@@ -30,7 +30,7 @@ jobs:
       run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./publish -p:PublishTrimmed=true -p:PublishReadyToRun=true
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: published-app
         path: ./publish/*
