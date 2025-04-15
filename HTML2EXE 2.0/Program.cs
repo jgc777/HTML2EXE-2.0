@@ -56,12 +56,9 @@ namespace HTML2EXE_2._0
                     if (args.Length >= 3)
                     {
                         if (File.Exists(args[2])) File.Copy(args[2], Path.Combine(tmpPath, "config.json"));
-                        else
-                        {
-                            Console.WriteLine("Config file not found: " + args[2], true);
-                            using (StreamWriter configFileStream = new StreamWriter(Path.Combine(tmpPath, "config.json"), true)) configFileStream.WriteLine("{}");
-                        }
+                        else Console.WriteLine("Config file not found: " + args[2], true);
                     }
+                    if (!File.Exists(Path.Combine(tmpPath, "config.json"))) File.WriteAllText(Path.Combine(tmpPath, "config.json"), "{}");
                     string output = Path.Combine(Environment.CurrentDirectory, "out.exe");
                     if (JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"] != null) output = Path.Combine(Environment.CurrentDirectory, JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"] + ".exe");
                     if (args.Length >= 2) output = args[1];

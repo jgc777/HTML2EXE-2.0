@@ -20,7 +20,7 @@ A rewrite of [HTML2EXE](https://jgc.corefn.xyz/HTML2EXE) which takes much less s
 - Quick and easy to use and distribute
 
 ## How to use it
-First of all, [download the program from the latest release](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/).
+First of all, [download the program from the latest release](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/). Then, drag and drop the HTML file or folder you want to convert to the program. You can also open the program to see the menu or call it from the command line (read more down here).
 
 ### GUI (Graphical User Interface)
 Just open the program and a GUI will show up with all the options. You can select the HTML file or folder you want to convert (with index.html) or just continue with an empty folder. The program will show a new window with many options and the build button. Press that button and the program will start compiling, and it will show a "Finished Building!" or a "Error" with the compiler log.
