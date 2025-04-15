@@ -1,6 +1,7 @@
 name: Publish for .NET 8.0
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
