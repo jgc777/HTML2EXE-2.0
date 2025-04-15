@@ -7,8 +7,10 @@ on:
     paths-ignore:
       - '*.md'
       - '*.yml'
-      - '.git*'
       - 'LICENSE'
+
+permissions:
+  contents: write
 
 jobs:
   build:
