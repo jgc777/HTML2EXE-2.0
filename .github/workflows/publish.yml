@@ -27,7 +27,7 @@ jobs:
       run: dotnet restore
 
     - name: Build and publish
-      run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./publish -p:PublishTrimmed=true -p:PublishReadyToRun=true
+      run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./publish -p:PublishTrimmed=true -p:PublishReadyToRun=true -p:EnableWindowsTargeting=true
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
