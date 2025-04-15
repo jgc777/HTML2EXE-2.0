@@ -52,6 +52,6 @@ jobs:
       with:
         name: "Build ${{ github.run_number }}"
         tag: ${{ github.run_number }}
-        body: "Latest windows binary (requires .NET 8.0 and it's automatically compiled)"
+        body: "Latest windows binary (requires .NET 8.0)"
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ./*
