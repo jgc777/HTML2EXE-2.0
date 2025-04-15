@@ -165,7 +165,7 @@ SourceFiles0=.\
                     var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
                     File.WriteAllBytes(Path.Combine(tmpPath, "webview.zip"), fileBytes);
                     string tempZipPath = Path.Combine(tmpPath, "webview.zip");
-                    log("] Extracting webview.zip...");
+                    log("Extracting webview.zip...");
                     ZipFile.ExtractToDirectory(tempZipPath, tmpPath);
                     File.Delete(tempZipPath);
                 }

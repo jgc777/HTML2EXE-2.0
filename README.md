@@ -26,13 +26,11 @@ First of all, [download the program from the latest release](https://github.com/
 Just open the program and a GUI will show up with all the options. You can select the HTML file or folder you want to convert (with index.html) or just continue with an empty folder. The program will show a new window with many options and the build button. Press that button and the program will start compiling, and it will show a "Finished Building!" or a "Error" with the compiler log.
 
 ### CLI (Command Line Interface))
-Open the program from a terminal with the following syntax:
+`HTML2EXE HTML OUTPUT CONFIG`
 
-`HTML2EXE (html file or folder) (optional exe output) (optional config.json)`
-
-- `(html file or folder)`: The HTML file or folder you want to convert. If you select a folder, make sure it contains an index.html file.
-- `(optional exe output)`: The output EXE file path. If you don't specify it, the program will create "out.exe".
-- `(optional config.json)`: The path to the config.json file. If you don't specify it, the program will use an empty config.json file.
+- HTML: The HTML file or folder you want to convert. If you select a folder, make sure it contains an index.html file.
+- OUTPUT (optional): The output EXE file path. If you don't specify it, the program will create "out.exe".
+- CONFIG (optional): The path to the config.json file. If you don't specify it, the program will use an empty config.json file.
 
 The program will show the log in the terminal.
 
