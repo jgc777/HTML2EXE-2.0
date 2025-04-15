@@ -1,0 +1,55 @@
+name: Publish for .NET 8.0
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '*.md'
+      - '*.yml'
+      - '.git*'
+      - 'LICENSE'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Set up .NET 8.0
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build and publish
+      run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./publish -p:PublishTrimmed=true -p:PublishReadyToRun=true
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: published-app
+        path: ./publish/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: published-app
+
+    - name: Create GitHub Release
+      uses: ncipollo/release-action@v1
+      with:
+        name: "Build ${{ github.run_number }}"
+        tag: ${{ github.run_number }}
+        body: "Latest windows binary (requires .NET 8.0 and it's automatically compiled)"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: ./*

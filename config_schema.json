@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Config",
+    "type": "object",
+    "properties": {
+        "maximized": {
+            "type": "boolean",
+            "description": "Whether to create a maximized window or not."
+        },
+        "resizable": {
+            "type": "boolean",
+            "description": "Whether to create a resizable window or not."
+        },
+        "control_box": {
+            "type": "boolean",
+            "description": "Whether to create a window with a control box or not."
+        },
+        "minimizable": {
+            "type": "boolean",
+            "description": "Whether to create a minimizable window or not."
+        },
+        "maximizable": {
+            "type": "boolean",
+            "description": "Whether to create a maximizable window or not."
+        },
+        "fullscreen": {
+            "type": "boolean",
+            "description": "Whether to create a fullscreen window or not."
+        },
+        "always_on_top": {
+            "type": "boolean",
+            "description": "Whether to create a window that is always on top or not."
+        },
+        "zoomcontrol": {
+            "type": "boolean",
+            "description": "Whether to create a window with zoom control or not."
+        },
+        "show_in_taskbar": {
+            "type": "boolean",
+            "description": "Whether to show the window in the taskbar or not."
+        },
+        "width": {
+            "type": "integer",
+            "description": "The width of the window."
+        },
+        "height": {
+            "type": "integer",
+            "description": "The height of the window."
+        },
+        "url": {
+            "type": "string",
+            "description": "The URL to load in the window."
+        },
+        "title": {
+            "type": "string",
+            "description": "The title of the window."
+        },
+        "icon": {
+            "type": "string",
+            "description": "The icon of the window."
+        },
+        "context_menu": {
+            "type": "boolean",
+            "description": "Whether to enable the context menu or not."
+        },
+        "dev_tools": {
+            "type": "boolean",
+            "description": "Whether to enable the developer tools or not."
+        },
+        "block_close": {
+            "type": "boolean",
+            "description": "Whether to block the close event or not."
+        },
+        "additional_cmd": {
+            "type": "string",
+            "description": "Additional command to run after starting the window."
+        },
+        "additional_cmd_args": {
+            "type": "string",
+            "description": "Additional command arguments to pass to the additional command."
+        }
+    },
+    "required": []
+}
