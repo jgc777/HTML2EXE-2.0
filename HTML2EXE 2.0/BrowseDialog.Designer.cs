@@ -38,12 +38,13 @@
             pictureBox1 = new PictureBox();
             label2 = new Label();
             cancelBtn = new Button();
+            websiteBtn = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // selectFileBtn
             // 
-            selectFileBtn.Location = new Point(182, 9);
+            selectFileBtn.Location = new Point(182, 21);
             selectFileBtn.Name = "selectFileBtn";
             selectFileBtn.Size = new Size(157, 30);
             selectFileBtn.TabIndex = 1;
@@ -61,7 +62,7 @@
             // 
             // selectFolderBtn
             // 
-            selectFolderBtn.Location = new Point(182, 45);
+            selectFolderBtn.Location = new Point(183, 57);
             selectFolderBtn.Name = "selectFolderBtn";
             selectFolderBtn.Size = new Size(157, 30);
             selectFolderBtn.TabIndex = 3;
@@ -88,7 +89,7 @@
             // 
             // noFileBtn
             // 
-            noFileBtn.Location = new Point(182, 81);
+            noFileBtn.Location = new Point(182, 93);
             noFileBtn.Name = "noFileBtn";
             noFileBtn.Size = new Size(157, 30);
             noFileBtn.TabIndex = 5;
@@ -117,7 +118,7 @@
             // 
             // cancelBtn
             // 
-            cancelBtn.Location = new Point(182, 117);
+            cancelBtn.Location = new Point(182, 129);
             cancelBtn.Name = "cancelBtn";
             cancelBtn.Size = new Size(157, 30);
             cancelBtn.TabIndex = 8;
@@ -125,13 +126,25 @@
             cancelBtn.UseVisualStyleBackColor = true;
             cancelBtn.Click += cancelBtn_Click_1;
             // 
+            // websiteBtn
+            // 
+            websiteBtn.Font = new Font("Segoe UI", 9F);
+            websiteBtn.Location = new Point(12, 129);
+            websiteBtn.Name = "websiteBtn";
+            websiteBtn.Size = new Size(165, 30);
+            websiteBtn.TabIndex = 9;
+            websiteBtn.Text = "Website";
+            websiteBtn.UseVisualStyleBackColor = true;
+            websiteBtn.Click += websiteBtn_Click;
+            // 
             // BrowseDialog
             // 
             AcceptButton = selectFileBtn;
             AutoScaleMode = AutoScaleMode.None;
             CancelButton = cancelBtn;
-            ClientSize = new Size(354, 156);
+            ClientSize = new Size(354, 171);
             ControlBox = false;
+            Controls.Add(websiteBtn);
             Controls.Add(cancelBtn);
             Controls.Add(label2);
             Controls.Add(pictureBox1);
@@ -161,5 +174,6 @@
         private PictureBox pictureBox1;
         private Label label2;
         private Button cancelBtn;
+        private Button websiteBtn;
     }
 }

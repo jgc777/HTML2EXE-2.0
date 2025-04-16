@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics;
+
 namespace HTML2EXE_2._0
 {
     public partial class BrowseDialog : Form
@@ -82,6 +84,14 @@ namespace HTML2EXE_2._0
         private void cancelBtn_Click_1(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void websiteBtn_Click(object sender, EventArgs e)
+        {
+            Process.Start(new ProcessStartInfo {
+                FileName = "https://jgc.corefn.xyz/HTML2EXE-2.0/",
+                UseShellExecute = true
+            });
         }
     }
 }
