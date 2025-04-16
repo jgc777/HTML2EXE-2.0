@@ -29,24 +29,47 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore -p:EnableWindowsTargeting=true
 
-    - name: Build and publish
+    - name: Build and publish main app
       run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./publish -p:PublishReadyToRun=true -p:EnableWindowsTargeting=true
 
-    - name: Upload artifact
+    - name: Build and publish WebView
+      run: |
+        dotnet publish HTML2EXE_Webview -c Release -r win-x64 --self-contained false -o ./webview_publish -p:EnableWindowsTargeting=true
+
+    - name: Create webview.zip
+      run: |
+        cd webview_publish
+        zip -r ../webview.zip ./*
+        cd ..
+
+    - name: Upload main app artifact
       uses: actions/upload-artifact@v4
       with:
         name: published-app
         path: ./publish/*
+
+    - name: Upload webview.zip artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: webview-zip
+        path: ./webview.zip
 
   release:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Download artifact
+    - name: Download main app artifact
       uses: actions/download-artifact@v4
       with:
         name: published-app
+        path: ./app
+
+    - name: Download webview.zip artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: webview-zip
+        path: ./
 
     - name: Create GitHub Release
       uses: ncipollo/release-action@v1
@@ -55,4 +78,6 @@ jobs:
         tag: ${{ github.run_number }}
         body: "Latest windows binary (requires .NET 8.0)"
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: ./*
+        artifacts: |
+          ./app/*
+          ./webview.zip
