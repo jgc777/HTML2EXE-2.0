@@ -34,7 +34,7 @@ jobs:
 
     - name: Build and publish WebView
       run: |
-        dotnet publish HTML2EXE_Webview -c Release -r win-x64 --self-contained false -o ./webview_publish -p:EnableWindowsTargeting=true
+        dotnet publish HTML2EXE_Webview -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./webview_publish -p:EnableWindowsTargeting=true
 
     - name: Create webview.zip
       run: |
