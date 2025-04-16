@@ -39,6 +39,7 @@ jobs:
     - name: Create webview.zip
       run: |
         cd webview_publish
+        rmdir /f /s runtimes
         zip -r ../webview.zip ./*
         cd ..
 
