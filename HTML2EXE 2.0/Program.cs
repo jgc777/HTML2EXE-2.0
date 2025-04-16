@@ -91,7 +91,7 @@ namespace HTML2EXE_2._0
             try
             {
                 string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
-                string webviewURL = "https://github.com/jgc777/HTML2EXE-2.0/raw/refs/heads/master/webview.zip";
+                string webviewURL = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
                 Directory.CreateDirectory(tmpPath);
                 if (!Directory.Exists(Path.Combine(tmpPath, "webfiles"))) Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
                 string configTitle = JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"]?.ToString() ?? null;
