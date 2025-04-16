@@ -11,7 +11,7 @@ namespace Webview {
             {
                 if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "/?" || args[0] == "/help"))
                 Process.Start(new ProcessStartInfo {
-                    FileName = "https://jgc.linkpc.net/HTML2EXE-2.0/",
+                    FileName = "https://jgc.corefn.xyz/HTML2EXE-2.0/",
                     UseShellExecute = true
                 });
                 else {
