@@ -76,7 +76,7 @@ jobs:
       with:
         name: "Build ${{ github.run_number }}"
         tag: ${{ github.run_number }}
-        body: "Latest windows binary (requires .NET 8.0)"
+        body: "Latest windows binary and webview (requires .NET 8.0). To use it, just download HTML2EXE.exe and run it."
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: |
           ./app/*
