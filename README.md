@@ -4,6 +4,7 @@
 ![Converter](https://img.shields.io/badge/converter-gray?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 [![License](https://img.shields.io/github/license/jgc777/HTML2EXE-2.0?style=for-the-badge)](./LICENSE)
+[![Publish for .NET 8.0](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml/badge.svg)](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml)
 
 <p align="center"><img src="icon.png" width="150"></p>
 
