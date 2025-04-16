@@ -6,8 +6,9 @@ on:
     branches:
       - master
     paths-ignore:
-      - '*.md'
-      - '*.yml'
+      - '.md'
+      - '.yml'
+      - '.gitignore'
       - 'LICENSE'
 
 permissions:
@@ -39,7 +40,7 @@ jobs:
     - name: Create webview.zip
       run: |
         cd webview_publish
-        rmdir /f /s runtimes
+        rm -rf runtimes
         zip -r ../webview.zip ./*
         cd ..
 
