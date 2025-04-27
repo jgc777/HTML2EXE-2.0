@@ -26,22 +26,39 @@ namespace Webview {
                 if (!string.IsNullOrEmpty(config["url"]?.ToString())) webView2.Source = new Uri(System.Environment.ExpandEnvironmentVariables(config["url"]?.ToString())); // Set config URL
                 else
                 {
-                    string url = null;
-                    string[] filesInWebfiles = Directory.EnumerateFiles(Path.Combine(Environment.CurrentDirectory, "webfiles")).ToArray(); // Get all files in the webfiles directory
-                    if (filesInWebfiles.Count() == 1) url = filesInWebfiles.First(); // If there is only one file in the directory, set it as the URL
-                    else if (File.Exists(Path.Combine(Environment.CurrentDirectory, "webfiles", "index.html"))) url = Path.Combine(Environment.CurrentDirectory, "webfiles", "index.html"); // Check for index.html
-                    else if (File.Exists(Path.Combine(Environment.CurrentDirectory, "webfiles", "index.htm"))) url = Path.Combine(Environment.CurrentDirectory, "webfiles", "index.htm"); // Check for index.htm
-                    else if (filesInWebfiles.Count() == 2)
+                    string url = null; // Initialize URL to null
+                    string webfilesPath = Path.Combine(Environment.CurrentDirectory, "webfiles"); // Path to webfiles folder
+                    string[] filesInWebfiles = Directory.EnumerateFiles(webfilesPath).ToArray(); // Get all files in webfiles folder
+                    var htmlFiles = filesInWebfiles.Where(file => file.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".htm", StringComparison.OrdinalIgnoreCase)).ToArray();
+                    
+                    // First priority: If there is only one HTML file, use it
+                    if (htmlFiles.Length == 1)
                     {
-                        if (filesInWebfiles[0].EndsWith(".ico")) url = Path.Combine(Environment.CurrentDirectory, "webfiles", filesInWebfiles[1].ToString()); // If the first file is a ico file, set the second file as the URL
-                        else if (filesInWebfiles[1].EndsWith(".ico")) url = Path.Combine(Environment.CurrentDirectory, "webfiles", filesInWebfiles[0].ToString()); // If the second file is an icon, set the first file as the URL
+                        url = htmlFiles.First();
                     }
-                    else foreach (var file in filesInWebfiles) if (file.EndsWith(".html") || file.EndsWith(".htm")) { // When a html is found
-                            url = Path.Combine(Environment.CurrentDirectory, "webfiles", file); // Set the html as the url
-                            break;
+                    // Second priority: If there is a index.html or index.htm file, use it
+                    else if (File.Exists(Path.Combine(webfilesPath, "index.html")))
+                    {
+                        url = Path.Combine(webfilesPath, "index.html");
+                    }
+                    else if (File.Exists(Path.Combine(webfilesPath, "index.htm")))
+                    {
+                        url = Path.Combine(webfilesPath, "index.htm");
+                    }
+                    // Third priority: if there are 2 files in webfiles, use the first one that is not an icon
+                    else if (filesInWebfiles.Length == 2)
+                    {
+                        var nonIcoFile = filesInWebfiles.FirstOrDefault(file => !file.EndsWith(".ico", StringComparison.OrdinalIgnoreCase));
+                        if (nonIcoFile != null)url = nonIcoFile;
+                    }
+                    // Fourth priority: If there are HTML files, use the first one found
+                    else if (htmlFiles.Length > 0)
+                    {
+                        url = htmlFiles.First();
                     }
 
-                    webView2.Source = new Uri(url ?? Path.Combine(Environment.CurrentDirectory, "webfiles")); // Set webview source
+                    // If no file has been set, use the webfiles folder as the default URL
+                    webView2.Source = new Uri(url ?? webfilesPath); // Set URL
                 }
 
                 if (config["maximized"]?.GetValue<bool>() ?? false) this.WindowState = FormWindowState.Maximized; // Maximize windo

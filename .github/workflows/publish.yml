@@ -6,8 +6,8 @@ on:
     branches:
       - master
     paths-ignore:
-      - '.md'
-      - '.yml'
+      - '*.md'
+      - '*.yml'
       - '.gitignore'
       - 'LICENSE'
 
@@ -40,8 +40,7 @@ jobs:
     - name: Create webview.zip
       run: |
         cd webview_publish
-        rm -rf runtimes
-        zip -r ../webview.zip ./*
+        zip ../webview.zip Webview.exe WebView2Loader.dll
         cd ..
 
     - name: Upload main app artifact
