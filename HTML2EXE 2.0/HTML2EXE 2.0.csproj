@@ -12,14 +12,15 @@
     <Title>HTML2EXE 2.0</Title>
     <Authors>Jgc7</Authors>
     <Description>Easyly convert html files to portable windows (x64) programs with customizable options.</Description>
-    <PackageProjectUrl>https://jgc.linkpc.net/HTML2EXE-2.0/</PackageProjectUrl>
+    <PackageProjectUrl>https://jgc.corefn.xyz/HTML2EXE-2.0/</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://jgc.linkpc.net/HTML2EXE-2.0/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/jgc777/HTML2EXE-2.0/</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <AssemblyName>HTML2EXE</AssemblyName>
     <Version>2.0.0</Version>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -31,6 +32,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

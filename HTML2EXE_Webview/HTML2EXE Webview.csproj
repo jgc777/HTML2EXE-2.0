@@ -11,29 +11,33 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <PlatformTarget>x64</PlatformTarget>
-    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-    <Title>HTML2EXE Webview</Title>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <Title>HTML2EXE 2.0 Webview</Title>
     <Product>HTML2EXE Webview</Product>
     <Description>Webview for HTML2EXE 2.0</Description>
     <NeutralLanguage>en</NeutralLanguage>
     <AssemblyName>Webview</AssemblyName>
     <Authors>Jgc7</Authors>
     <Copyright>Jgc7</Copyright>
-    <PackageProjectUrl>https://jgc.linkpc.net/HTML2EXE-2.0/</PackageProjectUrl>
+    <PackageProjectUrl>https://jgc.corefn.xyz/HTML2EXE-2.0/</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://jgc.linkpc.net/HTML2EXE-2.0/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/jgc777/HTML2EXE-2.0/</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Version>2.0.0</Version>
+    <ErrorReport>none</ErrorReport>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,6 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
