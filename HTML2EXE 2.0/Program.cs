@@ -137,12 +137,9 @@ PostInstallCmd=cmd /c del /f /q Webview.exe.WebView2
 AdminQuietInstCmd=
 UserQuietInstCmd=
 FILE0=""Webview.exe""
-FILE1=""Microsoft.Web.WebView2.Core.xml""
-FILE2=""Microsoft.Web.WebView2.WinForms.xml""
-FILE3=""Microsoft.Web.WebView2.Wpf.xml""
-FILE4=""WebView2Loader.dll""
-FILE5=""webfiles.zip""
-FILE6=""config.json""
+FILE1=""WebView2Loader.dll""
+FILE2=""webfiles.zip""
+FILE3=""config.json""
 [SourceFiles]
 SourceFiles0=.\
 [SourceFiles0]
@@ -150,9 +147,6 @@ SourceFiles0=.\
 %FILE1%=
 %FILE2%=
 %FILE3%=
-%FILE4%=
-%FILE5%=
-%FILE6%=
 ";
                 string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
                 log("Started building");
