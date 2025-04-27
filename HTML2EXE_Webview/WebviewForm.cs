@@ -136,6 +136,7 @@ namespace Webview {
                         UseShellExecute = true,
                         CreateNoWindow = true
                     };
+                    process.Start(); // Start process
                 }
             }
             catch (JsonException jsonEx)

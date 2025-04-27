@@ -11,12 +11,11 @@ namespace HTML2EXE_2._0
 
         private void BuildDialog_Load(object sender, EventArgs e)
         {
+            this.Visible = true;
             string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
-            Task.Delay(1500);
-            logTextBox.Cursor = Cursors.Default; // Default cursor
-            logTextBox.GotFocus += (s, ev) => logTextBox.Parent.Focus(); // Prevent focus on the RichTextBox
             string output = Path.Combine(Environment.CurrentDirectory, "out.exe");
-            if (JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"] != null) output = Path.Combine(Environment.CurrentDirectory, JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"] + ".exe");
+            string configTitle = JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"].ToString();
+            if (configTitle != null) output = Path.Combine(Environment.CurrentDirectory, configTitle + ".exe");
             Program.build(output);
         }
 
