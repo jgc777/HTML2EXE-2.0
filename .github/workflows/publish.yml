@@ -79,10 +79,8 @@ jobs:
         body:  |
             Latest Windows binary and webview (both require [.NET 8.0](https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-win-x64.exe)).
             To use it, just download [HTML2EXE.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE.exe) and run it.
-            Commit message:
             > ${{ github.event.head_commit.message }}
-            Diff:
-            ${{ github.event.before }}...${{ github.sha }}
+            > Diff: ${{ github.event.before }}...${{ github.sha }}
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: |
           ./app/*
