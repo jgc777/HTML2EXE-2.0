@@ -34,8 +34,7 @@ jobs:
       run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./publish -p:PublishReadyToRun=true -p:EnableWindowsTargeting=true
 
     - name: Build and publish WebView
-      run: |
-        dotnet publish HTML2EXE_Webview -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./webview_publish -p:EnableWindowsTargeting=true
+      run: dotnet publish HTML2EXE_Webview -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./webview_publish -p:EnableWindowsTargeting=true
 
     - name: Create webview.zip
       run: |
@@ -77,7 +76,7 @@ jobs:
       with:
         name: "Build ${{ github.run_number }}"
         tag: ${{ github.run_number }}
-        body: "Latest windows binary and webview (requires .NET 8.0). To use it, just download HTML2EXE.exe and run it."
+        body: "Latest autocompiled windows binary and webview (requires [.NET 8.0](https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-win-x64.exe)). To use it, just download HTML2EXE.exe and run it."
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: |
           ./app/*

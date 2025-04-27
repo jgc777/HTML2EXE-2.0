@@ -181,26 +181,21 @@ SourceFiles0=.\
                 string configIcon = JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["icon"]?.ToString();
                 if (!string.IsNullOrEmpty(configIcon)) {
                     log("Installing rcedit (to add the icon)...");
-                    using Process rceditwinget = new Process();
+                    Process rceditwinget = new Process();
                     rceditwinget.StartInfo = new ProcessStartInfo() {
                         FileName = "winget",
-                        Arguments = " install rcedit",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        CreateNoWindow = true,
+                        Arguments = "install rcedit",
+                        CreateNoWindow = true
                     };
                     rceditwinget.Start();
                     rceditwinget.WaitForExit();
+
                     log("Adding icon...");
                     using Process rcedit = new Process();
                     rcedit.StartInfo = new ProcessStartInfo() {
                         FileName = "rcedit",
-                        Arguments = " \"" + Path.Combine(tmpPath, "out.exe") + "\" --set-icon \"" + (File.Exists(configIcon) ? configIcon : Path.Combine(tmpPath, configIcon)) + "\"",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        CreateNoWindow = true,
+                        Arguments = "\"" + Path.Combine(tmpPath, "out.exe") + "\" --set-icon \"" + (File.Exists(configIcon) ? configIcon : Path.Combine(tmpPath, configIcon)) + "\"",
+                        CreateNoWindow = true
                     };
                     rcedit.Start();
                     rcedit.WaitForExit();
