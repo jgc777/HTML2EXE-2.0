@@ -73,11 +73,7 @@
         },
         "additional_cmd": {
             "type": "string",
-            "description": "Additional command to run after starting the window."
-        },
-        "additional_cmd_args": {
-            "type": "string",
-            "description": "Additional command arguments to pass to the additional command."
+            "description": "Additional command to run in the webfiles folder right after starting the window (in a hidden cmd.exe window)."
         }
     },
     "required": []

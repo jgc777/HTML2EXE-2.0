@@ -27,16 +27,16 @@ namespace Webview {
                 else
                 {
                     string url = null;
-                    if (Directory.EnumerateFiles(Path.Combine(Environment.CurrentDirectory, "webfiles")).Count() == 1) url = Path.Combine(Environment.CurrentDirectory, "webfiles", Path.GetFileName(Directory.EnumerateFiles(Path.Combine(Environment.CurrentDirectory, "webfiles")).First())); // If there is only one file in the directory, set it as the URL
+                    string[] filesInWebfiles = Directory.EnumerateFiles(Path.Combine(Environment.CurrentDirectory, "webfiles")).ToArray(); // Get all files in the webfiles directory
+                    if (filesInWebfiles.Count() == 1) url = filesInWebfiles.First(); // If there is only one file in the directory, set it as the URL
                     else if (File.Exists(Path.Combine(Environment.CurrentDirectory, "webfiles", "index.html"))) url = Path.Combine(Environment.CurrentDirectory, "webfiles", "index.html"); // Check for index.html
                     else if (File.Exists(Path.Combine(Environment.CurrentDirectory, "webfiles", "index.htm"))) url = Path.Combine(Environment.CurrentDirectory, "webfiles", "index.htm"); // Check for index.htm
-                    else if (Directory.EnumerateFiles(Path.Combine(Environment.CurrentDirectory, "webfiles")).Count() == 2)
+                    else if (filesInWebfiles.Count() == 2)
                     {
-                        string[] filesInWebfiles = Directory.EnumerateFiles(Path.Combine(Environment.CurrentDirectory, "webfiles")).ToArray(); // Get all files in the webfiles directory
                         if (filesInWebfiles[0].EndsWith(".ico")) url = Path.Combine(Environment.CurrentDirectory, "webfiles", filesInWebfiles[1].ToString()); // If the first file is a ico file, set the second file as the URL
                         else if (filesInWebfiles[1].EndsWith(".ico")) url = Path.Combine(Environment.CurrentDirectory, "webfiles", filesInWebfiles[0].ToString()); // If the second file is an icon, set the first file as the URL
                     }
-                    else foreach (var file in Directory.EnumerateFiles(Path.Combine(Environment.CurrentDirectory, "webfiles"))) if (file.EndsWith(".html") || file.EndsWith(".htm")) { // When a html is found
+                    else foreach (var file in filesInWebfiles) if (file.EndsWith(".html") || file.EndsWith(".htm")) { // When a html is found
                             url = Path.Combine(Environment.CurrentDirectory, "webfiles", file); // Set the html as the url
                             break;
                     }
@@ -68,17 +68,17 @@ namespace Webview {
 
                 this.ShowInTaskbar = config["show_in_taskbar"]?.GetValue<bool>() ?? true; // Config show in taskbar
 
-                if (config["icon"]?.ToString() != null) {
+                if (config["icon"] != null) {
                     this.Icon = new Icon(config["icon"].ToString()); // Config icon
                     this.ShowIcon = true; // Show icon
                 }
 
-                if (config["width"]?.ToString() != null) this.Width = config["width"].GetValue<int>(); // Set config width
-                if (config["height"]?.ToString() != null) this.Height = config["height"].GetValue<int>(); // Set config height
+                if (config["width"] != null) this.Width = config["width"].GetValue<int>(); // Set config width
+                if (config["height"] != null) this.Height = config["height"].GetValue<int>(); // Set config height
 
                 await webView2.EnsureCoreWebView2Async(); // Wait for WebView to be initialized
 
-                if (config["title"]?.ToString() != null) this.Text = config["title"].ToString(); // Set config title
+                if (config["title"] != null) this.Text = config["title"].ToString(); // Set config title
                 else webView2.CoreWebView2.DocumentTitleChanged += WebView_DocumentTitleChanged; // Set default title
 
                 webView2.CoreWebView2.Settings.AreDefaultContextMenusEnabled = config["context_menu"]?.GetValue<bool>() ?? false; // Config context menu
@@ -89,8 +89,7 @@ namespace Webview {
                 
                 this.TopMost = config["always_on_top"]?.GetValue<bool>() ?? false; // Always on top
 
-                webView2.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
-                { // Fullscreen change event
+                webView2.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) => { // Fullscreen change event
                     if (config["fullscreen"] != null) return; // If fullscreen is set in config return
                     if (webView2.CoreWebView2.ContainsFullScreenElement) // If fullscreen
                     {
@@ -110,16 +109,16 @@ namespace Webview {
 
                 webView2.Visible = true; // Show WebView
 
-                if (config["additional_cmd"] != null)
-                { // Config additional command
+                if (config["additional_cmd"] != null) { // Config additional command
                     Process process = new Process();
-                    process.StartInfo.FileName = config["additional_cmd"].ToString();
-                    process.StartInfo.Arguments = config["additional_cmd_args"]?.ToString() ?? "";
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardError = true;
-                    process.StartInfo.CreateNoWindow = true;
-                    process.Start();
+                    process.StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "cmd",
+                        Arguments = "/c " + config["additional_cmd"].ToString(),
+                        WorkingDirectory = Path.Combine(Environment.CurrentDirectory, "webfiles"),
+                        UseShellExecute = true,
+                        CreateNoWindow = true
+                    };
                 }
             }
             catch (JsonException jsonEx)
@@ -138,9 +137,9 @@ namespace Webview {
         }
         private void WebView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (config["block_close"]?.GetValue<bool>() ?? false)e.Cancel = true; // Block close event
+            if (config["block_close"]?.GetValue<bool>() ?? false) e.Cancel = true; // Block close event
         }
-        private void webView21_Click(object sender, EventArgs e) { }
-        private void WebviewForm_Load(object sender, EventArgs e) { }
+        private void webView21_Click(object sender, EventArgs e) {}
+        private void WebviewForm_Load(object sender, EventArgs e) {}
     }
 }

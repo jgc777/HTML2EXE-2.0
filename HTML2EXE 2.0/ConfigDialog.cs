@@ -45,7 +45,6 @@ namespace HTML2EXE_2._0
                 if (!string.IsNullOrEmpty(widthTextBox.Text)) config["width"] = Int32.Parse(widthTextBox.Text); // If the width is not empty, set it as the width
                 if (!string.IsNullOrEmpty(heightTextBox.Text)) config["height"] = Int32.Parse(heightTextBox.Text); // If the height is not empty, set it as the height
                 if (!string.IsNullOrEmpty(extraCmdTextBox.Text)) config["additional_cmd"] = extraCmdTextBox.Text; // If the extra command is not empty, set it as the extra command
-                if (!string.IsNullOrEmpty(cmdArgsTextBox.Text)) config["additional_cmd_args"] = cmdArgsTextBox.Text; // If the extra command arguments are not empty, set them as the extra command arguments
                 config["context_menu"] = contextMenu.Checked;
                 config["dev_tools"] = devTools.Checked;
                 config["maximized"] = maximized.Checked;

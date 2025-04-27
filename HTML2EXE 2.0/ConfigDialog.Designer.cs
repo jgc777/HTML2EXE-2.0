@@ -57,8 +57,6 @@
             okBtn = new Button();
             extraCmdTextBox = new TextBox();
             extraCmdLabel = new Label();
-            cmdArgsTextBox = new TextBox();
-            cmdArgsLabel = new Label();
             blockClose = new CheckBox();
             SuspendLayout();
             // 
@@ -157,7 +155,7 @@
             // contextMenu
             // 
             contextMenu.AutoSize = true;
-            contextMenu.Location = new Point(12, 228);
+            contextMenu.Location = new Point(12, 199);
             contextMenu.Name = "contextMenu";
             contextMenu.Size = new Size(138, 19);
             contextMenu.TabIndex = 9;
@@ -167,7 +165,7 @@
             // devTools
             // 
             devTools.AutoSize = true;
-            devTools.Location = new Point(156, 228);
+            devTools.Location = new Point(156, 199);
             devTools.Name = "devTools";
             devTools.Size = new Size(145, 19);
             devTools.TabIndex = 10;
@@ -177,7 +175,7 @@
             // maximized
             // 
             maximized.AutoSize = true;
-            maximized.Location = new Point(13, 253);
+            maximized.Location = new Point(13, 224);
             maximized.Name = "maximized";
             maximized.Size = new Size(84, 19);
             maximized.TabIndex = 11;
@@ -189,7 +187,7 @@
             resizable.AutoSize = true;
             resizable.Checked = true;
             resizable.CheckState = CheckState.Checked;
-            resizable.Location = new Point(156, 253);
+            resizable.Location = new Point(156, 224);
             resizable.Name = "resizable";
             resizable.Size = new Size(74, 19);
             resizable.TabIndex = 12;
@@ -201,7 +199,7 @@
             controlBox.AutoSize = true;
             controlBox.Checked = true;
             controlBox.CheckState = CheckState.Checked;
-            controlBox.Location = new Point(13, 278);
+            controlBox.Location = new Point(12, 249);
             controlBox.Name = "controlBox";
             controlBox.Size = new Size(146, 19);
             controlBox.TabIndex = 13;
@@ -213,7 +211,7 @@
             minimizable.AutoSize = true;
             minimizable.Checked = true;
             minimizable.CheckState = CheckState.Checked;
-            minimizable.Location = new Point(156, 278);
+            minimizable.Location = new Point(156, 249);
             minimizable.Name = "minimizable";
             minimizable.Size = new Size(91, 19);
             minimizable.TabIndex = 14;
@@ -225,7 +223,7 @@
             maximizable.AutoSize = true;
             maximizable.Checked = true;
             maximizable.CheckState = CheckState.Checked;
-            maximizable.Location = new Point(156, 303);
+            maximizable.Location = new Point(156, 274);
             maximizable.Name = "maximizable";
             maximizable.Size = new Size(93, 19);
             maximizable.TabIndex = 15;
@@ -235,7 +233,7 @@
             // fullscreen
             // 
             fullscreen.AutoSize = true;
-            fullscreen.Location = new Point(12, 303);
+            fullscreen.Location = new Point(13, 274);
             fullscreen.Name = "fullscreen";
             fullscreen.Size = new Size(109, 19);
             fullscreen.TabIndex = 16;
@@ -245,7 +243,7 @@
             // alwaysOnTop
             // 
             alwaysOnTop.AutoSize = true;
-            alwaysOnTop.Location = new Point(12, 328);
+            alwaysOnTop.Location = new Point(12, 299);
             alwaysOnTop.Name = "alwaysOnTop";
             alwaysOnTop.Size = new Size(101, 19);
             alwaysOnTop.TabIndex = 17;
@@ -255,7 +253,7 @@
             // zoomControl
             // 
             zoomControl.AutoSize = true;
-            zoomControl.Location = new Point(156, 328);
+            zoomControl.Location = new Point(156, 299);
             zoomControl.Name = "zoomControl";
             zoomControl.Size = new Size(135, 19);
             zoomControl.TabIndex = 18;
@@ -267,7 +265,7 @@
             showInTaskbar.AutoSize = true;
             showInTaskbar.Checked = true;
             showInTaskbar.CheckState = CheckState.Checked;
-            showInTaskbar.Location = new Point(12, 353);
+            showInTaskbar.Location = new Point(13, 324);
             showInTaskbar.Name = "showInTaskbar";
             showInTaskbar.Size = new Size(109, 19);
             showInTaskbar.TabIndex = 19;
@@ -312,7 +310,7 @@
             // 
             // okBtn
             // 
-            okBtn.Location = new Point(298, 386);
+            okBtn.Location = new Point(297, 349);
             okBtn.Name = "okBtn";
             okBtn.Size = new Size(75, 23);
             okBtn.TabIndex = 24;
@@ -324,7 +322,7 @@
             // 
             extraCmdTextBox.Location = new Point(106, 170);
             extraCmdTextBox.Name = "extraCmdTextBox";
-            extraCmdTextBox.PlaceholderText = "cmd";
+            extraCmdTextBox.PlaceholderText = "call start.bat";
             extraCmdTextBox.Size = new Size(267, 23);
             extraCmdTextBox.TabIndex = 27;
             // 
@@ -337,27 +335,10 @@
             extraCmdLabel.TabIndex = 26;
             extraCmdLabel.Text = "Extra command:";
             // 
-            // cmdArgsTextBox
-            // 
-            cmdArgsTextBox.Location = new Point(145, 199);
-            cmdArgsTextBox.Name = "cmdArgsTextBox";
-            cmdArgsTextBox.PlaceholderText = "/c winver";
-            cmdArgsTextBox.Size = new Size(227, 23);
-            cmdArgsTextBox.TabIndex = 29;
-            // 
-            // cmdArgsLabel
-            // 
-            cmdArgsLabel.AutoSize = true;
-            cmdArgsLabel.Location = new Point(12, 202);
-            cmdArgsLabel.Name = "cmdArgsLabel";
-            cmdArgsLabel.Size = new Size(127, 15);
-            cmdArgsLabel.TabIndex = 28;
-            cmdArgsLabel.Text = "Command arguments:";
-            // 
             // blockClose
             // 
             blockClose.AutoSize = true;
-            blockClose.Location = new Point(156, 353);
+            blockClose.Location = new Point(156, 324);
             blockClose.Name = "blockClose";
             blockClose.Size = new Size(105, 19);
             blockClose.TabIndex = 30;
@@ -369,10 +350,8 @@
             AcceptButton = okBtn;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 421);
+            ClientSize = new Size(384, 381);
             Controls.Add(blockClose);
-            Controls.Add(cmdArgsTextBox);
-            Controls.Add(cmdArgsLabel);
             Controls.Add(extraCmdTextBox);
             Controls.Add(extraCmdLabel);
             Controls.Add(okBtn);
@@ -441,8 +420,6 @@
         private Button okBtn;
         private TextBox extraCmdTextBox;
         private Label extraCmdLabel;
-        private TextBox cmdArgsTextBox;
-        private Label cmdArgsLabel;
         private CheckBox blockClose;
     }
 }
