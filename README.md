@@ -37,6 +37,7 @@ The program will show the log in the terminal.
 
 ## Config.json
 It's a JSON file which defines some program settings.
+
 | Option             | Type     | Description                                                                 |
 |--------------------|----------|-----------------------------------------------------------------------------|
 | `maximized`        | boolean  | If the window should be automatically maximized.                           |
