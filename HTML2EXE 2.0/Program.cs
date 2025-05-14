@@ -125,12 +125,14 @@ namespace HTML2EXE_2._0
 
                 if (latestVersion > Int32.Parse(CurrentVersion))
                 {
-                    log($"New version available ({latestVersion}). Updating...", false, true, GUI);
+                    log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true, GUI);
                     byte[] data = await client.GetByteArrayAsync(downloadUrl);
                     await File.WriteAllBytesAsync(TempFilePath, data);
+                    string argsString = null;
+                    if (args.Length > 0) argsString = "\"" + string.Join("\" \"", args) + "\"";
                     Process.Start(new ProcessStartInfo {
                         FileName = TempFilePath,
-                        Arguments = "\"" + string.Join("\" \"", args) + "\"",
+                        Arguments = argsString,
                         UseShellExecute = true,
                         WorkingDirectory = Environment.CurrentDirectory
                     });
