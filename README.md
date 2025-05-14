@@ -8,14 +8,14 @@
 
 <p align="center"><img src="icon.png" width="150"></p>
 
-A rewrite of [HTML2EXE](https://jgc.corefn.xyz/HTML2EXE) which takes much less size and it's more customizable.
+A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less size and it's more customizable.
 
 ## Features
 - Convert HTML files (really any chromium-compatible files) and folders to EXE files
 - Use internet webpages
 - Custom icon
 - Custom title & more
-- Small program size
+- Very small program size
 - Graphical user interface (GUI)
 - Command line interface (CLI)
 - Quick and easy to use and distribute
