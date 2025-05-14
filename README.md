@@ -36,7 +36,27 @@ Just open the program and a GUI will show up with all the options. You can selec
 The program will show the log in the terminal.
 
 ## Config.json
-It's a JSON file which defines some program settings. See [config_schema.json](config_schema.json) for more information.
+It's a JSON file which defines some program settings.
+| Option             | Type     | Description                                                                 |
+|--------------------|----------|-----------------------------------------------------------------------------|
+| `maximized`        | boolean  | If the window should be automatically maximized.                           |
+| `resizable`        | boolean  | If the window should be resizable.                                         |
+| `control_box`      | boolean  | If the window should have a control box (minimize, maximize and close buttons). |
+| `minimizable`      | boolean  | If the window should be minimizable.                                       |
+| `maximizable`      | boolean  | If the window should be maximizable.                                       |
+| `fullscreen`       | boolean  | If the window should be fullscreen by default.                             |
+| `always_on_top`    | boolean  | If the window should be always on top.                                     |
+| `zoomcontrol`      | boolean  | If the zoom control should be enabled.                                     |
+| `show_in_taskbar`  | boolean  | If the window should be shown in the taskbar.                              |
+| `width`            | integer  | The width of the window.                                                   |
+| `height`           | integer  | The height of the window.                                                  |
+| `url`              | string   | The URL to load.                                                            |
+| `title`            | string   | The title of the window.                                                   |
+| `icon`             | string   | The icon of the window.                                                    |
+| `context_menu`     | boolean  | If the context menu should be enabled.                                     |
+| `dev_tools`        | boolean  | If developer tools should be enabled.                                      |
+| `block_close`      | boolean  | If the window should be blocked from closing.                              |
+| `additional_cmd`   | string   | Additional command to run in the webfiles folder after starting the window (in a hidden cmd.exe window, use call to stay hidden or start to create a window). |
 
 ## Contributing
 Use GitHub pull requests, discussions or issues to report problems, suggest features...
