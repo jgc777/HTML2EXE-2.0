@@ -57,7 +57,7 @@ It's a JSON file which defines some program settings.
 | `context_menu`     | boolean  | If the context menu should be enabled.                                     |
 | `dev_tools`        | boolean  | If developer tools should be enabled.                                      |
 | `block_close`      | boolean  | If the window should be blocked from closing.                              |
-| `additional_cmd`   | string   | Additional command to run in the webfiles folder after starting the window (in a hidden cmd.exe window, use call to stay hidden or start to create a window). |
+| `additional_cmd`   | string   | Additional command to run in the webfiles folder after starting the window (in a hidden cmd.exe window, to start batch files use call to stay hidden or start to create a window). |
 
 ## Contributing
 Use GitHub pull requests, discussions or issues to report problems, suggest features...
