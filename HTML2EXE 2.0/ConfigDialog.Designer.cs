@@ -58,6 +58,8 @@
             extraCmdTextBox = new TextBox();
             extraCmdLabel = new Label();
             blockClose = new CheckBox();
+            loadConfigBtn = new Button();
+            openFileDialog2 = new OpenFileDialog();
             SuspendLayout();
             // 
             // urlLabel
@@ -345,12 +347,28 @@
             blockClose.Text = "Disable closing";
             blockClose.UseVisualStyleBackColor = true;
             // 
+            // loadConfigBtn
+            // 
+            loadConfigBtn.Location = new Point(12, 349);
+            loadConfigBtn.Name = "loadConfigBtn";
+            loadConfigBtn.Size = new Size(110, 23);
+            loadConfigBtn.TabIndex = 31;
+            loadConfigBtn.Text = "Load Config.json";
+            loadConfigBtn.UseVisualStyleBackColor = true;
+            loadConfigBtn.Click += loadConfigBtn_Click;
+            // 
+            // openFileDialog2
+            // 
+            openFileDialog2.FileName = "config.json";
+            openFileDialog2.Filter = "Json files|*.json";
+            // 
             // ConfigDialog
             // 
             AcceptButton = okBtn;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(384, 381);
+            Controls.Add(loadConfigBtn);
             Controls.Add(blockClose);
             Controls.Add(extraCmdTextBox);
             Controls.Add(extraCmdLabel);
@@ -421,5 +439,7 @@
         private TextBox extraCmdTextBox;
         private Label extraCmdLabel;
         private CheckBox blockClose;
+        private Button loadConfigBtn;
+        private OpenFileDialog openFileDialog2;
     }
 }

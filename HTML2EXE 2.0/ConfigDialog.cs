@@ -6,6 +6,7 @@ namespace HTML2EXE_2._0
     {
         public JsonNode config;
         public BuildDialog buildDialog;
+        public string iconPath = null;
         public ConfigDialog()
         {
             InitializeComponent();
@@ -38,9 +39,10 @@ namespace HTML2EXE_2._0
             {
                 if (!string.IsNullOrEmpty(urlTextBox.Text)) config["url"] = urlTextBox.Text; // If the URL is not empty, set it as the URL
                 if (!string.IsNullOrEmpty(titleTextBox.Text)) config["title"] = titleTextBox.Text; // If the title is not empty, set it as the title
-                if (File.Exists(openFileDialog1.FileName)) {
-                    File.Copy(openFileDialog1.FileName, Path.Combine(Path.GetTempPath(), "HTML2EXE", "webfiles", Path.GetFileName(openFileDialog1.FileName)), true); // Copy the icon to the webfiles directory
-                    config["icon"] = Path.Combine("webfiles", Path.GetFileName(openFileDialog1.FileName)); // Set the icon
+                if (File.Exists(iconPath))
+                {
+                    File.Copy(iconPath, Path.Combine(Path.GetTempPath(), "HTML2EXE", "webfiles", Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
+                    config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath)); // Set the icon
                 }
                 if (!string.IsNullOrEmpty(widthTextBox.Text)) config["width"] = Int32.Parse(widthTextBox.Text); // If the width is not empty, set it as the width
                 if (!string.IsNullOrEmpty(heightTextBox.Text)) config["height"] = Int32.Parse(heightTextBox.Text); // If the height is not empty, set it as the height
@@ -91,6 +93,7 @@ namespace HTML2EXE_2._0
         private void removeIconBtn_Click(object sender, EventArgs e)
         {
             openFileDialog1.FileName = null;
+            iconPath = null;
             iconPathLabel.Text = "No icon";
             removeIconBtn.Visible = false;
         }
@@ -98,9 +101,60 @@ namespace HTML2EXE_2._0
         private void iconBtn_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();
-            if (!string.IsNullOrEmpty(openFileDialog1.FileName)) {
+            if (!string.IsNullOrEmpty(openFileDialog1.FileName) && File.Exists(openFileDialog1.FileName))
+            {
                 iconPathLabel.Text = Path.GetFileName(openFileDialog1.FileName);
                 removeIconBtn.Visible = true;
+                iconPath = openFileDialog1.FileName;
+            }
+        }
+
+        private void loadConfigBtn_Click(object sender, EventArgs e)
+        {
+            openFileDialog2.ShowDialog();
+            try {
+                if (!string.IsNullOrEmpty(openFileDialog2.FileName) && File.Exists(openFileDialog2.FileName))
+                {
+                    JsonNode config = JsonNode.Parse(File.ReadAllText(openFileDialog2.FileName)); // Load the config file
+                    // Set inputs
+                    if (config["maximized"]!=null) maximized.Checked = config["maximized"].GetValue<bool>();
+                    if (config["resizable"]!=null) resizable.Checked = config["resizable"].GetValue<bool>();
+                    if (config["control_box"]!=null) controlBox.Checked = config["control_box"].GetValue<bool>();
+                    if (config["minimizable"]!=null) minimizable.Checked = config["minimizable"].GetValue<bool>();
+                    if (config["maximizable"]!=null) maximizable.Checked = config["maximizable"].GetValue<bool>();
+                    if (config["fullscreen"]!=null) fullscreen.Checked = config["fullscreen"].GetValue<bool>();
+                    if (config["always_on_top"]!=null) alwaysOnTop.Checked = config["always_on_top"].GetValue<bool>();
+                    if (config["zoom_control"]!=null) zoomControl.Checked = config["zoom_control"].GetValue<bool>();
+                    if (config["show_in_taskbar"]!=null) showInTaskbar.Checked = config["show_in_taskbar"].GetValue<bool>();
+                    if (config["context_menu"]!=null) contextMenu.Checked = config["context_menu"].GetValue<bool>();
+                    if (config["dev_tools"]!=null) devTools.Checked = config["dev_tools"].GetValue<bool>();
+                    if (config["block_close"]!=null) blockClose.Checked = config["block_close"].GetValue<bool>();
+                    if (config["url"]!=null) urlTextBox.Text = config["url"].ToString();
+                    if (config["title"]!=null) titleTextBox.Text = config["title"].ToString();
+                    if (config["width"]!=null) widthTextBox.Text = config["width"].ToString();
+                    if (config["height"]!=null) heightTextBox.Text = config["height"].ToString();
+                    if (config["additional_cmd"]!=null) extraCmdTextBox.Text = config["additional_cmd"].ToString();
+                    
+                    if (!string.IsNullOrEmpty(config["icon"].ToString())) // Set icon
+                    {
+                        // Define icon path
+                        if (File.Exists(Environment.ExpandEnvironmentVariables(config["icon"].ToString()))) iconPath = Environment.ExpandEnvironmentVariables(config["icon"].ToString());
+                        if (File.Exists(Path.Combine(Directory.GetParent(openFileDialog2.FileName)?.FullName ?? string.Empty, config["icon"].ToString()))) iconPath = Path.Combine(Directory.GetParent(openFileDialog2.FileName)?.FullName ?? string.Empty, config["icon"].ToString());
+                        if (File.Exists(Path.Combine(Environment.CurrentDirectory, config["icon"].ToString()))) iconPath = Path.Combine(Environment.CurrentDirectory, config["icon"].ToString());
+                        
+                        iconPathLabel.Text = Path.GetFileName(iconPath);
+                        removeIconBtn.Visible = true;
+                    }
+                    else
+                    {
+                        iconPathLabel.Text = "No icon";
+                        removeIconBtn.Visible = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

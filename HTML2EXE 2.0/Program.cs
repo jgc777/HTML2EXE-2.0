@@ -2,6 +2,8 @@ using System.IO.Compression;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
+using System.Windows.Forms;
+using System.Text.Json;
 
 namespace HTML2EXE_2._0
 {
@@ -34,6 +36,7 @@ namespace HTML2EXE_2._0
                 {
                     string htmlPath = null;
                     bool directory = false;
+                    // Define html/directory path and copy
                     if (File.Exists(args[0])) htmlPath = args[0];
                     else if (File.Exists(Path.Combine(Environment.CurrentDirectory, args[0]))) htmlPath = Path.Combine(Environment.CurrentDirectory, args[0]);
                     else if (Directory.Exists(args[0]))
@@ -53,16 +56,33 @@ namespace HTML2EXE_2._0
                     }
                     if (directory) new Microsoft.VisualBasic.Devices.Computer().FileSystem.CopyDirectory(htmlPath, Path.Combine(tmpPath, "webfiles"), true);
                     else File.Copy(htmlPath, Path.Combine(tmpPath, "webfiles", Path.GetFileName(htmlPath)), true);
+                    
+                    // Copy config icon and modify config file
                     if (args.Length >= 3)
                     {
-                        if (File.Exists(args[2])) File.Copy(args[2], Path.Combine(tmpPath, "config.json"));
+                        if (File.Exists(args[2])) {
+                            JsonNode config = JsonNode.Parse(File.ReadAllText(args[2]));
+                            string configIcon = config["icon"]?.ToString();
+                            string iconPath = null;
+                            if (File.Exists(Environment.ExpandEnvironmentVariables(configIcon))) iconPath = Environment.ExpandEnvironmentVariables(configIcon);
+                            if (File.Exists(Path.Combine(Environment.CurrentDirectory, configIcon))) iconPath = Path.Combine(Environment.CurrentDirectory, configIcon);
+                            config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath));
+                            File.Copy(iconPath, Path.Combine(Path.GetTempPath(), "HTML2EXE", "webfiles", Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
+                            File.WriteAllText(Path.Combine(tmpPath, "config.json"), config.ToString()); // Save the config file
+                        }
                         else Console.WriteLine("Config file not found: " + args[2], true);
                     }
+
+                    // Ensure config.json exists
                     if (!File.Exists(Path.Combine(tmpPath, "config.json"))) File.WriteAllText(Path.Combine(tmpPath, "config.json"), "{}");
+
+                    // Define output path
                     string output = Path.Combine(Environment.CurrentDirectory, "out.exe");
                     if (JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"] != null) output = Path.Combine(Environment.CurrentDirectory, JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"] + ".exe");
                     if (args.Length >= 2) output = args[1];
                     if (!Directory.Exists(Directory.GetParent(output)?.ToString())) Directory.CreateDirectory(Directory.GetParent(output).ToString());
+
+                    // Build the executable
                     build(output);
                 }
                 else
@@ -151,7 +171,6 @@ SourceFiles0=.\
                 string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
                 log("Started building");
                 log("Downloading webview.zip...");
-                
                 using (HttpClient client = new HttpClient())
                 {
                     var response = client.GetAsync(webviewURL).Result;
@@ -163,7 +182,6 @@ SourceFiles0=.\
                     ZipFile.ExtractToDirectory(tempZipPath, tmpPath);
                     File.Delete(tempZipPath);
                 }
-                
                 log("Compressing web files...");
                 ZipFile.CreateFromDirectory(Path.Combine(tmpPath, "webfiles"), Path.Combine(tmpPath, "webfiles.zip"), CompressionLevel.SmallestSize, true);
                 log("Building...");
@@ -204,8 +222,9 @@ SourceFiles0=.\
                 log("Cleaning up...");
                 File.Move(Path.Combine(tmpPath, "out.exe"), output, true);
                 Directory.Delete(tmpPath, true);
-                log("Finished building!", false, true, true);
+                log("Finished building!", false, true, GUI);
                 log("Output: " + output, false, true);
+                if (GUI) browseDialog.configDialog.buildDialog.Close();
                 Process.Start("explorer.exe", "/select, \"" + output + "\"");
             }
             catch (Exception ex)
