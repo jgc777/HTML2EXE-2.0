@@ -130,7 +130,7 @@ namespace HTML2EXE_2._0
                     await File.WriteAllBytesAsync(TempFilePath, data);
                     Process.Start(new ProcessStartInfo {
                         FileName = TempFilePath,
-                        Arguments = string.Join(" ", args),
+                        Arguments = "\"" + string.Join("\" \"", args) + "\"",
                         UseShellExecute = true,
                         WorkingDirectory = Environment.CurrentDirectory
                     });
