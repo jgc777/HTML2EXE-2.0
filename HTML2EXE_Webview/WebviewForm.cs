@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Nodes;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Security.Cryptography;
 
 namespace Webview {
     public partial class WebviewForm : Form
@@ -30,7 +31,12 @@ namespace Webview {
                     string webfilesPath = Path.Combine(Environment.CurrentDirectory, "webfiles"); // Path to webfiles folder
                     string[] filesInWebfiles = Directory.EnumerateFiles(webfilesPath).ToArray(); // Get all files in webfiles folder
                     var htmlFiles = filesInWebfiles.Where(file => file.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".htm", StringComparison.OrdinalIgnoreCase)).ToArray();
-                    
+
+                    // Zero priority: If there is only one file, use it
+                    if (filesInWebfiles.Length == 1) 
+                    {
+                        url = filesInWebfiles.First();
+                    }
                     // First priority: If there is only one HTML file, use it
                     if (htmlFiles.Length == 1)
                     {
