@@ -10,6 +10,7 @@ on:
       - '*.yml'
       - '.gitignore'
       - 'LICENSE'
+      - 'latest.json'
 
 permissions:
   contents: write
@@ -26,6 +27,11 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
+
+    - name: Set build number
+      run: |
+        FILE="src/HTML2EXE 2.0/Program.cs"
+        sed -i 's/private static readonly string CurrentVersion = .*;/private static readonly string CurrentVersion = '${{ github.run_number }}';/' $FILE
 
     - name: Restore dependencies
       run: dotnet restore -p:EnableWindowsTargeting=true
@@ -85,3 +91,31 @@ jobs:
         artifacts: |
           ./app/*
           ./webview.zip
+
+  create-latest-json:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      
+      - name: Set environment variables
+        run: |
+          echo "TAG_NAME=${{ github.run_number }}" >> $GITHUB_ENV
+          echo "RELEASE_DATE=$(date +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+      
+      - name: Create latest.json
+        run: |
+          echo "{
+            \"version\": ${{ github.run_number }},
+            \"pub_date\": \"${{ env.RELEASE_DATE }}\",
+            \"url\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ env.TAG_NAME }}/HTML2EXE.exe\"
+          }" > latest.json
+
+      - name: Update latest.json
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Actions
+          author_email: actions@github.com
+          message: "Update latest.json for build ${{ env.TAG_NAME }}"
+          add: "latest.json"

@@ -2,7 +2,6 @@ using System.IO.Compression;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
-using System.Windows.Forms;
 using System.Text.Json;
 
 namespace HTML2EXE_2._0
@@ -12,7 +11,12 @@ namespace HTML2EXE_2._0
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool FreeConsole();
 
-        public static string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
+        private static readonly bool update = true; // Set to false to disable update check
+        private static readonly string LatestJsonUrl = "https://jgc777.github.io/HTML2EXE-2.0/latest.json";
+        private static readonly string webviewURL = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
+        private static readonly int CurrentVersion = 9999; // Updated by GitHub at build
+        private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
+        public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
         public static bool GUI = false;
         public static BrowseDialog browseDialog;
 
@@ -20,6 +24,7 @@ namespace HTML2EXE_2._0
         static void Main(string[] args)
         {
             try {
+                if (update) CheckForUpdatesAsync().Wait();
                 if (Directory.Exists(tmpPath)) Directory.Delete(tmpPath, true);
                 Directory.CreateDirectory(tmpPath);
                 Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
@@ -106,12 +111,40 @@ namespace HTML2EXE_2._0
             }
         }
 
+        public static async Task CheckForUpdatesAsync()
+        {
+            try
+            {
+                using HttpClient client = new HttpClient();
+                string json = await client.GetStringAsync(LatestJsonUrl);
+
+                using JsonDocument doc = JsonDocument.Parse(json);
+                int latestVersion = doc.RootElement.GetProperty("version").GetInt32();
+                string downloadUrl = doc.RootElement.GetProperty("url").GetString();
+
+                if (latestVersion >= CurrentVersion)
+                {
+                    log($"New version available: {latestVersion}. Downloading and starting update...", false, true, GUI);
+                    byte[] data = await client.GetByteArrayAsync(downloadUrl);
+                    await File.WriteAllBytesAsync(TempFilePath, data);
+                    Process.Start(new ProcessStartInfo {
+                        FileName = TempFilePath,
+                        UseShellExecute = true
+                    });
+                    Environment.Exit(0);
+                }
+            }
+            catch (Exception ex)
+            {
+                log($"Error searching for updates: {ex.Message}", true, false, GUI);
+            }
+        }
+
         public static void build(string output)
         {
             try
             {
                 string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
-                string webviewURL = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
                 Directory.CreateDirectory(tmpPath);
                 if (!Directory.Exists(Path.Combine(tmpPath, "webfiles"))) Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
                 string configTitle = JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"]?.ToString() ?? null;
