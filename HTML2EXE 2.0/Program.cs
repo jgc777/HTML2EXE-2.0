@@ -123,7 +123,7 @@ namespace HTML2EXE_2._0
                 int latestVersion = doc.RootElement.GetProperty("version").GetInt32();
                 string downloadUrl = doc.RootElement.GetProperty("url").GetString();
 
-                if (latestVersion >= CurrentVersion)
+                if (latestVersion >= Int32.Parse(CurrentVersion))
                 {
                     log($"New version available: {latestVersion}. Downloading and starting update...", false, true, GUI);
                     byte[] data = await client.GetByteArrayAsync(downloadUrl);
