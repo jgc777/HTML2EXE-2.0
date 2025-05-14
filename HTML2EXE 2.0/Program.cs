@@ -25,7 +25,7 @@ namespace HTML2EXE_2._0
         {
             try {
                 Console.Title = "HTML2EXE 2.0 v" + CurrentVersion;
-                if (update) CheckForUpdatesAsync().Wait();
+                if (update) CheckForUpdatesAsync(args).Wait();
                 if (Directory.Exists(tmpPath)) Directory.Delete(tmpPath, true);
                 Directory.CreateDirectory(tmpPath);
                 Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
@@ -112,7 +112,7 @@ namespace HTML2EXE_2._0
             }
         }
 
-        public static async Task CheckForUpdatesAsync()
+        public static async Task CheckForUpdatesAsync(string[] args)
         {
             try
             {
@@ -130,6 +130,7 @@ namespace HTML2EXE_2._0
                     await File.WriteAllBytesAsync(TempFilePath, data);
                     Process.Start(new ProcessStartInfo {
                         FileName = TempFilePath,
+                        Arguments = string.Join(" ", args),
                         UseShellExecute = true
                     });
                     Environment.Exit(0);
