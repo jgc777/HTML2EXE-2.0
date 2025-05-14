@@ -26,7 +26,7 @@ namespace HTML2EXE_2._0
                     Console.WriteLine("Opening web documentation...");
                     Process.Start(new ProcessStartInfo
                     {
-                        FileName = "https://jgc.corefn.xyz/HTML2EXE-2.0/",
+                        FileName = "https://jgc777.github.io/HTML2EXE-2.0/",
                         UseShellExecute = true
                     });
                 }
