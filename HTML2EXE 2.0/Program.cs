@@ -18,7 +18,7 @@ namespace HTML2EXE_2._0
         #endif
         private static readonly bool update = true; // Set to false to disable update check
         private static readonly string LatestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
-        private static readonly string webviewURL = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
+        private static readonly string webviewURL = IsBigBuild ? "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip" : "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
         public static readonly string CurrentVersion = "999"; // Updated by GitHub at build
         private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
