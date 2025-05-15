@@ -141,10 +141,10 @@ jobs:
             > Diff: ${{ github.event.before }}...${{ github.sha }}
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: |
-          ./app/*
+          ./app/HTML2EXE.exe
           ./webview.zip
           ./latest.json
-          ./app-big/*
+          ./app-big/HTML2EXE-big.exe
           ./webview-big.zip
         overwrite: true
         overwrite_assets: true

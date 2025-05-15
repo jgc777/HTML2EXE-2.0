@@ -11,6 +11,11 @@ namespace HTML2EXE_2._0
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool FreeConsole();
 
+        #if BIG_BUILD
+            public static readonly bool IsBigBuild = true;
+        #else
+            public static readonly bool IsBigBuild = false;
+        #endif
         private static readonly bool update = true; // Set to false to disable update check
         private static readonly string LatestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
         private static readonly string webviewURL = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
@@ -133,9 +138,9 @@ namespace HTML2EXE_2._0
 
                 using JsonDocument doc = JsonDocument.Parse(json);
                 int latestVersion = doc.RootElement.GetProperty("version").GetInt32();
-                string downloadUrl = doc.RootElement.GetProperty("url").GetString();
+                string? downloadUrl = IsBigBuild ? doc.RootElement.GetProperty("url").GetString() : doc.RootElement.GetProperty("url_big").GetString();
 
-                if ((latestVersion > Int32.Parse(CurrentVersion)) && doc.RootElement.GetProperty("update").GetBoolean())
+                if ((latestVersion > Int32.Parse(CurrentVersion)) && doc.RootElement.GetProperty("update").GetBoolean() && !string.IsNullOrEmpty(downloadUrl))
                 {
                     log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true, GUI);
                     byte[] data = await client.GetByteArrayAsync(downloadUrl);
