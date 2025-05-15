@@ -23,7 +23,9 @@ namespace HTML2EXE_2._0
         { }
 
         public void ConfigDialog_Load(object sender, EventArgs e)
-        { }
+        {
+            this.Text = "HTML2EXE 2.0 v" + (Program.IsBigBuild ? Program.CurrentVersion + " (BIG)" : Program.CurrentVersion);
+        }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         { }

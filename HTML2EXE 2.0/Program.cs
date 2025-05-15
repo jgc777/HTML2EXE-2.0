@@ -29,7 +29,7 @@ namespace HTML2EXE_2._0
         static void Main(string[] args)
         {
             try {
-                Console.Title = "HTML2EXE 2.0 v" + CurrentVersion;
+                Console.Title = "HTML2EXE 2.0 v" + (IsBigBuild ? CurrentVersion + " (BIG)" : CurrentVersion);
                 if (update) CheckForUpdatesAsync(args).Wait();
                 if (Directory.Exists(tmpPath)) Directory.Delete(tmpPath, true);
                 Directory.CreateDirectory(tmpPath);

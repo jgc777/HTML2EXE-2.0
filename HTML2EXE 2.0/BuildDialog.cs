@@ -11,6 +11,7 @@ namespace HTML2EXE_2._0
 
         private void BuildDialog_Load(object sender, EventArgs e)
         {
+            this.Text = "HTML2EXE 2.0 v" + (Program.IsBigBuild ? Program.CurrentVersion + " (BIG)" : Program.CurrentVersion);
             this.Visible = true;
             string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
             string output = Path.Combine(Environment.CurrentDirectory, "out.exe");
