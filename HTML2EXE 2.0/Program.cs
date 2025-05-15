@@ -14,7 +14,7 @@ namespace HTML2EXE_2._0
         private static readonly bool update = true; // Set to false to disable update check
         private static readonly string LatestJsonUrl = "https://raw.githubusercontent.com/jgc777/HTML2EXE-2.0/refs/heads/master/latest.json";
         private static readonly string webviewURL = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
-        public static readonly string CurrentVersion = "999"; // Updated by GitHub at build
+        public static readonly string CurrentVersion = "54"; // Updated by GitHub at build
         private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
         public static bool GUI = false;
@@ -142,13 +142,24 @@ namespace HTML2EXE_2._0
                     await File.WriteAllBytesAsync(TempFilePath, data);
                     string argsString = null;
                     if (args.Length > 0) argsString = "\"" + string.Join("\" \"", args) + "\"";
-                    Process.Start(new ProcessStartInfo {
+                    Process update = new Process();
+                    update.StartInfo = new ProcessStartInfo
+                    {
                         FileName = TempFilePath,
                         Arguments = argsString,
-                        UseShellExecute = true,
-                        WorkingDirectory = Environment.CurrentDirectory
-                    });
-                    Environment.Exit(0);
+                        UseShellExecute = false,
+                        WorkingDirectory = Environment.CurrentDirectory,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    };
+                    update.OutputDataReceived += (sender, e) => { if (!string.IsNullOrEmpty(e.Data)) Console.WriteLine(e.Data); };
+                    update.ErrorDataReceived += (sender, e) => { if (!string.IsNullOrEmpty(e.Data)) Console.WriteLine(e.Data, true); };
+                    update.Start();
+                    update.BeginOutputReadLine();
+                    update.BeginErrorReadLine();
+                    update.WaitForExit();
+                    Environment.Exit(update.ExitCode);
                 }
             }
             catch (Exception ex)

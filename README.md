@@ -36,7 +36,7 @@ Just open the program and a GUI will show up with all the options. You can selec
 The program will show the log in the terminal.
 
 ## Config.json
-It's a JSON file which defines some program settings.
+It's a JSON file which defines some webview settings. It can be loaded in the CLI and configuration GUI. The configuration GUI creates it for you.
 
 | Option             | Type     | Description                                                                 |
 |--------------------|----------|-----------------------------------------------------------------------------|
