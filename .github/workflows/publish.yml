@@ -98,10 +98,9 @@ jobs:
       run: |
         echo "{
           \"version\": ${{ github.run_number }},
-          \"pub_date\": \"${{ env.RELEASE_DATE }}\",
           \"update\": true,
-          \"url\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ env.TAG_NAME }}/HTML2EXE.exe\"
-          \"url_big\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ env.TAG_NAME }}/HTML2EXE-big.exe\"
+          \"url\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ github.run_number }}/HTML2EXE.exe\",
+          \"url_big\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ github.run_number }}/HTML2EXE-big.exe\"
         }" > latest.json
 
     - name: Download main app artifact
