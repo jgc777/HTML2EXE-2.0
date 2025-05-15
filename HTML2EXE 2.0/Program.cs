@@ -12,9 +12,9 @@ namespace HTML2EXE_2._0
         static extern bool FreeConsole();
 
         private static readonly bool update = true; // Set to false to disable update check
-        private static readonly string LatestJsonUrl = "https://raw.githubusercontent.com/jgc777/HTML2EXE-2.0/refs/heads/master/latest.json";
+        private static readonly string LatestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
         private static readonly string webviewURL = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
-        public static readonly string CurrentVersion = "54"; // Updated by GitHub at build
+        public static readonly string CurrentVersion = "999"; // Updated by GitHub at build
         private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
         public static bool GUI = false;
@@ -135,7 +135,7 @@ namespace HTML2EXE_2._0
                 int latestVersion = doc.RootElement.GetProperty("version").GetInt32();
                 string downloadUrl = doc.RootElement.GetProperty("url").GetString();
 
-                if (latestVersion > Int32.Parse(CurrentVersion))
+                if ((latestVersion > Int32.Parse(CurrentVersion)) && doc.RootElement.GetProperty("update").GetBoolean())
                 {
                     log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true, GUI);
                     byte[] data = await client.GetByteArrayAsync(downloadUrl);

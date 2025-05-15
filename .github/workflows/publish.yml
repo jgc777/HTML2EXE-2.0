@@ -64,6 +64,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Create latest.json
+        run: |
+          echo "{
+            \"version\": ${{ github.run_number }},
+            \"pub_date\": \"${{ env.RELEASE_DATE }}\",
+            \"update\": true,
+            \"url\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ env.TAG_NAME }}/HTML2EXE.exe\"
+          }" > latest.json
+
     - name: Download main app artifact
       uses: actions/download-artifact@v4
       with:
@@ -82,7 +94,7 @@ jobs:
         name: "Build ${{ github.run_number }}"
         tag: ${{ github.run_number }}
         body:  |
-            Latest Windows binary and webview (both require [.NET 8.0](https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-win-x64.exe)).
+            Latest Windows binary, JSON update and webview (both require [.NET 8.0](https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-win-x64.exe)).
             To use it, just download [HTML2EXE.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE.exe) and run it.
             > ${{ github.event.head_commit.message }}
             > Diff: ${{ github.event.before }}...${{ github.sha }}
@@ -90,31 +102,8 @@ jobs:
         artifacts: |
           ./app/*
           ./webview.zip
-
-  create-latest-json:
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      
-      - name: Set environment variables
-        run: |
-          echo "TAG_NAME=${{ github.run_number }}" >> $GITHUB_ENV
-          echo "RELEASE_DATE=$(date +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
-      
-      - name: Create latest.json
-        run: |
-          echo "{
-            \"version\": ${{ github.run_number }},
-            \"pub_date\": \"${{ env.RELEASE_DATE }}\",
-            \"url\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ env.TAG_NAME }}/HTML2EXE.exe\"
-          }" > latest.json
-
-      - name: Update latest.json
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: GitHub Actions
-          author_email: actions@github.com
-          message: "Update latest.json for build ${{ env.TAG_NAME }}"
-          add: "latest.json"
+          ./latest.json
+        overwrite: true
+        overwrite_assets: true
+        draft: false
+        prerelease: false
