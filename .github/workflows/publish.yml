@@ -68,13 +68,13 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Create latest.json
-        run: |
-          echo "{
-            \"version\": ${{ github.run_number }},
-            \"pub_date\": \"${{ env.RELEASE_DATE }}\",
-            \"update\": true,
-            \"url\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ env.TAG_NAME }}/HTML2EXE.exe\"
-          }" > latest.json
+      run: |
+        echo "{
+          \"version\": ${{ github.run_number }},
+          \"pub_date\": \"${{ env.RELEASE_DATE }}\",
+          \"update\": true,
+          \"url\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ env.TAG_NAME }}/HTML2EXE.exe\"
+        }" > latest.json
 
     - name: Download main app artifact
       uses: actions/download-artifact@v4
