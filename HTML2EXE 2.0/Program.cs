@@ -1,4 +1,4 @@
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
@@ -42,16 +42,16 @@ namespace HTML2EXE_2._0
                 {
                     string htmlPath = null;
                     bool directory = false;
+                    string arg0Expanded = Environment.ExpandEnvironmentVariables(args[0]);
+
                     // Define html/directory path and copy
-                    if (File.Exists(args[0])) htmlPath = args[0];
+                    if (File.Exists(arg0Expanded)) htmlPath = arg0Expanded;
                     else if (File.Exists(Path.Combine(Environment.CurrentDirectory, args[0]))) htmlPath = Path.Combine(Environment.CurrentDirectory, args[0]);
-                    else if (Directory.Exists(args[0]))
-                    {
-                        htmlPath = args[0];
+                    else if (Directory.Exists(arg0Expanded)) {
+                        htmlPath = arg0Expanded;
                         directory = true;
                     }
-                    else if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, args[0])))
-                    {
+                    else if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, args[0]))) {
                         htmlPath = Path.Combine(Environment.CurrentDirectory, args[0]);
                         directory = true;
                     }
@@ -66,25 +66,37 @@ namespace HTML2EXE_2._0
                     // Copy config icon and modify config file
                     if (args.Length >= 3)
                     {
-                        if (File.Exists(args[2])) {
-                            JsonNode config = JsonNode.Parse(File.ReadAllText(args[2]));
-                            string configIcon = config["icon"]?.ToString();
+                        if (File.Exists(Environment.ExpandEnvironmentVariables(args[2]))) {
+                            JsonNode config = JsonNode.Parse(File.ReadAllText(Environment.ExpandEnvironmentVariables(args[2])));
+                            string configIcon = config?["icon"]?.ToString();
                             string iconPath = null;
-                            if (File.Exists(Environment.ExpandEnvironmentVariables(configIcon))) iconPath = Environment.ExpandEnvironmentVariables(configIcon);
-                            if (File.Exists(Path.Combine(Environment.CurrentDirectory, configIcon))) iconPath = Path.Combine(Environment.CurrentDirectory, configIcon);
-                            config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath));
-                            File.Copy(iconPath, Path.Combine(Path.GetTempPath(), "HTML2EXE", "webfiles", Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
+                            if (!string.IsNullOrEmpty(configIcon))
+                            {
+                                string expandedIcon = Environment.ExpandEnvironmentVariables(configIcon);
+                                if (!string.IsNullOrEmpty(expandedIcon) && File.Exists(expandedIcon))
+                                    iconPath = expandedIcon;
+                                else if (!string.IsNullOrEmpty(configIcon) && File.Exists(Path.Combine(Environment.CurrentDirectory, configIcon)))
+                                    iconPath = Path.Combine(Environment.CurrentDirectory, configIcon);
+                            }
+                            if (!string.IsNullOrEmpty(iconPath))
+                            {
+                                config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath));
+                                File.Copy(iconPath, Path.Combine(tmpPath, "webfiles", Path.GetFileName(iconPath)), true);
+                            }
                             File.WriteAllText(Path.Combine(tmpPath, "config.json"), config.ToString()); // Save the config file
                         }
                         else Console.WriteLine("Config file not found: " + args[2], true);
                     }
 
-                    // Ensure config.json exists
-                    if (!File.Exists(Path.Combine(tmpPath, "config.json"))) File.WriteAllText(Path.Combine(tmpPath, "config.json"), "{}");
-
                     // Define output path
                     string output = Path.Combine(Environment.CurrentDirectory, "out.exe");
-                    if (JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"] != null) output = Path.Combine(Environment.CurrentDirectory, JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"] + ".exe");
+                    string configJsonPath = Path.Combine(tmpPath, "config.json");
+                    if (File.Exists(configJsonPath))
+                    {
+                        var configNode = JsonNode.Parse(File.ReadAllText(configJsonPath));
+                        if (configNode?["title"] != null)
+                            output = Path.Combine(Environment.CurrentDirectory, configNode["title"] + ".exe");
+                    }
                     if (args.Length >= 2) output = args[1];
                     if (!Directory.Exists(Directory.GetParent(output)?.ToString())) Directory.CreateDirectory(Directory.GetParent(output).ToString());
 
@@ -104,7 +116,7 @@ namespace HTML2EXE_2._0
             }
             catch (Exception ex)
             {
-                log("Error: " + ex.Message, true, false, true);
+                log("Error: " + ex.Message, true, false, GUI);
             }
             finally
             {
@@ -147,13 +159,16 @@ namespace HTML2EXE_2._0
 
         public static void build(string output)
         {
-            try
-            {
-                string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
-                Directory.CreateDirectory(tmpPath);
-                if (!Directory.Exists(Path.Combine(tmpPath, "webfiles"))) Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
-                string configTitle = JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["title"]?.ToString() ?? null;
-                string iexpressConfig = @"[Version]
+            string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
+            Directory.CreateDirectory(tmpPath);
+            if (!Directory.Exists(Path.Combine(tmpPath, "webfiles"))) Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
+            
+            JsonNode? config = null;
+            string configPath = Path.Combine(tmpPath, "config.json");
+            if (File.Exists(configPath)) config = JsonNode.Parse(File.ReadAllText(configPath));
+            else config = JsonNode.Parse("{}");
+            bool hasConfig = File.Exists(configPath);
+            string iexpressConfig = @"[Version]
 Class=IEXPRESS
 SEDVersion=3
 [Options]
@@ -180,96 +195,99 @@ VersionInfo=VersionSection
 Internalname=" + Path.GetFileName(output) + @"
 OriginalFilename=" + Path.GetFileName(output) + @"
 FileDescription=%FileDesc%
-CompanyName=" + (configTitle ?? "Jgc7") + @"
-ProductName=" + (configTitle ?? "HTML2EXE 2.0") + @"
-LegalCopyright=Copyright
+CompanyName=" + (config?["title"]?.ToString() ?? "Jgc7") + @"
+ProductName=" + (config?["title"]?.ToString() ?? "HTML2EXE - Set title to change") + @"
+LegalCopyright=Copyright " + DateTime.Now.Year + " " + (config?["title"]?.ToString() ?? "Jgc7") + @"
 [Strings]
-FileDesc=" + (configTitle ?? "HTML2EXE 2.0") + @"
+FileDesc=" + (config?["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
 InstallPrompt=
 DisplayLicense=
 FinishMessage=
 TargetName=out.exe
-FriendlyName=" + (configTitle ?? "HTML2EXE 2.0") + @"
-AppLaunched=Webview
+FriendlyName=" + (config?["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
+AppLaunched=.\Webview.exe
 PostInstallCmd=cmd /c del /f /q Webview.exe.WebView2
 AdminQuietInstCmd=
 UserQuietInstCmd=
 FILE0=""Webview.exe""
 FILE1=""WebView2Loader.dll""
-FILE2=""webfiles.zip""
-FILE3=""config.json""
+FILE2=""webfiles.zip""" + (hasConfig ? "\nFILE3=\"config.json\"" : "") + @"
 [SourceFiles]
 SourceFiles0=.\
 [SourceFiles0]
 %FILE0%=
 %FILE1%=
-%FILE2%=
-%FILE3%=
+%FILE2%=" + (hasConfig ? "\n%FILE3%=" : "") + @"
 ";
-                string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
-                log("Started building");
-                log("Downloading webview.zip...");
-                using (HttpClient client = new HttpClient())
-                {
-                    var response = client.GetAsync(webviewURL).Result;
-                    response.EnsureSuccessStatusCode();
-                    var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
-                    File.WriteAllBytes(Path.Combine(tmpPath, "webview.zip"), fileBytes);
-                    string tempZipPath = Path.Combine(tmpPath, "webview.zip");
-                    log("Extracting webview.zip...");
-                    ZipFile.ExtractToDirectory(tempZipPath, tmpPath);
-                    File.Delete(tempZipPath);
-                }
-                log("Compressing web files...");
-                ZipFile.CreateFromDirectory(Path.Combine(tmpPath, "webfiles"), Path.Combine(tmpPath, "webfiles.zip"), CompressionLevel.SmallestSize, true);
-                log("Building...");
-                File.WriteAllText(iexpressConfigPath, iexpressConfig);
-                using (Process process = new Process())
-                {
-                    process.StartInfo.FileName = "iexpress";
-                    process.StartInfo.WorkingDirectory = tmpPath;
-                    process.StartInfo.Arguments = "/Q /N " + iexpressConfigPath;
-                    process.StartInfo.CreateNoWindow = true;
-                    process.StartInfo.UseShellExecute = false; process.Start();
-                    process.WaitForExit();
-                    if (process.ExitCode != 0) throw new Exception("Building failed with exit code: " + process.ExitCode);
-                }
-                string configIcon = JsonNode.Parse(File.ReadAllText(Path.Combine(tmpPath, "config.json")))["icon"]?.ToString();
-                if (!string.IsNullOrEmpty(configIcon)) {
-                    log("Installing rcedit (to add the icon)...");
-                    Process rceditwinget = new Process();
-                    rceditwinget.StartInfo = new ProcessStartInfo() {
-                        FileName = "winget",
-                        Arguments = "install rcedit",
-                        CreateNoWindow = true
-                    };
-                    rceditwinget.Start();
-                    rceditwinget.WaitForExit();
-
-                    log("Adding icon...");
-                    using Process rcedit = new Process();
-                    rcedit.StartInfo = new ProcessStartInfo() {
-                        FileName = "rcedit",
-                        Arguments = "\"" + Path.Combine(tmpPath, "out.exe") + "\" --set-icon \"" + (File.Exists(configIcon) ? configIcon : Path.Combine(tmpPath, configIcon)) + "\"",
-                        CreateNoWindow = true
-                    };
-                    rcedit.Start();
-                    rcedit.WaitForExit();
-                    if (rcedit.ExitCode != 0) log("rcedit failed with exit code: " + rcedit.ExitCode, true);
-                }
-                log("Cleaning up...");
-                File.Move(Path.Combine(tmpPath, "out.exe"), output, true);
-                Directory.Delete(tmpPath, true);
-                log("Finished building!", false, true, GUI);
-                log("Output: " + output, false, true);
-                if (GUI) browseDialog.configDialog.buildDialog.Close();
-                Process.Start("explorer.exe", "/select, \"" + output + "\"");
-            }
-            catch (Exception ex)
+            string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
+            log("Started building");
+            log("Downloading webview.zip...");
+            using (HttpClient client = new HttpClient())
             {
-                log("Build error: " + ex.Message, true, false, true);
-                log("Cleaning temporary directory and closing...");
-                Directory.Delete(tmpPath, true);
+                var response = client.GetAsync(webviewURL).Result;
+                response.EnsureSuccessStatusCode();
+                var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
+                File.WriteAllBytes(Path.Combine(tmpPath, "webview.zip"), fileBytes);
+                string tempZipPath = Path.Combine(tmpPath, "webview.zip");
+                log("Extracting webview.zip...");
+                ZipFile.ExtractToDirectory(tempZipPath, tmpPath);
+                File.Delete(tempZipPath);
+            }
+            log("Compressing web files...");
+            ZipFile.CreateFromDirectory(Path.Combine(tmpPath, "webfiles"), Path.Combine(tmpPath, "webfiles.zip"), CompressionLevel.SmallestSize, true);
+            log("Building...");
+            File.WriteAllText(iexpressConfigPath, iexpressConfig);
+            Process process = new Process();
+            process.StartInfo = new ProcessStartInfo {
+                FileName = "iexpress",
+                WorkingDirectory = tmpPath,
+                Arguments = "/Q /N " + iexpressConfigPath,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            process.Start();
+            process.WaitForExit();
+            if (process.ExitCode != 0) throw new Exception("Building failed with exit code: " + process.ExitCode);
+            log("IExpress finished with code " + process.ExitCode);
+            string? configIcon = config?["icon"]?.ToString();
+            if (!string.IsNullOrEmpty(configIcon))
+            {
+                log("Installing rcedit to add the icon...");
+                Process rceditwinget = new Process();
+                rceditwinget.StartInfo = new ProcessStartInfo()
+                {
+                    FileName = "winget",
+                    Arguments = "install rcedit",
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+                rceditwinget.Start();
+                rceditwinget.WaitForExit();
+
+                log("Adding icon...");
+                using Process rcedit = new Process();
+                rcedit.StartInfo = new ProcessStartInfo()
+                {
+                    FileName = "rcedit",
+                    Arguments = "\"" + Path.Combine(tmpPath, "out.exe") + "\" --set-icon \"" + (File.Exists(configIcon) ? configIcon : Path.Combine(tmpPath, configIcon)) + "\"",
+                    CreateNoWindow = true
+                };
+                rcedit.Start();
+                rcedit.WaitForExit();
+                if (rcedit.ExitCode != 0) log("rcedit failed with exit code: " + rcedit.ExitCode, true);
+            }
+            log("Cleaning up...");
+            File.Move(Path.Combine(tmpPath, "out.exe"), output, true);
+            Directory.Delete(tmpPath, true);
+            log("Finished building!", false, true, GUI);
+            log("Output: " + output, false, true);
+            if (GUI) {
+                browseDialog.configDialog.buildDialog.Close();
+                Process.Start("explorer.exe", "/select, \"" + output + "\"");
             }
         }
 

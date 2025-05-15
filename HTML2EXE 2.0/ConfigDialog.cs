@@ -135,7 +135,7 @@ namespace HTML2EXE_2._0
                     if (config["height"]!=null) heightTextBox.Text = config["height"].ToString();
                     if (config["additional_cmd"]!=null) extraCmdTextBox.Text = config["additional_cmd"].ToString();
                     
-                    if (!string.IsNullOrEmpty(config["icon"].ToString())) // Set icon
+                    if (!string.IsNullOrEmpty(config["icon"]?.ToString())) // Set icon
                     {
                         // Define icon path
                         if (File.Exists(Environment.ExpandEnvironmentVariables(config["icon"].ToString()))) iconPath = Environment.ExpandEnvironmentVariables(config["icon"].ToString());
