@@ -164,7 +164,7 @@ namespace HTML2EXE_2._0
             }
             catch (Exception ex)
             {
-                log($"Error searching for updates: {ex.Message}", true, false, true);
+                log($"Error searching for updates: \"{ex.Message}\". Try updating manually", true, false, true);
             }
         }
 
