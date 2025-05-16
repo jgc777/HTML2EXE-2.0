@@ -61,37 +61,24 @@ namespace HTML2EXE_2._0
             else config["url"] = null; // If the URL is empty, set it as null
             if (!string.IsNullOrEmpty(titleTextBox.Text)) config["title"] = titleTextBox.Text; // If the title is not empty, set it as the title
             else config["title"] = null; // If the title is empty, set it as null
-            if (!string.IsNullOrEmpty(iconPath))
-            {
-                if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://"))
-                {
-                    try
-                    {
+            if (!string.IsNullOrEmpty(iconPath)) {
+                if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://")) {
+                    try {
                         string tempIconPath = Path.Combine(HTML2EXE.tmpPath, "webfiles", "icon.ico");
-                        
-                        using (var client = new HttpClient())
-                        {
+                        using (var client = new HttpClient()) {
                             var data = client.GetByteArrayAsync(iconPath).Result;
                             File.WriteAllBytes(tempIconPath, data);
                         }
-
-                        config["icon"] = export ? iconPath : Path.Combine("webfiles", "icon.ico");
+                        config["icon"] = Path.Combine("webfiles", "icon.ico");
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         MessageBox.Show("Error downloading icon: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         config["icon"] = null;
                     }
                 }
-                else
-                {
-                    config["icon"] = export ? iconPath : Path.Combine("webfiles", Path.GetFileName(iconPath)); // Set the icon
-                    if (File.Exists(iconPath))
-                    {
-                        string tempIconDir = Path.Combine(HTML2EXE.tmpPath, "webfiles");
-                        Directory.CreateDirectory(tempIconDir);
-                        File.Copy(iconPath, Path.Combine(tempIconDir, Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
-                    }
+                else {
+                    config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath)); // Set the icon
+                    if (File.Exists(iconPath)) File.Copy(iconPath, Path.Combine(HTML2EXE.tmpPath, "webfiles", Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
                 }
             }
             else config["icon"] = null; // If the icon is empty, set it as null
@@ -200,9 +187,7 @@ namespace HTML2EXE_2._0
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            HTML2EXE.webviewURL = includeNETbox.Checked ? HTML2EXE.webview_big : HTML2EXE.webview;
-        }
+        {}
 
         private void saveConfigBtnClick(object sender, EventArgs e)
         {

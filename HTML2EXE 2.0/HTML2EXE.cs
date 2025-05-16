@@ -84,10 +84,25 @@ namespace HTML2EXE_2._0
                                 else if (!string.IsNullOrEmpty(configIcon) && File.Exists(Path.Combine(Environment.CurrentDirectory, configIcon)))
                                     iconPath = Path.Combine(Environment.CurrentDirectory, configIcon);
                             }
-                            if (!string.IsNullOrEmpty(iconPath))
-                            {
-                                config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath));
-                                File.Copy(iconPath, Path.Combine(tmpPath, "webfiles", Path.GetFileName(iconPath)), true);
+                            if (!string.IsNullOrEmpty(iconPath)) {
+                                if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://")) {
+                                    try {
+                                        string tempIconPath = Path.Combine(HTML2EXE.tmpPath, "webfiles", "icon.ico");
+                                        using (var client = new HttpClient()) {
+                                            var data = client.GetByteArrayAsync(iconPath).Result;
+                                            File.WriteAllBytes(tempIconPath, data);
+                                        }
+                                        config["icon"] = Path.Combine("webfiles", "icon.ico");
+                                    }
+                                    catch (Exception ex) {
+                                        MessageBox.Show("Error downloading icon: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        config["icon"] = null;
+                                    }
+                                }
+                                else {
+                                    config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath)); // Set the icon
+                                    if (File.Exists(iconPath)) File.Copy(iconPath, Path.Combine(HTML2EXE.tmpPath, "webfiles", Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
+                                }
                             }
                             File.WriteAllText(Path.Combine(tmpPath, "config.json"), config.ToString()); // Save the config file
                         }
@@ -102,7 +117,9 @@ namespace HTML2EXE_2._0
                         var configNode = JsonNode.Parse(File.ReadAllText(configJsonPath));
                         if (configNode?["title"] != null)
                             output = Path.Combine(Environment.CurrentDirectory, configNode["title"] + ".exe");
+                        webviewURL = (configNode["include_runtime"]?.GetValue<bool>() ?? IsBigBuild) ? webview_big : webview; // Set the webview URL based on the config or the build type
                     }
+                    else webviewURL = IsBigBuild ? webview_big : webview; // Set the webview URL based on the build type
                     if (args.Length >= 2) output = args[1];
                     if (!Directory.Exists(Directory.GetParent(output)?.ToString())) Directory.CreateDirectory(Directory.GetParent(output).ToString());
 
@@ -211,7 +228,7 @@ OriginalFilename=" + Path.GetFileName(output) + @"
 FileDescription=%FileDesc%
 CompanyName=" + (config["title"]?.ToString() ?? "Jgc7") + @"
 ProductName=" + (config["title"]?.ToString() ?? "HTML2EXE - Set title to change") + @"
-LegalCopyright=Copyright " + DateTime.Now.Year + " " + (config?["title"]?.ToString() ?? "Jgc7") + @"
+LegalCopyright=Copyright " + DateTime.Now.Year + " " + (config["title"]?.ToString() ?? "Jgc7") + @"
 [Strings]
 FileDesc=" + (config["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
 InstallPrompt=
