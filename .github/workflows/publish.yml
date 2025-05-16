@@ -30,7 +30,7 @@ jobs:
 
     - name: Set build number
       run: |
-        sed -i 's/public static readonly string CurrentVersion = ".*";/public static readonly string CurrentVersion = "${{ github.run_number }}";/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/Program.cs'
+        sed -i 's/public static readonly string CurrentVersion = ".*";/public static readonly string CurrentVersion = "${{ github.run_number }}";/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/HTML2EXE.cs'
 
     - name: Restore dependencies
       run: dotnet restore -p:EnableWindowsTargeting=true
