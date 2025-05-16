@@ -38,7 +38,7 @@
             iconBtn = new Button();
             removeIconBtn = new Button();
             iconPathLabel = new Label();
-            openFileDialog1 = new OpenFileDialog();
+            iconOpener = new OpenFileDialog();
             contextMenu = new CheckBox();
             devTools = new CheckBox();
             maximized = new CheckBox();
@@ -59,7 +59,10 @@
             extraCmdLabel = new Label();
             blockClose = new CheckBox();
             loadConfigBtn = new Button();
-            openFileDialog2 = new OpenFileDialog();
+            jsonOpener = new OpenFileDialog();
+            saveConfigBtn = new Button();
+            includeNETbox = new CheckBox();
+            jsonSaver = new SaveFileDialog();
             SuspendLayout();
             // 
             // urlLabel
@@ -148,11 +151,11 @@
             iconPathLabel.TabIndex = 8;
             iconPathLabel.Text = "No icon";
             // 
-            // openFileDialog1
+            // iconOpener
             // 
-            openFileDialog1.AddToRecent = false;
-            openFileDialog1.Filter = "Icon Files|*.ico";
-            openFileDialog1.Title = "Select icon";
+            iconOpener.AddToRecent = false;
+            iconOpener.Filter = "Icon Files|*.ico";
+            iconOpener.Title = "Select icon";
             // 
             // contextMenu
             // 
@@ -312,7 +315,7 @@
             // 
             // okBtn
             // 
-            okBtn.Location = new Point(297, 349);
+            okBtn.Location = new Point(297, 374);
             okBtn.Name = "okBtn";
             okBtn.Size = new Size(75, 23);
             okBtn.TabIndex = 24;
@@ -357,17 +360,47 @@
             loadConfigBtn.UseVisualStyleBackColor = true;
             loadConfigBtn.Click += loadConfigBtn_Click;
             // 
-            // openFileDialog2
+            // jsonOpener
             // 
-            openFileDialog2.FileName = "config.json";
-            openFileDialog2.Filter = "Json files|*.json";
+            jsonOpener.FileName = "config.json";
+            jsonOpener.Filter = "Json files|*.json";
+            // 
+            // saveConfigBtn
+            // 
+            saveConfigBtn.Location = new Point(12, 378);
+            saveConfigBtn.Name = "saveConfigBtn";
+            saveConfigBtn.Size = new Size(110, 23);
+            saveConfigBtn.TabIndex = 32;
+            saveConfigBtn.Text = "Save Config.json";
+            saveConfigBtn.UseVisualStyleBackColor = true;
+            saveConfigBtn.Click += saveConfigBtnClick;
+            // 
+            // includeNETbox
+            // 
+            includeNETbox.AutoSize = true;
+            includeNETbox.Location = new Point(156, 377);
+            includeNETbox.Name = "includeNETbox";
+            includeNETbox.Size = new Size(137, 19);
+            includeNETbox.TabIndex = 33;
+            includeNETbox.Text = "Include .NET runtime";
+            includeNETbox.UseVisualStyleBackColor = true;
+            includeNETbox.CheckedChanged += checkBox1_CheckedChanged;
+            // 
+            // jsonSaver
+            // 
+            jsonSaver.AddToRecent = false;
+            jsonSaver.DefaultExt = "json";
+            jsonSaver.FileName = "config.json";
+            jsonSaver.Filter = "JSON File|*.json";
             // 
             // ConfigDialog
             // 
             AcceptButton = okBtn;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 381);
+            ClientSize = new Size(384, 409);
+            Controls.Add(includeNETbox);
+            Controls.Add(saveConfigBtn);
             Controls.Add(loadConfigBtn);
             Controls.Add(blockClose);
             Controls.Add(extraCmdTextBox);
@@ -419,7 +452,7 @@
         private Button iconBtn;
         private Button removeIconBtn;
         private Label iconPathLabel;
-        private OpenFileDialog openFileDialog1;
+        private OpenFileDialog iconOpener;
         private CheckBox contextMenu;
         private CheckBox devTools;
         private CheckBox maximized;
@@ -440,6 +473,9 @@
         private Label extraCmdLabel;
         private CheckBox blockClose;
         private Button loadConfigBtn;
-        private OpenFileDialog openFileDialog2;
+        private OpenFileDialog jsonOpener;
+        private Button saveConfigBtn;
+        private CheckBox includeNETbox;
+        private SaveFileDialog jsonSaver;
     }
 }

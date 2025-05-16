@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace HTML2EXE_2._0
 {
-    internal static class Program
+    internal static class HTML2EXE
     {
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool FreeConsole();
@@ -18,7 +18,10 @@ namespace HTML2EXE_2._0
         #endif
         private static readonly bool update = true; // Set to false to disable update check
         private static readonly string LatestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
-        private static readonly string webviewURL = IsBigBuild ? "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip" : "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
+        public static string webview = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
+        public static string webview_big = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip";
+        public static string? webviewURL;
+
         public static readonly string CurrentVersion = "999"; // Updated by GitHub at build
         private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
@@ -34,11 +37,9 @@ namespace HTML2EXE_2._0
                 if (Directory.Exists(tmpPath)) Directory.Delete(tmpPath, true);
                 Directory.CreateDirectory(tmpPath);
                 Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
-                if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "/?" || args[0] == "/help"))
-                {
+                if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "/?" || args[0] == "/help")) {
                     Console.WriteLine("Opening web documentation...");
-                    Process.Start(new ProcessStartInfo
-                    {
+                    Process.Start(new ProcessStartInfo {
                         FileName = "https://jgc777.github.io/HTML2EXE-2.0/",
                         UseShellExecute = true
                     });
@@ -178,63 +179,63 @@ namespace HTML2EXE_2._0
             string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
             Directory.CreateDirectory(tmpPath);
             if (!Directory.Exists(Path.Combine(tmpPath, "webfiles"))) Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
-            
+
             JsonNode? config = null;
             string configPath = Path.Combine(tmpPath, "config.json");
             if (File.Exists(configPath)) config = JsonNode.Parse(File.ReadAllText(configPath));
             else config = JsonNode.Parse("{}");
             bool hasConfig = File.Exists(configPath);
             string iexpressConfig = @"[Version]
-Class=IEXPRESS
-SEDVersion=3
-[Options]
-PackagePurpose=InstallApp
-ShowInstallProgramWindow=1
-HideExtractAnimation=0
-UseLongFileName=1
-InsideCompressed=0
-CAB_FixedSize=0
-CAB_ResvCodeSigning=0
-RebootMode=N
-InstallPrompt=%InstallPrompt%
-DisplayLicense=%DisplayLicense%
-FinishMessage=%FinishMessage%
-TargetName=%TargetName%
-FriendlyName=%FriendlyName%
-AppLaunched=%AppLaunched%
-PostInstallCmd=%PostInstallCmd%
-AdminQuietInstCmd=%AdminQuietInstCmd%
-UserQuietInstCmd=%UserQuietInstCmd%
-SourceFiles=SourceFiles
-VersionInfo=VersionSection
-[VersionSection]
-Internalname=" + Path.GetFileName(output) + @"
-OriginalFilename=" + Path.GetFileName(output) + @"
-FileDescription=%FileDesc%
-CompanyName=" + (config?["title"]?.ToString() ?? "Jgc7") + @"
-ProductName=" + (config?["title"]?.ToString() ?? "HTML2EXE - Set title to change") + @"
-LegalCopyright=Copyright " + DateTime.Now.Year + " " + (config?["title"]?.ToString() ?? "Jgc7") + @"
-[Strings]
-FileDesc=" + (config?["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
-InstallPrompt=
-DisplayLicense=
-FinishMessage=
-TargetName=out.exe
-FriendlyName=" + (config?["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
-AppLaunched=.\Webview.exe
-PostInstallCmd=cmd /c del /f /q Webview.exe.WebView2
-AdminQuietInstCmd=
-UserQuietInstCmd=
-FILE0=""Webview.exe""
-FILE1=""WebView2Loader.dll""
-FILE2=""webfiles.zip""" + (hasConfig ? "\nFILE3=\"config.json\"" : "") + @"
-[SourceFiles]
-SourceFiles0=.\
-[SourceFiles0]
-%FILE0%=
-%FILE1%=
-%FILE2%=" + (hasConfig ? "\n%FILE3%=" : "") + @"
-";
+        Class=IEXPRESS
+        SEDVersion=3
+        [Options]
+        PackagePurpose=InstallApp
+        ShowInstallProgramWindow=1
+        HideExtractAnimation=0
+        UseLongFileName=1
+        InsideCompressed=0
+        CAB_FixedSize=0
+        CAB_ResvCodeSigning=0
+        RebootMode=N
+        InstallPrompt=%InstallPrompt%
+        DisplayLicense=%DisplayLicense%
+        FinishMessage=%FinishMessage%
+        TargetName=%TargetName%
+        FriendlyName=%FriendlyName%
+        AppLaunched=%AppLaunched%
+        PostInstallCmd=%PostInstallCmd%
+        AdminQuietInstCmd=%AdminQuietInstCmd%
+        UserQuietInstCmd=%UserQuietInstCmd%
+        SourceFiles=SourceFiles
+        VersionInfo=VersionSection
+        [VersionSection]
+        Internalname=" + Path.GetFileName(output) + @"
+        OriginalFilename=" + Path.GetFileName(output) + @"
+        FileDescription=%FileDesc%
+        CompanyName=" + (config?["title"]?.ToString() ?? "Jgc7") + @"
+        ProductName=" + (config?["title"]?.ToString() ?? "HTML2EXE - Set title to change") + @"
+        LegalCopyright=Copyright " + DateTime.Now.Year + " " + (config?["title"]?.ToString() ?? "Jgc7") + @"
+        [Strings]
+        FileDesc=" + (config?["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
+        InstallPrompt=
+        DisplayLicense=
+        FinishMessage=
+        TargetName=out.exe
+        FriendlyName=" + (config?["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
+        AppLaunched=.\Webview.exe
+        PostInstallCmd=cmd /c del /f /q Webview.exe.WebView2
+        AdminQuietInstCmd=
+        UserQuietInstCmd=
+        FILE0=""Webview.exe""
+        FILE1=""WebView2Loader.dll""
+        FILE2=""webfiles.zip""" + (hasConfig ? "\nFILE3=\"config.json\"" : "") + @"
+        [SourceFiles]
+        SourceFiles0=.\ 
+        [SourceFiles0]
+        %FILE0%=
+        %FILE1%=
+        %FILE2%=" + (hasConfig ? "\n%FILE3%=" : "") + @"
+        ";
             string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
             log("Started building");
             log("Downloading webview.zip...");
@@ -254,7 +255,8 @@ SourceFiles0=.\
             log("Building...");
             File.WriteAllText(iexpressConfigPath, iexpressConfig);
             Process process = new Process();
-            process.StartInfo = new ProcessStartInfo {
+            process.StartInfo = new ProcessStartInfo
+            {
                 FileName = "iexpress",
                 WorkingDirectory = tmpPath,
                 Arguments = "/Q /N " + iexpressConfigPath,
@@ -270,19 +272,44 @@ SourceFiles0=.\
             string? configIcon = config?["icon"]?.ToString();
             if (!string.IsNullOrEmpty(configIcon))
             {
-                log("Installing rcedit to add the icon...");
-                Process rceditwinget = new Process();
-                rceditwinget.StartInfo = new ProcessStartInfo()
+                bool rceditExists = false;
+                try {
+                    Process checkRcedit = new Process();
+                    checkRcedit.StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = "rcedit",
+                        Arguments = "-h",
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    };
+                    checkRcedit.Start();
+                    checkRcedit.WaitForExit(2000);
+                    rceditExists = checkRcedit.ExitCode == 0;
+                }
+                catch
                 {
-                    FileName = "winget",
-                    Arguments = "install rcedit",
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                };
-                rceditwinget.Start();
-                rceditwinget.WaitForExit();
+                    rceditExists = false;
+                }
+
+                if (!rceditExists)
+                {
+                    log("Installing rcedit...");
+                    Process rceditwinget = new Process();
+                    rceditwinget.StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = "winget",
+                        Arguments = "install -e --id electron.rcedit",
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    };
+                    rceditwinget.Start();
+                    rceditwinget.WaitForExit();
+                    if (rceditwinget.ExitCode != 0) throw new Exception("Error installing rcedit.");
+                }
 
                 log("Adding icon...");
                 using Process rcedit = new Process();
@@ -290,18 +317,22 @@ SourceFiles0=.\
                 {
                     FileName = "rcedit",
                     Arguments = "\"" + Path.Combine(tmpPath, "out.exe") + "\" --set-icon \"" + (File.Exists(configIcon) ? configIcon : Path.Combine(tmpPath, configIcon)) + "\"",
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
                 };
                 rcedit.Start();
                 rcedit.WaitForExit();
-                if (rcedit.ExitCode != 0) log("rcedit failed with exit code: " + rcedit.ExitCode, true);
+                if (rcedit.ExitCode != 0) log("rcedit failed with exit code " + rcedit.ExitCode, true);
             }
             log("Cleaning up...");
             File.Move(Path.Combine(tmpPath, "out.exe"), output, true);
             Directory.Delete(tmpPath, true);
             log("Finished building!", false, true, GUI);
             log("Output: " + output, false, true);
-            if (GUI) {
+            if (GUI)
+            {
                 browseDialog.configDialog.buildDialog.Close();
                 Process.Start("explorer.exe", "/select, \"" + output + "\"");
             }

@@ -59,6 +59,8 @@ It's a JSON file which defines some webview settings. It can be loaded in the CL
 | `block_close`      | boolean  | If the window should be blocked from closing.                              |
 | `additional_cmd`   | string   | Additional command to run in the webfiles folder after starting the window (in a hidden cmd.exe window, to start batch files use call to stay hidden or start to create a window). |
 
+Note that `include_runtime` is only used in the config for the HTML2EXE compiler. `icon` is a full path only in the compilation.
+
 ## Contributing
 Use GitHub pull requests, discussions or issues to report problems, suggest features...
 
