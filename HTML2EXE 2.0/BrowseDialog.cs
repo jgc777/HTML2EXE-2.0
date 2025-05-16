@@ -23,7 +23,7 @@ namespace HTML2EXE_2._0
             string htmlPath = openFileDialog1.FileName;
             if (File.Exists(htmlPath))
             {
-                string destinationPath = Path.Combine(Path.GetTempPath(), "HTML2EXE", "webfiles");
+                string destinationPath = Path.Combine(HTML2EXE.tmpPath, "webfiles");
                 Directory.CreateDirectory(destinationPath);
                 File.Copy(htmlPath, Path.Combine(destinationPath, Path.GetFileName(htmlPath)), true);
                 this.Visible = false;
@@ -40,7 +40,7 @@ namespace HTML2EXE_2._0
 
             if (Directory.Exists(folderPath))
             {
-                string destinationPath = Path.Combine(Path.GetTempPath(), "HTML2EXE", "webfiles");
+                string destinationPath = Path.Combine(HTML2EXE.tmpPath, "webfiles");
 
                 CopyDirectory(folderPath, destinationPath);
 
@@ -75,7 +75,7 @@ namespace HTML2EXE_2._0
 
         private void noFileBtn_Click_1(object sender, EventArgs e)
         {
-            string destinationPath = Path.Combine(Path.GetTempPath(), "HTML2EXE", "webfiles");
+            string destinationPath = Path.Combine(HTML2EXE.tmpPath, "webfiles");
             Directory.CreateDirectory(destinationPath);
             this.Visible = false;
             configDialog = new ConfigDialog();

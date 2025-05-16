@@ -40,7 +40,7 @@ namespace HTML2EXE_2._0
             try
             {
                 // Write the config to a file
-                string configPath = Path.Combine(Path.GetTempPath(), "HTML2EXE", "config.json");
+                string configPath = Path.Combine(HTML2EXE.tmpPath, "config.json");
                 if (File.Exists(configPath)) File.Delete(configPath);
                 File.WriteAllText(configPath, generateConfigJson().ToString());
 
@@ -58,7 +58,9 @@ namespace HTML2EXE_2._0
         private JsonNode generateConfigJson(bool export = false, bool removenulls = true) // Export meass we're saving the config as an exportation and not a build
         {
             if (!string.IsNullOrEmpty(urlTextBox.Text)) config["url"] = urlTextBox.Text; // If the URL is not empty, set it as the URL
+            else config["url"] = null; // If the URL is empty, set it as null
             if (!string.IsNullOrEmpty(titleTextBox.Text)) config["title"] = titleTextBox.Text; // If the title is not empty, set it as the title
+            else config["title"] = null; // If the title is empty, set it as null
             if (!string.IsNullOrEmpty(iconPath))
             {
                 if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://"))
@@ -92,6 +94,7 @@ namespace HTML2EXE_2._0
                     }
                 }
             }
+            else config["icon"] = null; // If the icon is empty, set it as null
             if (!string.IsNullOrEmpty(widthTextBox.Text)) config["width"] = Int32.Parse(widthTextBox.Text); // If the width is not empty, set it as the width
             else config["width"] = null; // If the width is empty, set it as null
             if (!string.IsNullOrEmpty(heightTextBox.Text)) config["height"] = Int32.Parse(heightTextBox.Text); // If the height is not empty, set it as the height
@@ -111,6 +114,7 @@ namespace HTML2EXE_2._0
             config["show_in_taskbar"] = showInTaskbar.Checked;
             config["block_close"] = blockClose.Checked;
             if (export) config["include_runtime"] = includeNETbox.Checked; // If exporting, set the include runtime option
+            HTML2EXE.webviewURL = includeNETbox.Checked ? HTML2EXE.webview_big : HTML2EXE.webview;
 
             // Clean nulls and order alphabetically
             if (config is JsonObject obj)
@@ -187,7 +191,6 @@ namespace HTML2EXE_2._0
                         iconPathLabel.Text = "No icon";
                         removeIconBtn.Visible = false;
                     }
-                    HTML2EXE.webviewURL = includeNETbox.Checked ? HTML2EXE.webview_big : HTML2EXE.webview;
                 }
             }
             catch (Exception ex)

@@ -315,7 +315,7 @@
             // 
             // okBtn
             // 
-            okBtn.Location = new Point(297, 374);
+            okBtn.Location = new Point(297, 378);
             okBtn.Name = "okBtn";
             okBtn.Size = new Size(75, 23);
             okBtn.TabIndex = 24;
@@ -378,7 +378,7 @@
             // includeNETbox
             // 
             includeNETbox.AutoSize = true;
-            includeNETbox.Location = new Point(156, 377);
+            includeNETbox.Location = new Point(156, 382);
             includeNETbox.Name = "includeNETbox";
             includeNETbox.Size = new Size(137, 19);
             includeNETbox.TabIndex = 33;

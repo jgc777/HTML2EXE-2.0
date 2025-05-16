@@ -176,65 +176,62 @@ namespace HTML2EXE_2._0
 
         public static void build(string output)
         {
-            string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
             Directory.CreateDirectory(tmpPath);
             if (!Directory.Exists(Path.Combine(tmpPath, "webfiles"))) Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
 
-            JsonNode? config = null;
             string configPath = Path.Combine(tmpPath, "config.json");
-            if (File.Exists(configPath)) config = JsonNode.Parse(File.ReadAllText(configPath));
-            else config = JsonNode.Parse("{}");
+            JsonNode? config = (File.Exists(configPath)) ? JsonNode.Parse(File.ReadAllText(configPath)) : new JsonObject();
             bool hasConfig = File.Exists(configPath);
             string iexpressConfig = @"[Version]
-        Class=IEXPRESS
-        SEDVersion=3
-        [Options]
-        PackagePurpose=InstallApp
-        ShowInstallProgramWindow=1
-        HideExtractAnimation=0
-        UseLongFileName=1
-        InsideCompressed=0
-        CAB_FixedSize=0
-        CAB_ResvCodeSigning=0
-        RebootMode=N
-        InstallPrompt=%InstallPrompt%
-        DisplayLicense=%DisplayLicense%
-        FinishMessage=%FinishMessage%
-        TargetName=%TargetName%
-        FriendlyName=%FriendlyName%
-        AppLaunched=%AppLaunched%
-        PostInstallCmd=%PostInstallCmd%
-        AdminQuietInstCmd=%AdminQuietInstCmd%
-        UserQuietInstCmd=%UserQuietInstCmd%
-        SourceFiles=SourceFiles
-        VersionInfo=VersionSection
-        [VersionSection]
-        Internalname=" + Path.GetFileName(output) + @"
-        OriginalFilename=" + Path.GetFileName(output) + @"
-        FileDescription=%FileDesc%
-        CompanyName=" + (config?["title"]?.ToString() ?? "Jgc7") + @"
-        ProductName=" + (config?["title"]?.ToString() ?? "HTML2EXE - Set title to change") + @"
-        LegalCopyright=Copyright " + DateTime.Now.Year + " " + (config?["title"]?.ToString() ?? "Jgc7") + @"
-        [Strings]
-        FileDesc=" + (config?["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
-        InstallPrompt=
-        DisplayLicense=
-        FinishMessage=
-        TargetName=out.exe
-        FriendlyName=" + (config?["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
-        AppLaunched=.\Webview.exe
-        PostInstallCmd=cmd /c del /f /q Webview.exe.WebView2
-        AdminQuietInstCmd=
-        UserQuietInstCmd=
-        FILE0=""Webview.exe""
-        FILE1=""WebView2Loader.dll""
-        FILE2=""webfiles.zip""" + (hasConfig ? "\nFILE3=\"config.json\"" : "") + @"
-        [SourceFiles]
-        SourceFiles0=.\ 
-        [SourceFiles0]
-        %FILE0%=
-        %FILE1%=
-        %FILE2%=" + (hasConfig ? "\n%FILE3%=" : "") + @"
+Class=IEXPRESS
+SEDVersion=3
+[Options]
+PackagePurpose=InstallApp
+ShowInstallProgramWindow=1
+HideExtractAnimation=0
+UseLongFileName=1
+InsideCompressed=0
+CAB_FixedSize=0
+CAB_ResvCodeSigning=0
+RebootMode=N
+InstallPrompt=%InstallPrompt%
+DisplayLicense=%DisplayLicense%
+FinishMessage=%FinishMessage%
+TargetName=%TargetName%
+FriendlyName=%FriendlyName%
+AppLaunched=%AppLaunched%
+PostInstallCmd=%PostInstallCmd%
+AdminQuietInstCmd=%AdminQuietInstCmd%
+UserQuietInstCmd=%UserQuietInstCmd%
+SourceFiles=SourceFiles
+VersionInfo=VersionSection
+[VersionSection]
+Internalname=" + Path.GetFileName(output) + @"
+OriginalFilename=" + Path.GetFileName(output) + @"
+FileDescription=%FileDesc%
+CompanyName=" + (config["title"]?.ToString() ?? "Jgc7") + @"
+ProductName=" + (config["title"]?.ToString() ?? "HTML2EXE - Set title to change") + @"
+LegalCopyright=Copyright " + DateTime.Now.Year + " " + (config?["title"]?.ToString() ?? "Jgc7") + @"
+[Strings]
+FileDesc=" + (config["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
+InstallPrompt=
+DisplayLicense=
+FinishMessage=
+TargetName=out.exe
+FriendlyName=" + (config["title"]?.ToString() ?? "HTML2EXE 2.0") + @"
+AppLaunched=.\Webview.exe
+PostInstallCmd=cmd /c del /f /q Webview.exe.WebView2
+AdminQuietInstCmd=
+UserQuietInstCmd=
+FILE0=""Webview.exe""
+FILE1=""WebView2Loader.dll""
+FILE2=""webfiles.zip""" + (hasConfig ? "\nFILE3=\"config.json\"" : "") + @"
+[SourceFiles]
+SourceFiles0=.\ 
+[SourceFiles0]
+%FILE0%=
+%FILE1%=
+%FILE2%=" + (hasConfig ? "\n%FILE3%=" : "") + @"
         ";
             string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
             log("Started building");
@@ -344,7 +341,7 @@ namespace HTML2EXE_2._0
             {
                 if (isError) browseDialog.configDialog.buildDialog.logTextBox.ForeColor = Color.Red;
                 if (isGreen) browseDialog.configDialog.buildDialog.logTextBox.ForeColor = Color.Green;
-                browseDialog.configDialog.buildDialog.logTextBox.Text += "\n[" + DateTime.Now.ToString("yyyy - MM - dd HH: mm:ss") + "] " + message;
+                browseDialog.configDialog.buildDialog.logTextBox.Text += "[" + DateTime.Now.ToString("yyyy - MM - dd HH: mm:ss") + "] " + message + Environment.NewLine;
             }
             else
             {

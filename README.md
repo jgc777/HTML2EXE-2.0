@@ -26,7 +26,7 @@ First of all, [download the program](https://github.com/jgc777/HTML2EXE-2.0/rele
 ## GUI (Graphical User Interface)
 Just open the program and a GUI will show up with all the options. You can select the HTML file or folder you want to convert (with index.html) or just continue with an empty folder. The program will show a new window with many options and the build button. Press that button and the program will start compiling, and it will show a "Finished Building!" or a "Error" with the compiler log.
 
-## CLI (Command Line Interface))
+## CLI (Command Line Interface)
 `HTML2EXE HTML OUTPUT CONFIG`
 
 - HTML: The HTML file or folder you want to convert. If you select a folder, make sure it contains an index.html file.
