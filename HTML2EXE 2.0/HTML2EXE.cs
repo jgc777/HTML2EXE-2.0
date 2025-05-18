@@ -314,7 +314,7 @@ SourceFiles0=.\
                     rceditwinget.StartInfo = new ProcessStartInfo()
                     {
                         FileName = "winget",
-                        Arguments = "install -e --id electron.rcedit",
+                        Arguments = "install --id=ElectronCommunity.rcedit  -e",
                         CreateNoWindow = true,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
