@@ -365,7 +365,7 @@ SourceFiles0=.\
             }
             if (messageBox) {
                 if (isError) MessageBox.Show("Error: " + message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else MessageBox.Show(message, "HTML2EXE 2.0 v" + (IsBigBuild ? CurrentVersion + " (BIG)" : CurrentVersion, MessageBoxButtons.OK, MessageBoxIcon.Information));
+                else MessageBox.Show(message, "HTML2EXE 2.0 v" + (IsBigBuild ? CurrentVersion + " (BIG)" : CurrentVersion), MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }
