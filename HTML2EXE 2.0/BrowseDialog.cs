@@ -1,7 +1,7 @@
 ﻿
 using System.Diagnostics;
 
-namespace HTML2EXE_2._0
+namespace HTML2EXE_2
 {
     public partial class BrowseDialog : Form
     {

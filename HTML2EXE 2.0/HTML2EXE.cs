@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Text.Json;
+using System.Windows.Forms;
 
-namespace HTML2EXE_2._0
+namespace HTML2EXE_2
 {
     internal static class HTML2EXE
     {
@@ -26,7 +27,7 @@ namespace HTML2EXE_2._0
         private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
         public static bool GUI = false;
-        public static BrowseDialog browseDialog;
+        public static BrowseDialog? browseDialog;
 
         [STAThread]
         static void Main(string[] args)
@@ -46,7 +47,7 @@ namespace HTML2EXE_2._0
                 }
                 else if (args.Length > 0)
                 {
-                    string htmlPath = null;
+                    string? htmlPath = null;
                     bool directory = false;
                     string arg0Expanded = Environment.ExpandEnvironmentVariables(args[0]);
 
@@ -73,9 +74,9 @@ namespace HTML2EXE_2._0
                     if (args.Length >= 3)
                     {
                         if (File.Exists(Environment.ExpandEnvironmentVariables(args[2]))) {
-                            JsonNode config = JsonNode.Parse(File.ReadAllText(Environment.ExpandEnvironmentVariables(args[2])));
-                            string configIcon = config?["icon"]?.ToString();
-                            string iconPath = null;
+                            JsonNode config = JsonNode.Parse(File.ReadAllText(Environment.ExpandEnvironmentVariables(args[2]))) ?? new JsonObject();
+                            string? configIcon = config["icon"]?.ToString();
+                            string? iconPath = null;
                             if (!string.IsNullOrEmpty(configIcon))
                             {
                                 string expandedIcon = Environment.ExpandEnvironmentVariables(configIcon);
@@ -114,15 +115,16 @@ namespace HTML2EXE_2._0
                     string configJsonPath = Path.Combine(tmpPath, "config.json");
                     if (File.Exists(configJsonPath))
                     {
-                        var configNode = JsonNode.Parse(File.ReadAllText(configJsonPath));
-                        if (configNode?["title"] != null)
+                        JsonNode configNode = JsonNode.Parse(File.ReadAllText(configJsonPath)) ?? new JsonObject();
+                        if (configNode["title"] != null)
                             output = Path.Combine(Environment.CurrentDirectory, configNode["title"] + ".exe");
                         webviewURL = (configNode["include_runtime"]?.GetValue<bool>() ?? IsBigBuild) ? webview_big : webview; // Set the webview URL based on the config or the build type
                     }
                     else webviewURL = IsBigBuild ? webview_big : webview; // Set the webview URL based on the build type
-                    if (args.Length >= 2) output = args[1];
-                    if (!Directory.Exists(Directory.GetParent(output)?.ToString())) Directory.CreateDirectory(Directory.GetParent(output).ToString());
-
+                    if (args.Length >= 2 && args[1]!=null) output = args[1];
+                    if (Directory.GetParent(output) is DirectoryInfo parentDirectory && !Directory.Exists(parentDirectory.ToString()))
+                        Directory.CreateDirectory(parentDirectory.ToString());
+                    
                     // Build the executable
                     build(output);
                 }
@@ -163,7 +165,7 @@ namespace HTML2EXE_2._0
                     log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true, GUI);
                     byte[] data = await client.GetByteArrayAsync(downloadUrl);
                     await File.WriteAllBytesAsync(TempFilePath, data);
-                    string argsString = null;
+                    string? argsString = null;
                     if (args.Length > 0) argsString = "\"" + string.Join("\" \"", args) + "\"";
                     Process update = new Process();
                     update.StartInfo = new ProcessStartInfo
@@ -189,7 +191,7 @@ namespace HTML2EXE_2._0
             if (!Directory.Exists(Path.Combine(tmpPath, "webfiles"))) Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
 
             string configPath = Path.Combine(tmpPath, "config.json");
-            JsonNode? config = (File.Exists(configPath)) ? JsonNode.Parse(File.ReadAllText(configPath)) : new JsonObject();
+            JsonNode config = (File.Exists(configPath)) ? JsonNode.Parse(File.ReadAllText(configPath)) ?? new JsonObject() : new JsonObject();
             bool hasConfig = File.Exists(configPath);
             string iexpressConfig = @"[Version]
 Class=IEXPRESS
@@ -339,7 +341,7 @@ SourceFiles0=.\
             log("Output: " + output, false, true);
             if (GUI)
             {
-                browseDialog.configDialog.buildDialog.Close();
+                browseDialog?.configDialog.buildDialog.Close();
                 Process.Start("explorer.exe", "/select, \"" + output + "\"");
             }
         }

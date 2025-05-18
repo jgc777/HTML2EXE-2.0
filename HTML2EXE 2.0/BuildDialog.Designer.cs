@@ -1,4 +1,4 @@
-﻿namespace HTML2EXE_2._0
+﻿namespace HTML2EXE_2
 {
     partial class BuildDialog
     {
@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BuildDialog));
             logTextBox = new RichTextBox();
             copyBtn = new Button();
+            buildBtn = new Button();
             SuspendLayout();
             // 
             // logTextBox
