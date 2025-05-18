@@ -3,8 +3,8 @@
 ![C#](https://img.shields.io/badge/c%23-%23239120.svg?logo=csharp&logoColor=white)
 ![Converter](https://img.shields.io/badge/converter-gray)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?logo=html5&logoColor=white)
-[![License](https://img.shields.io/github/license/jgc777/HTML2EXE-2.0)](./LICENSE)
-[![Publish for .NET 8.0](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml/badge.svg)](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+[![Workflow](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml/badge.svg)](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml)
 
 <p align="center"><img src="icon.png" width="150"></p>
 

@@ -1,4 +1,4 @@
-name: Publish for .NET 8.0
+name: Publish and release latest version
 
 on:
   workflow_dispatch:
