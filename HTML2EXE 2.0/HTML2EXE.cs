@@ -156,7 +156,7 @@ namespace HTML2EXE_2._0
 
                 using JsonDocument doc = JsonDocument.Parse(json);
                 int latestVersion = doc.RootElement.GetProperty("version").GetInt32();
-                string? downloadUrl = IsBigBuild ? doc.RootElement.GetProperty("url").GetString() : doc.RootElement.GetProperty("url_big").GetString();
+                string? downloadUrl = IsBigBuild ? doc.RootElement.GetProperty("url_big").GetString() : doc.RootElement.GetProperty("url").GetString();
 
                 if ((latestVersion > Int32.Parse(CurrentVersion)) && doc.RootElement.GetProperty("update").GetBoolean() && !string.IsNullOrEmpty(downloadUrl))
                 {
@@ -170,19 +170,11 @@ namespace HTML2EXE_2._0
                     {
                         FileName = TempFilePath,
                         Arguments = argsString,
-                        UseShellExecute = false,
-                        WorkingDirectory = Environment.CurrentDirectory,
-                        CreateNoWindow = true,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true
+                        UseShellExecute = true,
+                        WorkingDirectory = Environment.CurrentDirectory
                     };
-                    update.OutputDataReceived += (sender, e) => { if (!string.IsNullOrEmpty(e.Data)) Console.WriteLine(e.Data); };
-                    update.ErrorDataReceived += (sender, e) => { if (!string.IsNullOrEmpty(e.Data)) Console.WriteLine(e.Data, true); };
                     update.Start();
-                    update.BeginOutputReadLine();
-                    update.BeginErrorReadLine();
-                    update.WaitForExit();
-                    Environment.Exit(update.ExitCode);
+                    Environment.Exit(0);
                 }
             }
             catch (Exception ex)
@@ -356,9 +348,13 @@ SourceFiles0=.\
         {
             if (GUI)
             {
-                if (isError) browseDialog.configDialog.buildDialog.logTextBox.ForeColor = Color.Red;
-                if (isGreen) browseDialog.configDialog.buildDialog.logTextBox.ForeColor = Color.Green;
-                browseDialog.configDialog.buildDialog.logTextBox.Text += "[" + DateTime.Now.ToString("yyyy - MM - dd HH: mm:ss") + "] " + message + Environment.NewLine;
+                if (browseDialog is BrowseDialog && browseDialog.configDialog.buildDialog.logTextBox is RichTextBox)
+                {
+                    if (isError) browseDialog.configDialog.buildDialog.logTextBox.ForeColor = Color.Red;
+                    if (isGreen) browseDialog.configDialog.buildDialog.logTextBox.ForeColor = Color.Green;
+                    browseDialog.configDialog.buildDialog.logTextBox.Text += "[" + DateTime.Now.ToString("yyyy - MM - dd HH: mm:ss") + "] " + message + Environment.NewLine;
+                }
+                else throw new Exception("logTextBox not found");
             }
             else
             {
@@ -369,7 +365,7 @@ SourceFiles0=.\
             }
             if (messageBox) {
                 if (isError) MessageBox.Show("Error: " + message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else MessageBox.Show(message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else MessageBox.Show(message, "HTML2EXE 2.0 v" + (IsBigBuild ? CurrentVersion + " (BIG)" : CurrentVersion, MessageBoxButtons.OK, MessageBoxIcon.Information));
             }
         }
     }
