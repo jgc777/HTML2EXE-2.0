@@ -23,21 +23,27 @@ namespace HTML2EXE_2
         public static string webview_big = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip";
         public static string? webviewURL;
 
-        public static readonly string CurrentVersion = "999"; // Updated by GitHub at build
+        public static readonly string CurrentVersion = "69"; // Updated by GitHub at build
         private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
         public static bool GUI = false;
+        private static string guiFlag = Path.Combine(tmpPath, "gui.flag");
         public static BrowseDialog? browseDialog;
 
         [STAThread]
         static void Main(string[] args)
         {
-            try {
+            try
+            {
+                ApplicationConfiguration.Initialize();
+                Application.EnableVisualStyles();
                 Console.Title = "HTML2EXE 2.0 v" + (IsBigBuild ? CurrentVersion + " (BIG)" : CurrentVersion);
+
                 if (update) CheckForUpdatesAsync(args).Wait();
                 if (Directory.Exists(tmpPath)) Directory.Delete(tmpPath, true);
                 Directory.CreateDirectory(tmpPath);
                 Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
+
                 if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "/?" || args[0] == "/help")) {
                     Console.WriteLine("Opening web documentation...");
                     Process.Start(new ProcessStartInfo {
@@ -132,11 +138,9 @@ namespace HTML2EXE_2
                 {
                     GUI = true;
                     Console.WriteLine("No arguments provided, starting GUI...");
+                    File.WriteAllText(guiFlag, "");
                     FreeConsole();
-                    ApplicationConfiguration.Initialize();
-                    Application.EnableVisualStyles();
-                    browseDialog = new BrowseDialog();
-                    Application.Run(browseDialog);
+                    Application.Run(browseDialog = new BrowseDialog());
                 }
             }
             catch (Exception ex)
@@ -153,6 +157,7 @@ namespace HTML2EXE_2
         {
             try
             {
+                log("Checking for updates...");
                 using HttpClient client = new HttpClient();
                 string json = await client.GetStringAsync(LatestJsonUrl);
 
@@ -162,7 +167,7 @@ namespace HTML2EXE_2
 
                 if ((latestVersion > Int32.Parse(CurrentVersion)) && doc.RootElement.GetProperty("update").GetBoolean() && !string.IsNullOrEmpty(downloadUrl))
                 {
-                    log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true, GUI);
+                    log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true);
                     byte[] data = await client.GetByteArrayAsync(downloadUrl);
                     await File.WriteAllBytesAsync(TempFilePath, data);
                     string? argsString = null;
@@ -172,10 +177,22 @@ namespace HTML2EXE_2
                     {
                         FileName = TempFilePath,
                         Arguments = argsString,
-                        UseShellExecute = true,
-                        WorkingDirectory = Environment.CurrentDirectory
+                        UseShellExecute = false,
+                        WorkingDirectory = Environment.CurrentDirectory,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true
                     };
+                    update.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data ?? "");
+                    update.ErrorDataReceived += (sender, e) => Console.WriteLine(e.Data ?? "", true);
                     update.Start();
+                    update.BeginOutputReadLine();
+                    update.BeginErrorReadLine();
+                    while (!(update.HasExited || File.Exists(guiFlag)))
+                    {
+                        await Task.Delay(100);
+                    }
+                    if (File.Exists(guiFlag)) File.Delete(guiFlag);
                     Environment.Exit(0);
                 }
             }
@@ -242,8 +259,7 @@ SourceFiles0=.\
 [SourceFiles0]
 %FILE0%=
 %FILE1%=
-%FILE2%=" + (hasConfig ? "\n%FILE3%=" : "") + @"
-        ";
+%FILE2%=" + (hasConfig ? "\n%FILE3%=" : "");
             string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
             log("Started building");
             log("Downloading webview.zip...");
@@ -346,7 +362,7 @@ SourceFiles0=.\
             }
         }
 
-        public static void log(string message, bool isError = false, bool isGreen = false, bool messageBox = false)
+        public static void log(string message = "", bool isError = false, bool isGreen = false, bool messageBox = false)
         {
             if (GUI)
             {
