@@ -15,7 +15,7 @@
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Title>HTML2EXE 2.0 Webview</Title>
     <Product>HTML2EXE Webview</Product>
-    <Description>Webview for HTML2EXE 2.0</Description>
+    <Description>Webview for https://jgc777.github.io/HTML2EXE-2.0/</Description>
     <NeutralLanguage>en</NeutralLanguage>
     <AssemblyName>Webview</AssemblyName>
     <Authors>Jgc7</Authors>

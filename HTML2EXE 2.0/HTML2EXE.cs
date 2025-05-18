@@ -23,7 +23,7 @@ namespace HTML2EXE_2
         public static string webview_big = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip";
         public static string? webviewURL;
 
-        public static readonly string CurrentVersion = "69"; // Updated by GitHub at build
+        public static readonly string CurrentVersion = "999"; // Updated by GitHub at build
         private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
         public static bool GUI = false;
