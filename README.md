@@ -68,6 +68,6 @@ Use GitHub pull requests, discussions or issues to report problems, suggest feat
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
-- [Webview2](https://developer.microsoft.com/es-es/microsoft-edge/webview2) & [iExpress](https://es.wikipedia.org/wiki/IExpress): Microsoft
-- Logo: [Web Fonts](http://www.onlinewebfonts.com)
+- [Webview 2](https://developer.microsoft.com/es-es/microsoft-edge/webview2) & [IExpress](https://es.wikipedia.org/wiki/IExpress): Microsoft
 - [rcedit](https://github.com/electron/rcedit): Electron
+- [Icon](https://www.onlinewebfonts.com/icon/454233): Online WebFonts
