@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Diagnostics;
+using System.Text.Json.Nodes;
 
 namespace HTML2EXE_2
 {
@@ -13,11 +14,16 @@ namespace HTML2EXE_2
         {
             this.Text = "HTML2EXE 2.0 v" + (HTML2EXE.IsBigBuild ? HTML2EXE.CurrentVersion + " (BIG)" : HTML2EXE.CurrentVersion);
             this.Visible = true;
-            string output = Path.Combine(Environment.CurrentDirectory, "out.exe");
-            JsonNode config = JsonNode.Parse(File.ReadAllText(Path.Combine(HTML2EXE.tmpPath, "config.json")));
-            string configTitle = config["title"]?.ToString();
-            if (configTitle != null) output = Path.Combine(Environment.CurrentDirectory, configTitle + ".exe");
-            HTML2EXE.build(output);
+            JsonNode config = JsonNode.Parse(File.ReadAllText(Path.Combine(HTML2EXE.tmpPath, "config.json"))) ?? new JsonObject();
+            string output = (config["title"]?.ToString() != null) ? Path.Combine(Environment.CurrentDirectory, $"{config["title"]?.ToString()}.exe") : Path.Combine(Environment.CurrentDirectory, "out.exe");
+            // Set the output path using the config title or default to "out.exe"
+            try {
+                HTML2EXE.build(output);
+                this.Close();
+                Process.Start("explorer.exe", $"/select, \"{output}\"");
+            } catch (Exception ex) {
+                HTML2EXE.log($"Build error: {ex.Message}",true,false,true);
+            }
         }
 
         private void copyBtn_Click(object sender, EventArgs e)
