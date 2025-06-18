@@ -10,7 +10,6 @@ on:
       - '*.yml'
       - '.gitignore'
       - 'LICENSE'
-      - 'latest.json'
 
 permissions:
   contents: write
