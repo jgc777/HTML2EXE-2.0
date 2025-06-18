@@ -12,7 +12,7 @@ namespace HTML2EXE_2
 
         private void BuildDialog_Load(object sender, EventArgs e)
         {
-            this.Text = "HTML2EXE 2.0 v" + (HTML2EXE.IsBigBuild ? HTML2EXE.CurrentVersion + " (BIG)" : HTML2EXE.CurrentVersion);
+            this.Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
             this.Visible = true;
             JsonNode config = JsonNode.Parse(File.ReadAllText(Path.Combine(HTML2EXE.tmpPath, "config.json"))) ?? new JsonObject();
             string output = (config["title"]?.ToString() != null) ? Path.Combine(Environment.CurrentDirectory, $"{config["title"]?.ToString()}.exe") : Path.Combine(Environment.CurrentDirectory, "out.exe");

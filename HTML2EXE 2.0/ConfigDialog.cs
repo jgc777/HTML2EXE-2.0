@@ -24,7 +24,8 @@ namespace HTML2EXE_2
 
         public void ConfigDialog_Load(object sender, EventArgs e)
         {
-            this.Text = "HTML2EXE 2.0 v" + (HTML2EXE.IsBigBuild ? HTML2EXE.CurrentVersion + " (BIG)" : HTML2EXE.CurrentVersion);
+            this.Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
+            this.includeNETbox.Checked = HTML2EXE.IsBigBuild; // Set the include .NET runtime checkbox based on the build type
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)

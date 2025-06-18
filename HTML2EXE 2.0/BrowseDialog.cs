@@ -14,7 +14,7 @@ namespace HTML2EXE_2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = "HTML2EXE 2.0 v" + (HTML2EXE.IsBigBuild ? HTML2EXE.CurrentVersion + " (BIG)" : HTML2EXE.CurrentVersion);
+            this.Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
         }
 
         private void selectFileBtn_Click(object sender, EventArgs e)
