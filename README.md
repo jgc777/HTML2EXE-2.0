@@ -12,10 +12,9 @@ A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less
 
 ## Features
 - Convert HTML files (really any chromium-compatible files) and folders to EXE files
-- Use internet webpages
-- Custom icon
-- Custom title & more
-- Very small program size
+- Use internet webpages (Use the URL option)
+- Custom icon, title, windows command & more
+- Very small program size (except for the version with .NET included)
 - Graphical user interface (GUI)
 - Command line interface (CLI)
 - Quick and easy to use and distribute
@@ -59,13 +58,13 @@ It's a JSON file which defines some webview settings. It can be loaded in the CL
 | `block_close`      | boolean  | If the window should be blocked from closing.                              |
 | `additional_cmd`   | string   | Additional command to run in the webfiles folder after starting the window (in a hidden cmd.exe window, to start batch files use call to stay hidden or start to create a window). |
 
-Note that `include_runtime` is only used in the config for the HTML2EXE compiler. `icon` is a full path only in the compilation.
+Note that `include_runtime` is only used in the config for the HTML2EXE compiler (not in the webview). `icon` is a full path only during the compilation.
 
 ## Contributing
-Use GitHub pull requests, discussions or issues to report problems, suggest features...
+Use GitHub pull requests, discussions or issues to report problems, suggest features, etc. It will be appreciated.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 - [Webview 2](https://developer.microsoft.com/es-es/microsoft-edge/webview2) & [IExpress](https://es.wikipedia.org/wiki/IExpress): Microsoft

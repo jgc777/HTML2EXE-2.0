@@ -365,7 +365,7 @@ SourceFiles0=.\
                 if (browseDialog is BrowseDialog && browseDialog?.configDialog?.buildDialog?.logTextBox is RichTextBox logTextBox)
                 { // If used to hide warnings and make code cleaner
                     int start = logTextBox.TextLength;
-                    logTextBox.AppendText($"[{DateTime.Now.ToString("yyyy - MM - dd HH: mm:ss")}] {message}\n");
+                    logTextBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] [HTML2EXE] {message}\n");
                     logTextBox.Select(start, logTextBox.TextLength - start); // Select the new text
                     logTextBox.SelectionColor = logTextBox.ForeColor; // Default color
                     if (isError) logTextBox.SelectionColor = Color.Red; // Red for isError
@@ -378,7 +378,7 @@ SourceFiles0=.\
                 var originalColor = Console.ForegroundColor;
                 if (isError) Console.ForegroundColor = ConsoleColor.Red;
                 if (isGreen) Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"[{DateTime.Now.ToString("yyyy - MM - dd HH: mm:ss")}] {message}");
+                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] [HTML2EXE] {message}");
                 if (isError || isGreen) Console.ForegroundColor = originalColor;
             }
 
