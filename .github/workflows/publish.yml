@@ -28,7 +28,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Set build number
-      run: sed -i 's/CurrentVersion = .*;/CurrentVersion = "${{ github.run_number }}";/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/HTML2EXE.cs'
+      run: sed -i 's/CurrentVersion = .*;/CurrentVersion = ${{ github.run_number }};/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/HTML2EXE.cs'
 
     - name: Restore dependencies
       run: dotnet restore -p:EnableWindowsTargeting=true
