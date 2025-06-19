@@ -1,12 +1,13 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json.Nodes;
 
 namespace HTML2EXE_2
 {
     public partial class ConfigDialog : Form
     {
         public JsonNode config = new JsonObject();
-        public BuildDialog buildDialog;
-        public string iconPath = null;
+        public BuildDialog? buildDialog;
+        public string? iconPath = null;
 
         private Dictionary<string, CheckBox> checkBoxes;
         private Dictionary<string, TextBox> textBoxes;
@@ -120,10 +121,10 @@ namespace HTML2EXE_2
             if (removenulls) {
                 var ordered = new JsonObject();
                 foreach (var kvp in config.AsObject()
-                    .Where(kvp => kvp.Value != null && !string.IsNullOrEmpty(kvp.Value.ToString()))
+                    .Where(kvp => kvp.Value is not null && !string.IsNullOrEmpty(kvp.Value.ToString()))
                     .OrderBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
                     )
-                    ordered[kvp.Key] = kvp.Value.DeepClone();
+                    ordered[kvp.Key] = kvp.Value?.DeepClone(); // ? to remove warning and DeepClone to ensure correct copying
                 config = ordered;
             }
             
@@ -156,25 +157,27 @@ namespace HTML2EXE_2
                 if (File.Exists(jsonOpener.FileName))
                 {
                     JsonNode newConfig = JsonNode.Parse(File.ReadAllText(jsonOpener.FileName)) ?? new JsonObject(); // Load the config file
-                    
+
                     // Set checkboxes
-                    foreach (var option in checkBoxes) if (newConfig[option.Key] != null) option.Value.Checked = newConfig[option.Key].GetValue<bool>();
+#pragma warning disable CS8602
+                    foreach (var option in checkBoxes) if (newConfig[option.Key] is not null) option.Value.Checked = newConfig[option.Key].GetValue<bool>();
                     // Set textboxes
-                    foreach (var option in textBoxes) if (newConfig[option.Key] != null) option.Value.Text = newConfig[option.Key].ToString();
+                    foreach (var option in textBoxes) if (newConfig[option.Key] is not null) option.Value.Text = newConfig[option.Key].ToString();
                     // Set int textboxes
-                    foreach (var option in intTextBoxes) if (newConfig[option.Key] != null) option.Value.Text = newConfig[option.Key].ToString();
+                    foreach (var option in intTextBoxes) if (newConfig[option.Key] is not null) option.Value.Text = newConfig[option.Key].ToString();
 
                     // Define icon path
                     iconPathLabel.Text = Path.GetFileName(iconPath);
                     removeIconBtn.Visible = true;
-                    if (newConfig["icon"] != null && (newConfig["icon"].ToString().StartsWith("http://") || newConfig["icon"].ToString().StartsWith("https://")))
+                    if (newConfig["icon"] is not null && (newConfig["icon"].ToString().StartsWith("http://") || newConfig["icon"].ToString().StartsWith("https://")))
                         iconPath = newConfig["icon"].ToString(); // If the icon is a URL, use it directly
-                    else if (newConfig["icon"] != null && HTML2EXE.TryGetFilePath(newConfig["icon"].ToString()) != null) // Otherwise, try to get the file path from the webfiles directory
+                    else if (newConfig["icon"] is not null && HTML2EXE.TryGetFilePath(newConfig["icon"].ToString()) is not null) // Otherwise, try to get the file path from the webfiles directory
                         iconPath = HTML2EXE.TryGetFilePath(newConfig["icon"].ToString());
                     else {
                         iconPathLabel.Text = "No icon";
                         removeIconBtn.Visible = false;
                     }
+#pragma warning restore CS8602
                 }
             } catch (Exception ex) {
                 MessageBox.Show($"Error loading config: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

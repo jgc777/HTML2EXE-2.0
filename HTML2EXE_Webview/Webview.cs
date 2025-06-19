@@ -1,13 +1,12 @@
-﻿using System.Diagnostics;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Runtime.Versioning;
-using System.Windows.Forms;
 
-namespace Webview {
+namespace Webview
+{
+    [SupportedOSPlatform("windows6.1")] // Remove warnings
     internal static class Webview
     {
         [STAThread]
-        [SupportedOSPlatform("windows6.1")] // Remove warnings
         static void Main(string[] args)
         {
             try

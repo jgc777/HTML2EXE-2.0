@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Text.Json;
-using System.Windows.Forms;
 
 namespace HTML2EXE_2
 {
@@ -57,9 +56,7 @@ namespace HTML2EXE_2
 
                 CheckForUpdatesAsync(args).Wait();
 
-                if (args.Length > 0)
-                {
-                    bool directory = false;
+                if (args.Length > 0) {
                     string? htmlPath = TryGetFileFolderPath(args[0]); // Try to get the file path from the first argument
                     if (string.IsNullOrEmpty(htmlPath)) throw new Exception($"File/Folder not found: {args[0]}"); // If the first argument is still not a file or folder, throw an error
                     if (Directory.Exists(htmlPath)) new Microsoft.VisualBasic.Devices.Computer().FileSystem.CopyDirectory(htmlPath, Path.Combine(tmpPath, "webfiles"), true); // Copy directory to webfiles
@@ -101,7 +98,7 @@ namespace HTML2EXE_2
                     if (File.Exists(tempConfigJson)) { // If a config file exists, read it and set the output name and webview URL
                         JsonNode config = JsonNode.Parse(File.ReadAllText(tempConfigJson)) ?? new JsonObject();
                         // If the config file has a title, use it as the output name
-                        if (config["title"] != null) output = Path.Combine(Environment.CurrentDirectory, $"{config["title"]}.exe");
+                        if (config["title"] is not null) output = Path.Combine(Environment.CurrentDirectory, $"{config["title"]}.exe");
                         webviewURL = (config["include_runtime"]?.GetValue<bool>() ?? IsBigBuild) ? webview_big : webview; // Set the webview URL based on the config or the build type
                     }
                     else webviewURL = IsBigBuild ? webview_big : webview; // Set the webview URL based on the build type
@@ -365,7 +362,7 @@ SourceFiles0=.\
         public static void log(string message = "", bool isError = false, bool isGreen = false, bool messageBox = false)
         { // Logs a message to the console or GUI if the GUI is active
             if (GUI) {
-                if (browseDialog is BrowseDialog && browseDialog.configDialog.buildDialog.logTextBox is RichTextBox logTextBox)
+                if (browseDialog is BrowseDialog && browseDialog?.configDialog?.buildDialog?.logTextBox is RichTextBox logTextBox)
                 { // If used to hide warnings and make code cleaner
                     int start = logTextBox.TextLength;
                     logTextBox.AppendText($"[{DateTime.Now.ToString("yyyy - MM - dd HH: mm:ss")}] {message}\n");
