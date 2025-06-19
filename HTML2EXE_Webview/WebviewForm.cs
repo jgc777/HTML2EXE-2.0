@@ -137,7 +137,7 @@ namespace Webview {
                     process.StartInfo = new ProcessStartInfo
                     {
                         FileName = "cmd",
-                        Arguments = "/c " + config["additional_cmd"].ToString(),
+                        Arguments = $"/c {config["additional_cmd"].ToString()}",
                         WorkingDirectory = Path.Combine(Environment.CurrentDirectory, "webfiles"),
                         UseShellExecute = false,
                         CreateNoWindow = true

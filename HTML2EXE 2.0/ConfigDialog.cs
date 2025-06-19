@@ -4,13 +4,41 @@ namespace HTML2EXE_2
 {
     public partial class ConfigDialog : Form
     {
-        public JsonNode config;
+        public JsonNode config = new JsonObject();
         public BuildDialog buildDialog;
         public string iconPath = null;
+
+        private Dictionary<string, CheckBox> checkBoxes;
+        private Dictionary<string, TextBox> textBoxes;
+        private Dictionary<string, TextBox> intTextBoxes;
         public ConfigDialog()
         {
             InitializeComponent();
-            config = new JsonObject();
+            
+            checkBoxes = new Dictionary<string, CheckBox> {
+                { "maximized", maximized },
+                { "resizable", resizable },
+                { "control_box", controlBox },
+                { "minimizable", minimizable },
+                { "maximizable", maximizable },
+                { "fullscreen", fullscreen },
+                { "always_on_top", alwaysOnTop },
+                { "zoom_control", zoomControl },
+                { "show_in_taskbar", showInTaskbar },
+                { "context_menu", contextMenu },
+                { "dev_tools", devTools },
+                { "block_close", blockClose },
+                { "include_runtime", includeNETbox }
+            };
+            textBoxes = new Dictionary<string, TextBox> {
+                { "url", urlTextBox },
+                { "title", titleTextBox },
+                { "additional_cmd", extraCmdTextBox }
+            };
+            intTextBoxes = new Dictionary<string, TextBox> {
+                { "width", widthTextBox },
+                { "height", heightTextBox }
+            };
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -41,9 +69,8 @@ namespace HTML2EXE_2
             try
             {
                 // Write the config to a file
-                string configPath = Path.Combine(HTML2EXE.tmpPath, "config.json");
-                if (File.Exists(configPath)) File.Delete(configPath);
-                File.WriteAllText(configPath, generateConfigJson().ToString());
+                if (File.Exists(HTML2EXE.tempConfigJson)) File.Delete(HTML2EXE.tempConfigJson);
+                File.WriteAllText(HTML2EXE.tempConfigJson, generateConfigJson().ToString());
 
                 // Close this form and show the build dialog
                 this.Close();
@@ -52,28 +79,30 @@ namespace HTML2EXE_2
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error saving configuration: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private JsonNode generateConfigJson(bool export = false, bool removenulls = true) // Export meass we're saving the config as an exportation and not a build
         {
-            if (!string.IsNullOrEmpty(urlTextBox.Text)) config["url"] = urlTextBox.Text; // If the URL is not empty, set it as the URL
-            else config["url"] = null; // If the URL is empty, set it as null
-            if (!string.IsNullOrEmpty(titleTextBox.Text)) config["title"] = titleTextBox.Text; // If the title is not empty, set it as the title
-            else config["title"] = null; // If the title is empty, set it as null
+            // Set checkboxes ignoring includeNETbox
+            foreach (var option in checkBoxes.Except(new Dictionary<string, CheckBox> {{"include_runtime",includeNETbox}})) config[option.Key] = option.Value.Checked;
+            // Set textboxes
+            foreach (var option in textBoxes) config[option.Key] = string.IsNullOrEmpty(option.Value.Text) ? null : option.Value.Text;
+            // Set int textboxes
+            foreach (var option in intTextBoxes) config[option.Key] = string.IsNullOrEmpty(option.Value.Text) ? null : Int32.Parse(option.Value.Text);
+
             if (!string.IsNullOrEmpty(iconPath)) {
-                if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://")) {
+                if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://")) { // If the icon is a URL download it
                     try {
                         string tempIconPath = Path.Combine(HTML2EXE.tmpPath, "webfiles", "icon.ico");
                         using (var client = new HttpClient()) {
                             var data = client.GetByteArrayAsync(iconPath).Result;
                             File.WriteAllBytes(tempIconPath, data);
                         }
-                        config["icon"] = Path.Combine("webfiles", "icon.ico");
-                    }
-                    catch (Exception ex) {
-                        MessageBox.Show("Error downloading icon: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        config["icon"] = Path.Combine("webfiles", "icon.ico"); // Set the icon to the downloaded file
+                    } catch (Exception ex) {
+                        MessageBox.Show($"Error downloading icon: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         config["icon"] = null;
                     }
                 }
@@ -83,38 +112,21 @@ namespace HTML2EXE_2
                 }
             }
             else config["icon"] = null; // If the icon is empty, set it as null
-            if (!string.IsNullOrEmpty(widthTextBox.Text)) config["width"] = Int32.Parse(widthTextBox.Text); // If the width is not empty, set it as the width
-            else config["width"] = null; // If the width is empty, set it as null
-            if (!string.IsNullOrEmpty(heightTextBox.Text)) config["height"] = Int32.Parse(heightTextBox.Text); // If the height is not empty, set it as the height
-            else config["height"] = null; // If the height is empty, set it as null
-            if (!string.IsNullOrEmpty(extraCmdTextBox.Text)) config["additional_cmd"] = extraCmdTextBox.Text; // If the extra command is not empty, set it as the extra command
-            else config["additional_cmd"] = null; // If the extra command is empty, set it as null
-            config["context_menu"] = contextMenu.Checked;
-            config["dev_tools"] = devTools.Checked;
-            config["maximized"] = maximized.Checked;
-            config["maximizable"] = maximizable.Checked;
-            config["resizable"] = resizable.Checked;
-            config["control_box"] = controlBox.Checked;
-            config["minimizable"] = minimizable.Checked;
-            config["fullscreen"] = fullscreen.Checked;
-            config["always_on_top"] = alwaysOnTop.Checked;
-            config["zoom_control"] = zoomControl.Checked;
-            config["show_in_taskbar"] = showInTaskbar.Checked;
-            config["block_close"] = blockClose.Checked;
+
             if (export) config["include_runtime"] = includeNETbox.Checked; // If exporting, set the include runtime option
-            HTML2EXE.webviewURL = includeNETbox.Checked ? HTML2EXE.webview_big : HTML2EXE.webview;
+            HTML2EXE.webviewURL = includeNETbox.Checked ? HTML2EXE.webview_big : HTML2EXE.webview; // Set the webview URL based on the include runtime option
 
             // Clean nulls and order alphabetically
-            if (config is JsonObject obj)
-            {
-                if (removenulls) obj.Where(kvp => kvp.Value == null).Select(kvp => kvp.Key).ToList().ForEach(key => obj.Remove(key)); // Remove null values
-
+            if (removenulls) {
                 var ordered = new JsonObject();
-                foreach (var kvp in obj.OrderBy(kvp => kvp.Key)) // Order the config alphabetically
-                    ordered[kvp.Key] = kvp.Value?.DeepClone();
-
-                return ordered;
+                foreach (var kvp in config.AsObject()
+                    .Where(kvp => kvp.Value != null && !string.IsNullOrEmpty(kvp.Value.ToString()))
+                    .OrderBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
+                    )
+                    ordered[kvp.Key] = kvp.Value.DeepClone();
+                config = ordered;
             }
+            
             return config;
         }
 
@@ -129,8 +141,7 @@ namespace HTML2EXE_2
         private void iconBtn_Click(object sender, EventArgs e)
         {
             iconOpener.ShowDialog();
-            if (!string.IsNullOrEmpty(iconOpener.FileName) && File.Exists(iconOpener.FileName))
-            {
+            if (!string.IsNullOrEmpty(iconOpener.FileName) && File.Exists(iconOpener.FileName)) {
                 iconPathLabel.Text = Path.GetFileName(iconOpener.FileName);
                 removeIconBtn.Visible = true;
                 iconPath = iconOpener.FileName;
@@ -142,48 +153,31 @@ namespace HTML2EXE_2
             jsonOpener.ShowDialog();
             try
             {
-                if (!string.IsNullOrEmpty(jsonOpener.FileName) && File.Exists(jsonOpener.FileName))
+                if (File.Exists(jsonOpener.FileName))
                 {
-                    JsonNode config = JsonNode.Parse(File.ReadAllText(jsonOpener.FileName)); // Load the config file
-                    // Set inputs
-                    if (config["maximized"] != null) maximized.Checked = config["maximized"].GetValue<bool>();
-                    if (config["resizable"] != null) resizable.Checked = config["resizable"].GetValue<bool>();
-                    if (config["control_box"] != null) controlBox.Checked = config["control_box"].GetValue<bool>();
-                    if (config["minimizable"] != null) minimizable.Checked = config["minimizable"].GetValue<bool>();
-                    if (config["maximizable"] != null) maximizable.Checked = config["maximizable"].GetValue<bool>();
-                    if (config["fullscreen"] != null) fullscreen.Checked = config["fullscreen"].GetValue<bool>();
-                    if (config["always_on_top"] != null) alwaysOnTop.Checked = config["always_on_top"].GetValue<bool>();
-                    if (config["zoom_control"] != null) zoomControl.Checked = config["zoom_control"].GetValue<bool>();
-                    if (config["show_in_taskbar"] != null) showInTaskbar.Checked = config["show_in_taskbar"].GetValue<bool>();
-                    if (config["context_menu"] != null) contextMenu.Checked = config["context_menu"].GetValue<bool>();
-                    if (config["dev_tools"] != null) devTools.Checked = config["dev_tools"].GetValue<bool>();
-                    if (config["block_close"] != null) blockClose.Checked = config["block_close"].GetValue<bool>();
-                    if (config["url"] != null) urlTextBox.Text = config["url"].ToString();
-                    if (config["title"] != null) titleTextBox.Text = config["title"].ToString();
-                    if (config["width"] != null) widthTextBox.Text = config["width"].ToString();
-                    if (config["height"] != null) heightTextBox.Text = config["height"].ToString();
-                    if (config["additional_cmd"] != null) extraCmdTextBox.Text = config["additional_cmd"].ToString();
+                    JsonNode newConfig = JsonNode.Parse(File.ReadAllText(jsonOpener.FileName)) ?? new JsonObject(); // Load the config file
+                    
+                    // Set checkboxes
+                    foreach (var option in checkBoxes) if (newConfig[option.Key] != null) option.Value.Checked = newConfig[option.Key].GetValue<bool>();
+                    // Set textboxes
+                    foreach (var option in textBoxes) if (newConfig[option.Key] != null) option.Value.Text = newConfig[option.Key].ToString();
+                    // Set int textboxes
+                    foreach (var option in intTextBoxes) if (newConfig[option.Key] != null) option.Value.Text = newConfig[option.Key].ToString();
 
-                    if (!string.IsNullOrEmpty(config["icon"]?.ToString())) // Set icon
-                    {
-                        // Define icon path
-                        if (File.Exists(Environment.ExpandEnvironmentVariables(config["icon"].ToString()))) iconPath = Environment.ExpandEnvironmentVariables(config["icon"].ToString());
-                        else if (File.Exists(Path.Combine(Environment.CurrentDirectory, config["icon"].ToString()))) iconPath = Path.Combine(Environment.CurrentDirectory, config["icon"].ToString());
-                        else if (config["icon"].ToString().StartsWith("http://") || config["icon"].ToString().StartsWith("https://")) iconPath = config["icon"].ToString();
-
-                        iconPathLabel.Text = Path.GetFileName(iconPath);
-                        removeIconBtn.Visible = true;
-                    }
-                    else
-                    {
+                    // Define icon path
+                    iconPathLabel.Text = Path.GetFileName(iconPath);
+                    removeIconBtn.Visible = true;
+                    if (newConfig["icon"] != null && (newConfig["icon"].ToString().StartsWith("http://") || newConfig["icon"].ToString().StartsWith("https://")))
+                        iconPath = newConfig["icon"].ToString(); // If the icon is a URL, use it directly
+                    else if (newConfig["icon"] != null && HTML2EXE.TryGetFilePath(newConfig["icon"].ToString()) != null) // Otherwise, try to get the file path from the webfiles directory
+                        iconPath = HTML2EXE.TryGetFilePath(newConfig["icon"].ToString());
+                    else {
                         iconPathLabel.Text = "No icon";
                         removeIconBtn.Visible = false;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            } catch (Exception ex) {
+                MessageBox.Show($"Error loading config: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -193,7 +187,7 @@ namespace HTML2EXE_2
         private void saveConfigBtnClick(object sender, EventArgs e)
         {
             jsonSaver.ShowDialog();
-            File.WriteAllText(jsonSaver.FileName, generateConfigJson(true, false).ToString()); // Generate and save the config
+            File.WriteAllText(jsonSaver.FileName, generateConfigJson(true, true).ToString()); // Generate and save the config
         }
     }
 }

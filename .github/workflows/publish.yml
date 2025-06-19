@@ -28,8 +28,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Set build number
-      run: |
-        sed -i 's/public static readonly string CurrentVersion = ".*";/public static readonly string CurrentVersion = "${{ github.run_number }}";/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/HTML2EXE.cs'
+      run: sed -i 's/CurrentVersion = .*;/CurrentVersion = "${{ github.run_number }}";/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/HTML2EXE.cs'
 
     - name: Restore dependencies
       run: dotnet restore -p:EnableWindowsTargeting=true
@@ -37,7 +36,7 @@ jobs:
     - name: Build and publish main app (self-contained)
       run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o ./publish-big -p:PublishReadyToRun=true -p:EnableWindowsTargeting=true -p:DefineConstants="BIG_BUILD"
 
-    - name: Rename HTML2EXE-big.exe
+    - name: Rename to HTML2EXE-big.exe
       run: mv "./publish-big/HTML2EXE.exe" "./publish-big/HTML2EXE-big.exe"
 
     - name: Build and publish WebView (self-contained)
@@ -76,13 +75,13 @@ jobs:
     - name: Upload main app artifact
       uses: actions/upload-artifact@v4
       with:
-        name: published-app
+        name: HTML2EXE
         path: ./publish/*
 
     - name: Upload webview.zip artifact
       uses: actions/upload-artifact@v4
       with:
-        name: webview-zip
+        name: webview
         path: ./webview.zip
 
   release:
@@ -105,13 +104,13 @@ jobs:
     - name: Download main app artifact
       uses: actions/download-artifact@v4
       with:
-        name: published-app
+        name: HTML2EXE
         path: ./app
 
     - name: Download webview.zip artifact
       uses: actions/download-artifact@v4
       with:
-        name: webview-zip
+        name: webview
         path: ./
 
     - name: Download HTML2EXE-big.exe artifact

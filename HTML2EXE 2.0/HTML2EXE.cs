@@ -17,17 +17,20 @@ namespace HTML2EXE_2
         #else
             public static readonly bool IsBigBuild = false;
         #endif
+
         private static readonly bool update = true; // Set to false to disable update check
+        public static readonly int CurrentVersion = 999; // Updated by GitHub at build
         private static readonly string LatestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
-        public static string webview = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
-        public static string webview_big = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip";
+        public static readonly string webview = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
+        public static readonly string webview_big = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip";
         public static string? webviewURL;
 
-        public static readonly string CurrentVersion = "999"; // Updated by GitHub at build
-        private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
+        private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
+        public static readonly string tempConfigJson = Path.Combine(tmpPath, "config.json");
+
         public static bool GUI = false;
-        private static string guiFlag = Path.Combine(tmpPath, "gui.flag");
+        private static readonly string guiFlag = Path.Combine(tmpPath, "gui.flag");
         private static BrowseDialog? browseDialog;
 
         [STAThread]
@@ -39,7 +42,7 @@ namespace HTML2EXE_2
                 Application.EnableVisualStyles();
                 Console.Title = $"HTML2EXE 2.0 v{(IsBigBuild ? $"{CurrentVersion} (BIG)" : CurrentVersion)}";
 
-                if (args.Length > 0 && new[] { "-h", "--help", "/?", "/help" }.Contains(args[0])) {
+                if (args.Length > 0 && new[]{"-h", "--help", "/?", "/help"}.Contains(args[0])) {
                     Console.WriteLine("Opening web documentation...");
                     Process.Start(new ProcessStartInfo {
                         FileName = "https://jgc777.github.io/HTML2EXE-2.0/",
@@ -51,19 +54,15 @@ namespace HTML2EXE_2
                 if (Directory.Exists(tmpPath)) Directory.Delete(tmpPath, true);
                 Directory.CreateDirectory(tmpPath);
                 Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
-                if (update) CheckForUpdatesAsync(args).Wait(); // Check for updates
+
+                CheckForUpdatesAsync(args).Wait();
 
                 if (args.Length > 0)
                 {
                     bool directory = false;
-                    string? htmlPath = TryGetFilePath(args[0]); // Try to get the file path from the first argument
-                    if (string.IsNullOrEmpty(htmlPath)) { 
-                        htmlPath = TryGetFolderPath(args[0]); // If the first argument is not a file, try to get the folder path
-                        if (string.IsNullOrEmpty(htmlPath)) throw new Exception($"File/Folder not found: {args[0]}"); // If the first argument is still not a file or folder, throw an error
-                        else directory = true; // If the path is a directory, set directory to true
-                    }
-
-                    if (directory) new Microsoft.VisualBasic.Devices.Computer().FileSystem.CopyDirectory(htmlPath, Path.Combine(tmpPath, "webfiles"), true); // Copy directory to webfiles
+                    string? htmlPath = TryGetFileFolderPath(args[0]); // Try to get the file path from the first argument
+                    if (string.IsNullOrEmpty(htmlPath)) throw new Exception($"File/Folder not found: {args[0]}"); // If the first argument is still not a file or folder, throw an error
+                    if (Directory.Exists(htmlPath)) new Microsoft.VisualBasic.Devices.Computer().FileSystem.CopyDirectory(htmlPath, Path.Combine(tmpPath, "webfiles"), true); // Copy directory to webfiles
                     else File.Copy(htmlPath, Path.Combine(tmpPath, "webfiles", Path.GetFileName(htmlPath)), true); // Copy file to webfiles
 
                     // Copy config icon and modify config file
@@ -133,7 +132,7 @@ namespace HTML2EXE_2
 
         public static async Task CheckForUpdatesAsync(string[] args)
         {
-            try
+            if (update) try
             {
                 log("Checking for updates...");
                 using HttpClient client = new HttpClient();
@@ -143,7 +142,7 @@ namespace HTML2EXE_2
                 int latestVersion = doc.RootElement.GetProperty("version").GetInt32();
                 string? downloadUrl = IsBigBuild ? doc.RootElement.GetProperty("url_big").GetString() : doc.RootElement.GetProperty("url").GetString();
 
-                if ((latestVersion > Int32.Parse(CurrentVersion)) && doc.RootElement.GetProperty("update").GetBoolean() && !string.IsNullOrEmpty(downloadUrl))
+                if (latestVersion > CurrentVersion && doc.RootElement.GetProperty("update").GetBoolean() && !string.IsNullOrEmpty(downloadUrl))
                 {
                     log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true);
                     byte[] data = await client.GetByteArrayAsync(downloadUrl);
@@ -351,11 +350,16 @@ SourceFiles0=.\
             return (File.Exists(expanded)) ? expanded : (File.Exists(currentDir) ? currentDir : null);
         }
 
-        private static string? TryGetFolderPath(string path)
+        public static string? TryGetFolderPath(string path)
         { // Returns the full path of a folder if it exists, otherwise returns null
             var expanded = Environment.ExpandEnvironmentVariables(path);
             var currentDir = Path.Combine(Environment.CurrentDirectory, path);
             return (Directory.Exists(expanded)) ? expanded : (Directory.Exists(currentDir) ? currentDir : null);
+        }
+
+        public static string? TryGetFileFolderPath(string path)
+        { // Returns the full path of a file or folder if it exists, otherwise returns null
+            return (TryGetFilePath(path) ?? TryGetFolderPath(path) ?? null);
         }
 
         public static void log(string message = "", bool isError = false, bool isGreen = false, bool messageBox = false)
