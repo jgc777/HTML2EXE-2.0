@@ -37,8 +37,8 @@ The program will show the log in the terminal.
 ## Config.json
 It's a JSON file which defines some webview settings. It can be loaded in the CLI and configuration GUI. The configuration GUI creates it for you.
 
-| Option             | Type     | Description                                                                 |
-|--------------------|----------|-----------------------------------------------------------------------------|
+| Option             | Type     | Description                                                                |
+|--------------------|----------|----------------------------------------------------------------------------|
 | `maximized`        | boolean  | If the window should be automatically maximized.                           |
 | `resizable`        | boolean  | If the window should be resizable.                                         |
 | `control_box`      | boolean  | If the window should have a control box (minimize, maximize and close buttons). |
@@ -50,8 +50,8 @@ It's a JSON file which defines some webview settings. It can be loaded in the CL
 | `show_in_taskbar`  | boolean  | If the window should be shown in the taskbar.                              |
 | `width`            | integer  | The width of the window.                                                   |
 | `height`           | integer  | The height of the window.                                                  |
-| `url`              | string   | The URL to load.                                                            |
-| `title`            | string   | The title of the window.                                                   |
+| `url`              | string   | The URL to load.                                                           |
+| `title`            | string   | The title of the window and data folder.                                   |
 | `icon`             | string   | The icon of the window.                                                    |
 | `context_menu`     | boolean  | If the context menu should be enabled.                                     |
 | `dev_tools`        | boolean  | If developer tools should be enabled.                                      |

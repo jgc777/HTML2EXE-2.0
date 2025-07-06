@@ -12,6 +12,21 @@ namespace Webview
         public WebviewForm()
         {
             InitializeComponent();
+            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HTML2EXE"); // Get AppData folder path
+            string folderName = "default"; // Default folder name
+            try { // Try to read the title from config.json
+                string configPath = Path.Combine(Environment.CurrentDirectory, "config.json");
+                if (File.Exists(configPath))
+                {
+                    var configJson = JsonNode.Parse(File.ReadAllText(configPath));
+                    if (!string.IsNullOrEmpty(configJson!["title"]?.ToString()))
+                        folderName = configJson["title"]!.ToString();
+                }
+            }
+            catch { } // Ignore errors in reading config.json
+
+            // Initialize WebView2 with user data folder
+            webView2.CreationProperties = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties{UserDataFolder = Path.Combine(appData, folderName) };
             InitializeWebview();
         }
         async void InitializeWebview()
@@ -21,7 +36,6 @@ namespace Webview
                 FormClosing += WebView_FormClosing;
                 string configPath = Path.Combine(Environment.CurrentDirectory, "config.json"); // Config file path
                 if (File.Exists(configPath)) config = JsonNode.Parse(await File.ReadAllTextAsync(configPath)) ?? new JsonObject(); // Parse JSON config file
-
 #pragma warning disable CS8604
                 if (!string.IsNullOrEmpty(config["url"]?.ToString())) webView2.Source = new Uri(Environment.ExpandEnvironmentVariables(config["url"]?.ToString())); // Set config URL
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
