@@ -32,13 +32,13 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore -p:EnableWindowsTargeting=true
 
-    - name: Build and publish main app (self-contained)
+    - name: Build main app (self-contained)
       run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o ./publish-big -p:PublishReadyToRun=true -p:EnableWindowsTargeting=true -p:DefineConstants="BIG_BUILD"
 
     - name: Rename to HTML2EXE-big.exe
       run: mv "./publish-big/HTML2EXE.exe" "./publish-big/HTML2EXE-big.exe"
 
-    - name: Build and publish WebView (self-contained)
+    - name: Build WebView (self-contained)
       run: dotnet publish HTML2EXE_Webview -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o ./webview_publish_big -p:EnableWindowsTargeting=true
 
     - name: Create webview-big.zip
@@ -47,22 +47,22 @@ jobs:
         zip ../webview-big.zip Webview.exe WebView2Loader.dll
         cd ..
 
-    - name: Upload HTML2EXE-big.exe artifact
+    - name: Upload HTML2EXE-big.exe
       uses: actions/upload-artifact@v4
       with:
         name: HTML2EXE-big
         path: ./publish-big/*
 
-    - name: Upload webview-big.zip artifact
+    - name: Upload webview-big.zip
       uses: actions/upload-artifact@v4
       with:
         name: webview-big
         path: ./webview-big.zip
 
-    - name: Build and publish main app
+    - name: Build main app
       run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./publish -p:PublishReadyToRun=true -p:EnableWindowsTargeting=true
 
-    - name: Build and publish WebView
+    - name: Build WebView
       run: dotnet publish HTML2EXE_Webview -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o ./webview_publish -p:EnableWindowsTargeting=true
 
     - name: Create webview.zip
@@ -71,28 +71,28 @@ jobs:
         zip ../webview.zip Webview.exe WebView2Loader.dll
         cd ..
 
-    - name: Upload main app artifact
+    - name: Upload HTML2EXE.exe
       uses: actions/upload-artifact@v4
       with:
         name: HTML2EXE
         path: ./publish/*
 
-    - name: Upload webview.zip artifact
+    - name: Upload webview.zip
       uses: actions/upload-artifact@v4
       with:
         name: webview
         path: ./webview.zip
 
-    - name: Set update = false for offline build
+    - name: Disable updates for offline build
       run: sed -i 's/bool update = .*/bool update = false;/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/HTML2EXE.cs'
 
-    - name: Build and publish HTML2EXE-offline.exe (self-contained)
+    - name: Build main app (offline & self-contained)
       run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o ./publish-offline -p:PublishReadyToRun=true -p:EnableWindowsTargeting=true -p:DefineConstants="OFFLINE_BUILD"
 
     - name: Rename to HTML2EXE-offline.exe
       run: mv "./publish-offline/HTML2EXE.exe" "./publish-offline/HTML2EXE-offline.exe"
 
-    - name: Upload HTML2EXE-offline.exe artifact
+    - name: Upload HTML2EXE-offline.exe
       uses: actions/upload-artifact@v4
       with:
         name: HTML2EXE-offline
@@ -103,9 +103,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
-
     - name: Create latest.json
       run: |
         echo "{
