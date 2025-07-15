@@ -17,7 +17,8 @@ namespace HTML2EXE_2
             public static readonly bool IsBigBuild = false;
         #endif
 
-        private static readonly bool update = true; // Set to false to disable update check
+        // Set to false to disable update check
+        private static readonly bool update = true;
         public static readonly int CurrentVersion = 999; // Updated by GitHub at build
         private static readonly string LatestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
         public static readonly string webview = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";

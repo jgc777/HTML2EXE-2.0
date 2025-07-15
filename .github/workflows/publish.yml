@@ -1,5 +1,4 @@
 name: Publish and release latest version
-
 on:
   workflow_dispatch:
   push:
@@ -84,6 +83,21 @@ jobs:
         name: webview
         path: ./webview.zip
 
+    - name: Set update = false for offline build
+      run: sed -i 's/bool update = .*/bool update = false;/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/HTML2EXE.cs'
+
+    - name: Build and publish HTML2EXE-offline.exe (self-contained)
+      run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o ./publish-offline -p:PublishReadyToRun=true -p:EnableWindowsTargeting=true -p:DefineConstants="OFFLINE_BUILD"
+
+    - name: Rename to HTML2EXE-offline.exe
+      run: mv "./publish-offline/HTML2EXE.exe" "./publish-offline/HTML2EXE-offline.exe"
+
+    - name: Upload HTML2EXE-offline.exe artifact
+      uses: actions/upload-artifact@v4
+      with:
+      name: HTML2EXE-offline
+      path: ./publish-offline/*
+
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -101,6 +115,12 @@ jobs:
           \"url_big\": \"https://github.com/jgc777/HTML2EXE-2.0/releases/download/${{ github.run_number }}/HTML2EXE-big.exe\"
         }" > latest.json
 
+    - name: Download HTML2EXE-offline.exe artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: HTML2EXE-offline
+        path: ./app-offline
+    
     - name: Download main app artifact
       uses: actions/download-artifact@v4
       with:
@@ -134,6 +154,7 @@ jobs:
             - HTML2EXE.exe and webview.zip (both require [.NET 8.0](https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-win-x64.exe)). To use it, just download [HTML2EXE.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE.exe) and run it.
             - latest.json (for auto-update)
             - HTML2EXE-big.exe and webview-big.zip (both are self-contained and do not require .NET 8.0). To use it, just download [HTML2EXE-big.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE-big.exe) and run it.
+            - HTML2EXE-offline.exe (doesn't update and does not require .NET 8.0). To use it, just download [HTML2EXE-offline.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE-offline.exe) and run it.
             > ${{ github.event.head_commit.message }}
             > Diff: ${{ github.event.before }}...${{ github.sha }}
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -143,3 +164,4 @@ jobs:
           ./latest.json
           ./app-big/HTML2EXE-big.exe
           ./webview-big.zip
+          ./app-offline/HTML2EXE-offline.exe
