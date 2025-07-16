@@ -15,19 +15,22 @@ namespace HTML2EXE_2
             public static readonly bool IsBigBuild = true;
         #else
             public static readonly bool IsBigBuild = false;
-        #endif
+#endif
 
-        // Set to false to disable update check
-        private static readonly bool update = true;
-        public static readonly int CurrentVersion = 999; // Updated by GitHub at build
-        private static readonly string LatestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
+        private static readonly bool update = true; // Set to false to disable update check
+        private static readonly string latestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
+        public static readonly int CurrentVersion = 0; // Updated by GitHub at build, version 0 also disables update check
         public static readonly string webview = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview.zip";
         public static readonly string webview_big = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip";
         public static string? webviewURL;
 
         public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
-        private static readonly string TempFilePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
-        public static readonly string tempConfigJson = Path.Combine(tmpPath, "config.json");
+        public static readonly string tmpWebfilesPath = Path.Combine(tmpPath, "webfiles");
+
+        private static readonly string tmpUpdatePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
+        public static readonly string tmpConfigJson = Path.Combine(tmpPath, "config.json");
+        public static readonly string tmpWebviewPath = Path.Combine(tmpPath, "webview.zip");
+        private static readonly string tmpOutputPath = Path.Combine(tmpPath, "out.exe");
 
         public static bool GUI = false;
         private static readonly string guiFlag = Path.Combine(tmpPath, "gui.flag");
@@ -53,15 +56,15 @@ namespace HTML2EXE_2
 
                 if (Directory.Exists(tmpPath)) Directory.Delete(tmpPath, true);
                 Directory.CreateDirectory(tmpPath);
-                Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
+                Directory.CreateDirectory(tmpWebfilesPath);
 
                 CheckForUpdatesAsync(args).Wait();
 
                 if (args.Length > 0) {
                     string? htmlPath = TryGetFileFolderPath(args[0]); // Try to get the file path from the first argument
                     if (string.IsNullOrEmpty(htmlPath)) throw new Exception($"File/Folder not found: {args[0]}"); // If the first argument is still not a file or folder, throw an error
-                    if (Directory.Exists(htmlPath)) new Microsoft.VisualBasic.Devices.Computer().FileSystem.CopyDirectory(htmlPath, Path.Combine(tmpPath, "webfiles"), true); // Copy directory to webfiles
-                    else File.Copy(htmlPath, Path.Combine(tmpPath, "webfiles", Path.GetFileName(htmlPath)), true); // Copy file to webfiles
+                    if (Directory.Exists(htmlPath)) CopyDirectory(htmlPath, tmpWebfilesPath); // Copy directory to webfiles
+                    else File.Copy(htmlPath, Path.Combine(tmpWebfilesPath, Path.GetFileName(htmlPath)), true); // Copy file to webfiles
 
                     // Copy config icon and modify config file
                     if (args.Length >= 3)
@@ -71,13 +74,13 @@ namespace HTML2EXE_2
                         JsonNode config = JsonNode.Parse(File.ReadAllText(argsConfigPath)) ?? new JsonObject(); // Parse the config file
                         
                         string? configIcon = config["icon"]?.ToString(); // Read the icon path from the config file
-                        string? iconPath = (!string.IsNullOrEmpty(configIcon)) ? iconPath = TryGetFilePath(configIcon) : null; // If the icon path is set in the config, check if it exists, otherwise set it to null
+                        string? iconPath = string.IsNullOrEmpty(configIcon) ? null : TryGetFilePath(configIcon); // If the icon path is set in the config, check if it exists, otherwise set it to null
                         if (!string.IsNullOrEmpty(iconPath)) { // If the icon path has been set
                             if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://")) { // If the icon path is a URL
                                 try {
                                     using (var client = new HttpClient()) { // Download the icon to webfiles\icon.ico
                                         var data = client.GetByteArrayAsync(iconPath).Result;
-                                        File.WriteAllBytes(Path.Combine(tmpPath, "webfiles", "icon.ico"), data);
+                                        File.WriteAllBytes(Path.Combine(tmpWebfilesPath, "icon.ico"), data);
                                     }
                                     config["icon"] = Path.Combine("webfiles", "icon.ico"); // Modify the config icon path to point to the downloaded icon
                                 }
@@ -88,16 +91,15 @@ namespace HTML2EXE_2
                             }
                             else {
                                 config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath)); // Set the icon
-                                if (File.Exists(iconPath)) File.Copy(iconPath, Path.Combine(tmpPath, "webfiles", Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
+                                if (File.Exists(iconPath)) File.Copy(iconPath, Path.Combine(tmpWebfilesPath, Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
                             }
                         }
-                        File.WriteAllText(Path.Combine(tmpPath, "config.json"), config.ToString()); // Save the config file
+                        File.WriteAllText(tmpConfigJson, config.ToString()); // Save the config file
                     }
 
                     string output = Path.Combine(Environment.CurrentDirectory, "out.exe"); // Define default output path
-                    string tempConfigJson = Path.Combine(tmpPath, "config.json");
-                    if (File.Exists(tempConfigJson)) { // If a config file exists, read it and set the output name and webview URL
-                        JsonNode config = JsonNode.Parse(File.ReadAllText(tempConfigJson)) ?? new JsonObject();
+                    if (File.Exists(tmpConfigJson)) { // If a config file exists, read it and set the output name and webview URL
+                        JsonNode config = JsonNode.Parse(File.ReadAllText(tmpConfigJson)) ?? new JsonObject();
                         // If the config file has a title, use it as the output name
                         if (config["title"] is not null) output = Path.Combine(Environment.CurrentDirectory, $"{config["title"]}.exe");
                         webviewURL = (config["include_runtime"]?.GetValue<bool>() ?? IsBigBuild) ? webview_big : webview; // Set the webview URL based on the config or the build type
@@ -105,7 +107,8 @@ namespace HTML2EXE_2
                     else webviewURL = IsBigBuild ? webview_big : webview; // Set the webview URL based on the build type
 
                     if (args.Length >= 2 && args[1]!=null) output = args[1]; // If the second argument is provided, use it as the output path
-                    if (Directory.GetParent(output) is DirectoryInfo parentDirectory && !Directory.Exists(parentDirectory.ToString())) Directory.CreateDirectory(parentDirectory.ToString()); // Ensure the output directory exists
+                    if (Directory.GetParent(output) is DirectoryInfo parentDirectory && !Directory.Exists(parentDirectory.ToString()))
+                        Directory.CreateDirectory(parentDirectory.ToString()); // Ensure the output directory exists
 
                     build(output); // Build the executable
                 }
@@ -130,26 +133,29 @@ namespace HTML2EXE_2
 
         public static async Task CheckForUpdatesAsync(string[] args)
         {
-            if (update) try
+            #if !DEBUG // No updates in debug mode
+            if (CurrentVersion != 0 && update) try
             {
                 log("Checking for updates...");
                 using HttpClient client = new HttpClient();
-                string json = await client.GetStringAsync(LatestJsonUrl);
+                string json = await client.GetStringAsync(latestJsonUrl);
 
                 using JsonDocument doc = JsonDocument.Parse(json);
                 int latestVersion = doc.RootElement.GetProperty("version").GetInt32();
-                string? downloadUrl = IsBigBuild ? doc.RootElement.GetProperty("url_big").GetString() : doc.RootElement.GetProperty("url").GetString();
+                string downloadUrl =  doc.RootElement.GetProperty(IsBigBuild ? "url_big" : "url").GetString()!;
 
-                if (latestVersion > CurrentVersion && doc.RootElement.GetProperty("update").GetBoolean() && !string.IsNullOrEmpty(downloadUrl))
+                if (latestVersion > CurrentVersion &&
+                doc.RootElement.GetProperty("update").GetBoolean() &&
+                !string.IsNullOrEmpty(downloadUrl))
                 {
                     log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true);
                     byte[] data = await client.GetByteArrayAsync(downloadUrl);
-                    await File.WriteAllBytesAsync(TempFilePath, data);
-                    string? argsString = null;
+                    await File.WriteAllBytesAsync(tmpUpdatePath, data);
+                    string argsString = "";
                     if (args.Length > 0) argsString = string.Join(" ", args.Select(arg => $"\"{arg}\"")); // Join the arguments into a single string, escaping them
                     using (Process update = new Process()) {
                         update.StartInfo = new ProcessStartInfo {
-                            FileName = TempFilePath,
+                            FileName = tmpUpdatePath,
                             Arguments = argsString,
                             UseShellExecute = false,
                             WorkingDirectory = Environment.CurrentDirectory,
@@ -172,16 +178,13 @@ namespace HTML2EXE_2
             {
                 log($"Error searching for updates: \"{ex.Message}\". Try updating manually", true, false, true);
             }
+            #endif
         }
 
         public static void build(string output)
-        {
-            Directory.CreateDirectory(tmpPath);
-            if (!Directory.Exists(Path.Combine(tmpPath, "webfiles"))) Directory.CreateDirectory(Path.Combine(tmpPath, "webfiles"));
-
-            string configPath = Path.Combine(tmpPath, "config.json");
-            bool hasConfig = File.Exists(configPath);
-            JsonNode config = hasConfig ? JsonNode.Parse(File.ReadAllText(configPath)) ?? new JsonObject() : new JsonObject(); // Parse the config file if it exists, otherwise create a new JsonObject
+        { // Builds the final executable
+            bool hasConfig = File.Exists(tmpConfigJson);
+            JsonNode config = hasConfig ? JsonNode.Parse(File.ReadAllText(tmpConfigJson)) ?? new JsonObject() : new JsonObject(); // Parse the config file if it exists, otherwise create a new JsonObject
             string iexpressConfig = $@"[Version]
 Class=IEXPRESS
 SEDVersion=3
@@ -235,27 +238,31 @@ SourceFiles0=.\
 %FILE2%=
 {(hasConfig ? "%FILE3%=" : "")}
 ";
-            string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
-
             log("Started building");
-            log("Downloading webview.zip...");
-            using (HttpClient client = new HttpClient()) {
-                var response = client.GetAsync(webviewURL).Result;
-                response.EnsureSuccessStatusCode();
-                var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
-                string tempZipPath = Path.Combine(tmpPath, "webview.zip");
-                File.WriteAllBytes(tempZipPath, fileBytes);
 
-                log("Extracting webview.zip...");
-                ZipFile.ExtractToDirectory(tempZipPath, tmpPath);
-                File.Delete(tempZipPath);
+            log("Writing IExpress config...");
+            string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
+            File.WriteAllText(iexpressConfigPath, iexpressConfig);
+
+            if (!File.Exists(tmpWebviewPath)) {
+                log("Downloading webview.zip...");
+                using (HttpClient client = new HttpClient())
+                {
+                    var response = client.GetAsync(webviewURL).Result;
+                    response.EnsureSuccessStatusCode();
+                    var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
+                    File.WriteAllBytes(tmpWebviewPath, fileBytes);
+                }
             }
 
+            log("Extracting webview.zip...");
+            ZipFile.ExtractToDirectory(tmpWebviewPath, tmpPath);
+            File.Delete(tmpWebviewPath);
+
             log("Compressing web files...");
-            ZipFile.CreateFromDirectory(Path.Combine(tmpPath, "webfiles"), Path.Combine(tmpPath, "webfiles.zip"), CompressionLevel.SmallestSize, true);
+            ZipFile.CreateFromDirectory(tmpWebfilesPath, Path.Combine(tmpPath, "webfiles.zip"), CompressionLevel.SmallestSize, true);
             
             log("Building...");
-            File.WriteAllText(iexpressConfigPath, iexpressConfig);
             using (Process iexpress = new Process())
             {
                 iexpress.StartInfo = new ProcessStartInfo {
@@ -273,7 +280,7 @@ SourceFiles0=.\
                 log($"IExpress finished with code {iexpress.ExitCode}");
             }
 
-            string ? configIcon = config?["icon"]?.ToString();
+            string? configIcon = config?["icon"]?.ToString();
             if (!string.IsNullOrEmpty(configIcon)) { // If there is a config icon, add it to the executable using rcedit
                 // Check if rcedit is installed
                 bool rceditExists = false;
@@ -322,7 +329,7 @@ SourceFiles0=.\
                     {
                         FileName = "rcedit",
                         // Add the icon to the executable, checking if it's a full path or relative to the tmpPath
-                        Arguments = $"\"{Path.Combine(tmpPath, "out.exe")}\" --set-icon \"{(File.Exists(configIcon) ? configIcon : Path.Combine(tmpPath, configIcon))}\"",
+                        Arguments = $"\"{tmpOutputPath}\" --set-icon \"{(File.Exists(configIcon) ? configIcon : Path.Combine(tmpPath, configIcon))}\"",
                         CreateNoWindow = true,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
@@ -335,7 +342,7 @@ SourceFiles0=.\
             }
 
             log("Cleaning up...");
-            File.Move(Path.Combine(tmpPath, "out.exe"), output, true);
+            File.Move(tmpOutputPath, output, true);
 
             log("Finished building!", false, true, GUI);
             log($"Output: {output}", false, true);
@@ -358,6 +365,17 @@ SourceFiles0=.\
         public static string? TryGetFileFolderPath(string path)
         { // Returns the full path of a file or folder if it exists, otherwise returns null
             return (TryGetFilePath(path) ?? TryGetFolderPath(path) ?? null);
+        }
+
+        public static void CopyDirectory(string sourceDir, string destinationDir, bool overwrite = true)
+        { // Copies a directory and its contents to a new location, optionally overwriting existing files
+            if (!Directory.Exists(destinationDir)) Directory.CreateDirectory(destinationDir);
+
+            foreach (var file in Directory.GetFiles(sourceDir))
+                File.Copy(file, Path.Combine(destinationDir, Path.GetFileName(file)), overwrite); // Copy files from source to destination
+
+            foreach (var directory in Directory.GetDirectories(sourceDir))
+                CopyDirectory(directory, Path.Combine(destinationDir, Path.GetFileName(directory))); // Recursively copy directories from source to destination
         }
 
         public static void log(string message = "", bool isError = false, bool isGreen = false, bool messageBox = false)

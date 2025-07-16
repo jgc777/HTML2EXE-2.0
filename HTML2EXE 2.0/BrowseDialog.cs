@@ -5,7 +5,7 @@ namespace HTML2EXE_2
 {
     public partial class BrowseDialog : Form
     {
-        public ConfigDialog configDialog;
+        public ConfigDialog? configDialog;
 
         public BrowseDialog()
         {
@@ -23,9 +23,7 @@ namespace HTML2EXE_2
             string htmlPath = openFileDialog1.FileName;
             if (File.Exists(htmlPath))
             {
-                string destinationPath = Path.Combine(HTML2EXE.tmpPath, "webfiles");
-                Directory.CreateDirectory(destinationPath);
-                File.Copy(htmlPath, Path.Combine(destinationPath, Path.GetFileName(htmlPath)), true);
+                File.Copy(htmlPath, Path.Combine(HTML2EXE.tmpWebfilesPath, Path.GetFileName(htmlPath)), true);
                 this.Visible = false;
                 configDialog = new ConfigDialog();
                 configDialog.ShowDialog();
@@ -40,9 +38,7 @@ namespace HTML2EXE_2
 
             if (Directory.Exists(folderPath))
             {
-                string destinationPath = Path.Combine(HTML2EXE.tmpPath, "webfiles");
-
-                CopyDirectory(folderPath, destinationPath);
+                HTML2EXE.CopyDirectory(folderPath, HTML2EXE.tmpWebfilesPath);
 
                 this.Visible = false;
                 configDialog = new ConfigDialog();
@@ -51,22 +47,7 @@ namespace HTML2EXE_2
             this.Close();
         }
 
-        private void CopyDirectory(string sourceDir, string destinationDir)
-        {
-            if (!Directory.Exists(destinationDir)) Directory.CreateDirectory(destinationDir);
-
-            foreach (var file in Directory.GetFiles(sourceDir))
-            {
-                string destFile = Path.Combine(destinationDir, Path.GetFileName(file));
-                File.Copy(file, destFile, true);
-            }
-
-            foreach (var directory in Directory.GetDirectories(sourceDir))
-            {
-                string destDir = Path.Combine(destinationDir, Path.GetFileName(directory));
-                CopyDirectory(directory, destDir);
-            }
-        }
+        
 
         private void cancelBtn_Click(object sender, EventArgs e)
         {
@@ -75,16 +56,9 @@ namespace HTML2EXE_2
 
         private void noFileBtn_Click_1(object sender, EventArgs e)
         {
-            string destinationPath = Path.Combine(HTML2EXE.tmpPath, "webfiles");
-            Directory.CreateDirectory(destinationPath);
             this.Visible = false;
             configDialog = new ConfigDialog();
             configDialog.ShowDialog();
-            this.Close();
-        }
-
-        private void cancelBtn_Click_1(object sender, EventArgs e)
-        {
             this.Close();
         }
 

@@ -6,14 +6,20 @@ namespace Webview
     [SupportedOSPlatform("windows6.1")] // Remove warnings
     internal static class Webview
     {
+        private static readonly string webfilesZipPath = Path.Combine(Environment.CurrentDirectory, "webfiles.zip");
+        public static readonly string webfilesPath = Path.Combine(Environment.CurrentDirectory, "webfiles");
+        public static readonly String appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HTML2EXE");
+        public static readonly string configPath = Path.Combine(Environment.CurrentDirectory, "config.json");
+        
+        
         [STAThread]
         static void Main(string[] args)
         {
             try
             {
-                if (File.Exists(Path.Combine(Environment.CurrentDirectory, "webfiles.zip"))) {
-                    ZipFile.ExtractToDirectory(Path.Combine(Environment.CurrentDirectory, "webfiles.zip"), Environment.CurrentDirectory);
-                    File.Delete(Path.Combine(Environment.CurrentDirectory, "webfiles.zip"));
+                if (File.Exists(webfilesZipPath)) {
+                    ZipFile.ExtractToDirectory(webfilesZipPath, Environment.CurrentDirectory);
+                    File.Delete(webfilesZipPath);
                 }
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

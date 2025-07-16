@@ -148,10 +148,10 @@ jobs:
         name: "HTML2EXE 2.${{ github.run_number }}"
         tag: ${{ github.run_number }}
         body:  |
-            - HTML2EXE.exe and webview.zip (both require [.NET 8.0](https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-win-x64.exe)). To use it, just download [HTML2EXE.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE.exe) and run it.
-            - latest.json (for auto-update)
-            - HTML2EXE-big.exe and webview-big.zip (both are self-contained and do not require .NET 8.0). To use it, just download [HTML2EXE-big.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE-big.exe) and run it.
-            - HTML2EXE-offline.exe (doesn't update and does not require .NET 8.0). To use it, just download [HTML2EXE-offline.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE-offline.exe) and run it.
+            - **HTML2EXE.exe** and webview.zip (both require [.NET 8.0](https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-win-x64.exe)). To use it, just download [HTML2EXE.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE.exe) and run it.
+            - **latest.json** (for auto-update)
+            - **HTML2EXE-big.exe** and webview-big.zip (both are self-contained and do not require .NET 8.0). To use it, just download [HTML2EXE-big.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE-big.exe) and run it.
+            - **HTML2EXE-offline.exe** (does not update and does not require .NET 8.0). To use it, just download [HTML2EXE-offline.exe](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE-offline.exe) and run it.
             > ${{ github.event.head_commit.message }}
             > Diff: ${{ github.event.before }}...${{ github.sha }}
         token: ${{ secrets.GITHUB_TOKEN }}

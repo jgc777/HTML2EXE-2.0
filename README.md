@@ -8,7 +8,7 @@
 
 <p align="center"><img src="icon.png" width="150"></p>
 
-A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less size and it's more customizable.
+A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less size and it's more customizable. Note that there are some good alternatives such as [Electron](https://www.electronjs.org/docs/latest/), [NW.js](https://nwjs.readthedocs.io/en/latest/) or [Tauri](https://v2.tauri.app/start/).
 
 ## Features
 - Convert HTML files (really any chromium-compatible files) and folders to EXE files
@@ -58,7 +58,7 @@ It's a JSON file which defines some webview settings. It can be loaded in the CL
 | `block_close`      | boolean  | If the window should be blocked from closing.                              |
 | `additional_cmd`   | string   | Additional command to run in the webfiles folder after starting the window (in a hidden cmd.exe window, to start batch files use call to stay hidden or start to create a window). |
 
-Note that `include_runtime` is only used in the config for the HTML2EXE compiler (not in the webview). `icon` is a full path only during the compilation.
+Options like `include_runtime`, and `webview` are only used for the HTML2EXE compiler, not for the webview itself. `icon` is a full path only during the compilation.
 
 ## Contributing
 Use GitHub pull requests, discussions or issues to report problems, suggest features, etc. It will be appreciated.

@@ -14,8 +14,8 @@ namespace HTML2EXE_2
         {
             this.Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
             this.Visible = true;
-            JsonNode config = JsonNode.Parse(File.ReadAllText(Path.Combine(HTML2EXE.tmpPath, "config.json"))) ?? new JsonObject();
-            string output = (config["title"]?.ToString() is not null) ? Path.Combine(Environment.CurrentDirectory, $"{config["title"]?.ToString()}.exe") : Path.Combine(Environment.CurrentDirectory, "out.exe");
+            JsonNode config = JsonNode.Parse(File.ReadAllText(HTML2EXE.tmpConfigJson)) ?? new JsonObject();
+            string output = Path.Combine(Environment.CurrentDirectory, (config["title"]?.ToString() is not null) ?  $"{config["title"]!.ToString()}.exe" : "out.exe");
             // Set the output path using the config title or default to "out.exe"
             try {
                 HTML2EXE.build(output);

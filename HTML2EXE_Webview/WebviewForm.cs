@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 
 namespace Webview
 {
+
     [SupportedOSPlatform("windows6.1")] // Remove warnings
     public partial class WebviewForm : Form
     {
@@ -12,13 +13,11 @@ namespace Webview
         public WebviewForm()
         {
             InitializeComponent();
-            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HTML2EXE"); // Get AppData folder path
             string folderName = "default"; // Default folder name
             try { // Try to read the title from config.json
-                string configPath = Path.Combine(Environment.CurrentDirectory, "config.json");
-                if (File.Exists(configPath))
+                if (File.Exists(Webview.configPath))
                 {
-                    var configJson = JsonNode.Parse(File.ReadAllText(configPath));
+                    var configJson = JsonNode.Parse(File.ReadAllText(Webview.configPath));
                     if (!string.IsNullOrEmpty(configJson!["title"]?.ToString()))
                         folderName = configJson["title"]!.ToString();
                 }
@@ -26,7 +25,7 @@ namespace Webview
             catch { } // Ignore errors in reading config.json
 
             // Initialize WebView2 with user data folder
-            webView2.CreationProperties = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties{UserDataFolder = Path.Combine(appData, folderName) };
+            webView2.CreationProperties = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties{UserDataFolder = Path.Combine(Webview.appData, folderName) };
             InitializeWebview();
         }
         async void InitializeWebview()
@@ -34,16 +33,13 @@ namespace Webview
             try
             {
                 FormClosing += WebView_FormClosing;
-                string configPath = Path.Combine(Environment.CurrentDirectory, "config.json"); // Config file path
-                if (File.Exists(configPath)) config = JsonNode.Parse(await File.ReadAllTextAsync(configPath)) ?? new JsonObject(); // Parse JSON config file
-#pragma warning disable CS8604
-                if (!string.IsNullOrEmpty(config["url"]?.ToString())) webView2.Source = new Uri(Environment.ExpandEnvironmentVariables(config["url"]?.ToString())); // Set config URL
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
+                if (File.Exists(Webview.configPath)) config = JsonNode.Parse(await File.ReadAllTextAsync(Webview.configPath)) ?? new JsonObject(); // Parse JSON config file
+
+                if (!string.IsNullOrEmpty(config["url"]?.ToString())) webView2.Source = new Uri(Environment.ExpandEnvironmentVariables(config["url"]!.ToString()!)); // Set config URL
                 else
                 {
                     string? url = null; // Initialize URL to null
-                    string webfilesPath = Path.Combine(Environment.CurrentDirectory, "webfiles"); // Path to webfiles folder
-                    string[] filesInWebfiles = Directory.EnumerateFiles(webfilesPath).ToArray(); // Get all files in webfiles folder
+                    string[] filesInWebfiles = Directory.EnumerateFiles(Webview.webfilesPath).ToArray(); // Get all files in webfiles folder
                     var htmlFiles = filesInWebfiles.Where(file => file.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".htm", StringComparison.OrdinalIgnoreCase)).ToArray(); // Get all HTML files in webfiles folder
 
                     // First priority: If there is only one file, use it
@@ -53,11 +49,11 @@ namespace Webview
                     if (htmlFiles.Length == 1)
                         url = htmlFiles.First();
                     // Third priority: If there is a index.html file, use it
-                    else if (File.Exists(Path.Combine(webfilesPath, "index.html")))
-                        url = Path.Combine(webfilesPath, "index.html");
+                    else if (File.Exists(Path.Combine(Webview.webfilesPath, "index.html")))
+                        url = Path.Combine(Webview.webfilesPath, "index.html");
                     // Fourth priority: If there is a index.htm file, use it
-                    else if (File.Exists(Path.Combine(webfilesPath, "index.htm")))
-                        url = Path.Combine(webfilesPath, "index.htm");
+                    else if (File.Exists(Path.Combine(Webview.webfilesPath, "index.htm")))
+                        url = Path.Combine(Webview.webfilesPath, "index.htm");
                     // Fifth priority: if there are 2 files in webfiles and only one is not an .ico file, use the other file
                     else if (filesInWebfiles.Length == 2 // 2 files
                         && filesInWebfiles.Any(file => file.EndsWith(".ico", StringComparison.OrdinalIgnoreCase)) // At least one is an .ico file
@@ -68,7 +64,7 @@ namespace Webview
                     else if (htmlFiles.Length > 0)
                         url = htmlFiles.First();
 
-                    webView2.Source = new Uri(url ?? webfilesPath); // Set url to the determined URL or webfiles folder
+                    webView2.Source = new Uri(url ?? Webview.webfilesPath); // Set url to the determined URL or webfiles folder
                 }
 
                 if (config["maximized"]?.GetValue<bool>() ?? false) WindowState = FormWindowState.Maximized; // Maximize windo

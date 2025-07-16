@@ -124,7 +124,7 @@
             cancelBtn.TabIndex = 8;
             cancelBtn.Text = "Cancel";
             cancelBtn.UseVisualStyleBackColor = true;
-            cancelBtn.Click += cancelBtn_Click_1;
+            cancelBtn.Click += cancelBtn_Click;
             // 
             // websiteBtn
             // 
