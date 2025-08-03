@@ -8,7 +8,10 @@
 
 <p align="center"><img src="icon.png" width="150"></p>
 
-A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less size and it's more customizable. Note that there are some good alternatives such as [Electron](https://www.electronjs.org/docs/latest/), [NW.js](https://nwjs.readthedocs.io/en/latest/) or [Tauri](https://v2.tauri.app/start/).
+A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less size and it's more customizable. Note that there are some good alternatives such as [Electron](https://www.electronjs.org/docs/latest/), [NW.js](https://nwjs.readthedocs.io/en/latest/) or [Tauri](https://v2.tauri.app/start/). Due to iexpress limitations, this program only works in Windows.
+
+## Requirements
+- Windows 10 or later
 
 ## Features
 - Convert HTML files (really any chromium-compatible files) and folders to EXE files
@@ -26,11 +29,12 @@ First of all, [download the program](https://github.com/jgc777/HTML2EXE-2.0/rele
 Just open the program and a GUI will show up with all the options. You can select the HTML file or folder you want to convert (with index.html) or just continue with an empty folder. The program will show a new window with many options and the build button. Press that button and the program will start compiling, and it will show a "Finished Building!" or a "Error" with the compiler log.
 
 ## CLI (Command Line Interface)
-`HTML2EXE HTML OUTPUT CONFIG`
+`HTML2EXE HTML OUTPUT CONFIG WEBVIEW`
 
-- HTML: The HTML file or folder you want to convert. If you select a folder, make sure it contains an index.html file.
+- HTML: The HTML file or folder you want to convert. If you select a folder, make sure it contains a .html file (it's better if it's named index.html).
 - OUTPUT (optional): The output EXE file path. If you don't specify it, the program will create "out.exe".
 - CONFIG (optional): The path to the config.json file. If you don't specify it, the program will use an empty config.json file.
+- WEBVIEW (optional): The path to a local webview.zip file, a folder with webview.zip extracted or a URL to a webview.zip. If you don't specify it, the program will use the latest default webview.
 
 The program will show the log in the terminal.
 

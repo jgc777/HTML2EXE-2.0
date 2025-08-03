@@ -15,7 +15,7 @@ namespace HTML2EXE_2
             public static readonly bool IsBigBuild = true;
         #else
             public static readonly bool IsBigBuild = false;
-#endif
+        #endif
 
         private static readonly bool update = true; // Set to false to disable update check
         private static readonly string latestJsonUrl = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/latest.json";
@@ -62,41 +62,45 @@ namespace HTML2EXE_2
 
                 if (args.Length > 0) {
                     string? htmlPath = TryGetFileFolderPath(args[0]); // Try to get the file path from the first argument
-                    if (string.IsNullOrEmpty(htmlPath)) throw new Exception($"File/Folder not found: {args[0]}"); // If the first argument is still not a file or folder, throw an error
+                    if (string.IsNullOrEmpty(htmlPath)) throw new Exception($"HTML file/folder not found: {args[0]}"); // If the first argument is still not a file or folder, throw an error
                     if (Directory.Exists(htmlPath)) CopyDirectory(htmlPath, tmpWebfilesPath); // Copy directory to webfiles
                     else File.Copy(htmlPath, Path.Combine(tmpWebfilesPath, Path.GetFileName(htmlPath)), true); // Copy file to webfiles
 
                     // Copy config icon and modify config file
                     if (args.Length >= 3)
                     {
-                        string argsConfigPath = TryGetFilePath(args[2]) ?? throw new Exception($"Config file not found: {args[2]}"); // If the config file is still not found, throw an error
-
-                        JsonNode config = JsonNode.Parse(File.ReadAllText(argsConfigPath)) ?? new JsonObject(); // Parse the config file
-                        
-                        string? configIcon = config["icon"]?.ToString(); // Read the icon path from the config file
-                        string? iconPath = string.IsNullOrEmpty(configIcon) ? null : TryGetFilePath(configIcon); // If the icon path is set in the config, check if it exists, otherwise set it to null
-                        if (!string.IsNullOrEmpty(iconPath)) { // If the icon path has been set
-                            if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://")) { // If the icon path is a URL
-                                try {
-                                    using (var client = new HttpClient()) { // Download the icon to webfiles\icon.ico
-                                        var data = client.GetByteArrayAsync(iconPath).Result;
-                                        File.WriteAllBytes(Path.Combine(tmpWebfilesPath, "icon.ico"), data);
+                        JsonNode config = new JsonObject();
+                        string? argsConfigPath = TryGetFilePath(args[2]); // If the config file is still not found, throw an error
+                        if (string.IsNullOrEmpty(argsConfigPath))
+                            log($"Warning: config file not found: {args[2]}",true,false); // If the config file is not found, log a warning and use an empty config
+                        else { // Else read the config file
+                            config = JsonNode.Parse(File.ReadAllText(argsConfigPath)) ?? new JsonObject();
+                            string? configIcon = config["icon"]?.ToString(); // Read the icon path from the config file
+                            string? iconPath = string.IsNullOrEmpty(configIcon) ? null : TryGetFilePath(configIcon); // If the icon path is set in the config, check if it exists, otherwise set it to null
+                            if (!string.IsNullOrEmpty(iconPath)) { // If the icon path has been set
+                                if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://")) { // If the icon path is a URL
+                                    try {
+                                        using (var client = new HttpClient()) { // Download the icon to webfiles\icon.ico
+                                            var data = client.GetByteArrayAsync(iconPath).Result;
+                                            File.WriteAllBytes(Path.Combine(tmpWebfilesPath, "icon.ico"), data);
+                                        }
+                                        config["icon"] = Path.Combine("webfiles", "icon.ico"); // Modify the config icon path to point to the downloaded icon
                                     }
-                                    config["icon"] = Path.Combine("webfiles", "icon.ico"); // Modify the config icon path to point to the downloaded icon
+                                    catch (Exception ex) {
+                                        log($"Error downloading icon: {ex.Message}",true,false);
+                                        config["icon"] = null;
+                                    }
                                 }
-                                catch (Exception ex) {
-                                    MessageBox.Show($"Error downloading icon: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    config["icon"] = null;
+                                else {
+                                    config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath)); // Set the icon
+                                    if (File.Exists(iconPath)) File.Copy(iconPath, Path.Combine(tmpWebfilesPath, Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
                                 }
                             }
-                            else {
-                                config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath)); // Set the icon
-                                if (File.Exists(iconPath)) File.Copy(iconPath, Path.Combine(tmpWebfilesPath, Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
-                            }
+                            File.WriteAllText(tmpConfigJson, config.ToString()); // Save the config file
                         }
-                        File.WriteAllText(tmpConfigJson, config.ToString()); // Save the config file
                     }
 
+                    //Set output path and webview URL
                     string output = Path.Combine(Environment.CurrentDirectory, "out.exe"); // Define default output path
                     if (File.Exists(tmpConfigJson)) { // If a config file exists, read it and set the output name and webview URL
                         JsonNode config = JsonNode.Parse(File.ReadAllText(tmpConfigJson)) ?? new JsonObject();
@@ -106,9 +110,30 @@ namespace HTML2EXE_2
                     }
                     else webviewURL = IsBigBuild ? webview_big : webview; // Set the webview URL based on the build type
 
-                    if (args.Length >= 2 && args[1]!=null) output = args[1]; // If the second argument is provided, use it as the output path
+                    if (args.Length >= 2) {
+                        if (!string.IsNullOrEmpty(args[1])) output = args[1]; // If the second argument is provided, use it as the output path
+                        else log("Warning: no output path provided, using default: out.exe", true, false);
+                    }
                     if (Directory.GetParent(output) is DirectoryInfo parentDirectory && !Directory.Exists(parentDirectory.ToString()))
-                        Directory.CreateDirectory(parentDirectory.ToString()); // Ensure the output directory exists
+                            Directory.CreateDirectory(parentDirectory.ToString()); // Ensure the output directory exists
+
+                    //Set local webview path
+                    if (args.Length >= 4)
+                    {
+                        if (args[3].StartsWith("http://") || args[3].StartsWith("https://")) // If the fourth argument is a URL, set the webview URL
+                        {
+                            webviewURL = args[3];
+                            log($"Using webview URL: {webviewURL}");
+                            return;
+                        }
+
+                        string? webviewPath = TryGetFileFolderPath(args[3]); // Try to get the webview path from the fourth argument
+                        if (string.IsNullOrEmpty(webviewPath)) log($"Warning: webview path not found: {args[3]}", true, false);
+                        else {
+                            if (Directory.Exists(webviewPath)) CopyDirectory(webviewPath, tmpPath);
+                            else File.Copy(webviewPath, tmpWebviewPath, true);
+                        }
+                    }
 
                     build(output); // Build the executable
                 }
@@ -116,7 +141,7 @@ namespace HTML2EXE_2
                 {
                     GUI = true;
                     Console.WriteLine("No arguments provided, starting GUI...");
-                    File.WriteAllText(guiFlag, "");
+                    File.WriteAllText(guiFlag, ""); // Used to close the updater console window when the updated GUI is opened
                     FreeConsole();
                     Application.Run(browseDialog = new BrowseDialog());
                 }
@@ -133,7 +158,9 @@ namespace HTML2EXE_2
 
         public static async Task CheckForUpdatesAsync(string[] args)
         {
-            #if !DEBUG // No updates in debug mode
+#if DEBUG // No updates in debug mode
+            await Task.Delay(0); // Just to keep the method async
+#else
             if (CurrentVersion != 0 && update) try
             {
                 log("Checking for updates...");
@@ -178,7 +205,7 @@ namespace HTML2EXE_2
             {
                 log($"Error searching for updates: \"{ex.Message}\". Try updating manually", true, false, true);
             }
-            #endif
+#endif
         }
 
         public static void build(string output)
@@ -244,20 +271,25 @@ SourceFiles0=.\
             string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
             File.WriteAllText(iexpressConfigPath, iexpressConfig);
 
-            if (!File.Exists(tmpWebviewPath)) {
-                log("Downloading webview.zip...");
-                using (HttpClient client = new HttpClient())
+            if(!(File.Exists(Path.Combine(tmpPath, "Webview.exe")) && File.Exists(Path.Combine(tmpPath, "WebView2Loader.dll")))) // If there is no Webview.exe and WebView2Loader.dll in the tmpPath
+            {
+                if (!File.Exists(tmpWebviewPath)) // If the webview.zip file does not exist download it
                 {
-                    var response = client.GetAsync(webviewURL).Result;
-                    response.EnsureSuccessStatusCode();
-                    var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
-                    File.WriteAllBytes(tmpWebviewPath, fileBytes);
+                    log("Downloading webview.zip...");
+                    if (webviewURL is null) throw new Exception("Error: webview URL is null.");
+                    using (HttpClient client = new HttpClient())
+                    {
+                        var response = client.GetAsync(webviewURL).Result;
+                        response.EnsureSuccessStatusCode();
+                        var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
+                        File.WriteAllBytes(tmpWebviewPath, fileBytes);
+                    }
                 }
-            }
 
-            log("Extracting webview.zip...");
-            ZipFile.ExtractToDirectory(tmpWebviewPath, tmpPath);
-            File.Delete(tmpWebviewPath);
+                log("Extracting webview.zip...");
+                ZipFile.ExtractToDirectory(tmpWebviewPath, tmpPath);
+                File.Delete(tmpWebviewPath);
+            }
 
             log("Compressing web files...");
             ZipFile.CreateFromDirectory(tmpWebfilesPath, Path.Combine(tmpPath, "webfiles.zip"), CompressionLevel.SmallestSize, true);
