@@ -66,7 +66,7 @@ namespace HTML2EXE_2
             }
         }
 
-        private JsonNode generateConfigJson(bool export = false, bool removenulls = true) // Export meass we're saving the config as an exportation and not a build
+        private JsonNode generateConfigJson(bool export = false, bool removenulls = true) // Export means we're saving the config as an exportation and not a build
         {
             // Set checkboxes ignoring includeNETbox
             foreach (var option in checkBoxes.Except(new Dictionary<string, CheckBox> { { "include_runtime", includeNETbox } })) config[option.Key] = option.Value.Checked;
