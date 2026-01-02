@@ -80,14 +80,25 @@ namespace Webview
 
                 MaximizeBox = config["maximizable"]?.GetValue<bool>() ?? true; // Config maximize button
 
-                if (config["resizable"]?.GetValue<bool>() ?? true) FormBorderStyle = FormBorderStyle.Sizable; // Resizable window
+                if (config["resizable"]?.GetValue<bool>() ?? true)
+                {
+                    FormBorderStyle = FormBorderStyle.Sizable; // Resizable window
+                    // Add fullscreen key event handlers
+                    webView2.KeyDown += Webview_KeyDown;
+                    KeyDown += Webview_KeyDown;
+                }
                 else
                 {
                     FormBorderStyle = FormBorderStyle.FixedSingle; // Fixed window
                     MaximizeBox = false; // Disable maximize button
                 }
 
-                if (config["fullscreen"]?.GetValue<bool>() ?? false) enterFullscreen(); // Config fullscreen
+                if (config["fullscreen"]?.GetValue<bool>() ?? false) {
+                    enterFullscreen(); // Config fullscreen
+                    // Remove fullscreen key event handlers
+                    webView2.KeyDown -= Webview_KeyDown;
+                    KeyDown -= Webview_KeyDown;
+                }
 
                 ShowInTaskbar = config["show_in_taskbar"]?.GetValue<bool>() ?? true; // Config show in taskbar
 
@@ -103,9 +114,6 @@ namespace Webview
 
                 await webView2.EnsureCoreWebView2Async(); // Wait for WebView to be initialized
 
-                // Add event handlers
-                webView2.KeyDown += Webview_KeyDown;
-                KeyDown += Webview_KeyDown;
 
                 if (config["title"] is not null) Text = config["title"].ToString(); // Set config title
                 else webView2.CoreWebView2.DocumentTitleChanged += WebView_DocumentTitleChanged; // Set default title
