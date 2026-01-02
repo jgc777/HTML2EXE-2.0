@@ -10,11 +10,15 @@ namespace Webview
     public partial class WebviewForm : Form
     {
         JsonNode config = new JsonObject();
+        public bool isFullscreen = false;
+        private FormWindowState previousWindowState;
+        private FormBorderStyle previousBorderStyle;
         public WebviewForm()
         {
             InitializeComponent();
             string folderName = "default"; // Default folder name
-            try { // Try to read the title from config.json
+            try
+            { // Try to read the title from config.json
                 if (File.Exists(Webview.configPath))
                 {
                     var configJson = JsonNode.Parse(File.ReadAllText(Webview.configPath));
@@ -25,7 +29,7 @@ namespace Webview
             catch { } // Ignore errors in reading config.json
 
             // Initialize WebView2 with user data folder
-            webView2.CreationProperties = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties{UserDataFolder = Path.Combine(Webview.appData, folderName) };
+            webView2.CreationProperties = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties { UserDataFolder = Path.Combine(Webview.appData, folderName) };
             InitializeWebview();
         }
         async void InitializeWebview()
@@ -70,28 +74,25 @@ namespace Webview
                 if (config["maximized"]?.GetValue<bool>() ?? false) WindowState = FormWindowState.Maximized; // Maximize windo
                 else WindowState = FormWindowState.Normal; // Normal window
 
-                if (config["resizable"]?.GetValue<bool>() ?? true) FormBorderStyle = FormBorderStyle.Sizable; // Resizable window
-                else {
-                    FormBorderStyle = FormBorderStyle.FixedSingle; // Fixed window
-                    MaximizeBox = false; // Disable maximize button
-                }
-
                 ControlBox = config["control_box"]?.GetValue<bool>() ?? true; // Config control box
 
                 MinimizeBox = config["minimizable"]?.GetValue<bool>() ?? true; // Config minimize button
 
-                MaximizeBox = config["maximizable"]?.GetValue<bool>() ?? true; // Config minimize button
+                MaximizeBox = config["maximizable"]?.GetValue<bool>() ?? true; // Config maximize button
 
-                if (config["fullscreen"]?.GetValue<bool>() ?? false) // Config fullscreen
+                if (config["resizable"]?.GetValue<bool>() ?? true) FormBorderStyle = FormBorderStyle.Sizable; // Resizable window
+                else
                 {
-                    TopMost = true; // Always on top
-                    FormBorderStyle = FormBorderStyle.None; // No border
-                    WindowState = FormWindowState.Maximized; // Maximize window
+                    FormBorderStyle = FormBorderStyle.FixedSingle; // Fixed window
+                    MaximizeBox = false; // Disable maximize button
                 }
+
+                if (config["fullscreen"]?.GetValue<bool>() ?? false) enterFullscreen(); // Config fullscreen
 
                 ShowInTaskbar = config["show_in_taskbar"]?.GetValue<bool>() ?? true; // Config show in taskbar
 
-                if (config["icon"] is not null) {
+                if (config["icon"] is not null)
+                {
 #pragma warning disable CS8602
                     Icon = new Icon(config["icon"].ToString()); // Config icon
                     ShowIcon = true; // Show icon
@@ -102,44 +103,33 @@ namespace Webview
 
                 await webView2.EnsureCoreWebView2Async(); // Wait for WebView to be initialized
 
+                // Add event handlers
+                webView2.KeyDown += Webview_KeyDown;
+                KeyDown += Webview_KeyDown;
+
                 if (config["title"] is not null) Text = config["title"].ToString(); // Set config title
                 else webView2.CoreWebView2.DocumentTitleChanged += WebView_DocumentTitleChanged; // Set default title
 
                 webView2.CoreWebView2.Settings.AreDefaultContextMenusEnabled = config["context_menu"]?.GetValue<bool>() ?? false; // Config context menu
-                
+
                 webView2.CoreWebView2.Settings.AreDevToolsEnabled = config["dev_tools"]?.GetValue<bool>() ?? false; // Config dev tools
-                
+
                 webView2.CoreWebView2.Settings.IsZoomControlEnabled = config["zoom_control"]?.GetValue<bool>() ?? false; // Config zoom
-                
+
                 TopMost = config["always_on_top"]?.GetValue<bool>() ?? false; // Always on top
 
-                webView2.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) => { // Fullscreen change event
-                    if (config["fullscreen"] is not null) return; // If fullscreen is set in config return
-                    if (webView2.CoreWebView2.ContainsFullScreenElement) // If fullscreen
-                    {
-                        TopMost = true; // Always on top
-                        FormBorderStyle = FormBorderStyle.None; // No border
-                        if (WindowState == FormWindowState.Maximized) WindowState = FormWindowState.Normal; // Unmaximize window to avoid problems
-                        WindowState = FormWindowState.Maximized; // Maximize window
-                    }
-                    else
-                    {
-                        TopMost = config["always_on_top"]?.GetValue<bool>() ?? false; // Set always on top
-                        FormBorderStyle = FormBorderStyle.Sizable; // Border
-                        if (config["maximized"]?.GetValue<bool>() ?? false) WindowState = FormWindowState.Maximized; // Config maximize
-                        else WindowState = FormWindowState.Normal; // Unmaximize
-                    }
-                };
+                webView2.CoreWebView2.ContainsFullScreenElementChanged += fulscreenUpdate;
 
                 webView2.Visible = true; // Show WebView
 
-                if (config["additional_cmd"] is not null) { // Config additional command
+                if (config["additional_cmd"] is not null)
+                { // Config additional command
                     Process process = new Process();
                     process.StartInfo = new ProcessStartInfo
                     {
-                        FileName = "cmd",
+                        FileName = "cmd.exe",
                         Arguments = $"/c {config["additional_cmd"].ToString()}",
-                        WorkingDirectory = Path.Combine(Environment.CurrentDirectory, "webfiles"),
+                        WorkingDirectory = Webview.webfilesPath,
                         UseShellExecute = false,
                         CreateNoWindow = true
                     };
@@ -157,7 +147,7 @@ namespace Webview
                 Close(); // Close form on error
             }
         }
-        void WebView_DocumentTitleChanged(object? sender, object e)
+        private void WebView_DocumentTitleChanged(object? sender, object e)
         {
             Text = webView2.CoreWebView2.DocumentTitle;
         }
@@ -165,7 +155,40 @@ namespace Webview
         {
             if (config["block_close"]?.GetValue<bool>() ?? false) e.Cancel = true; // Block close event
         }
-        private void webView21_Click(object sender, EventArgs e) {}
-        private void WebviewForm_Load(object sender, EventArgs e) {}
+
+        public void enterFullscreen() {
+            previousBorderStyle = FormBorderStyle;
+            previousWindowState = WindowState;
+            isFullscreen = true;
+
+            FormBorderStyle = FormBorderStyle.None;
+            if (WindowState == FormWindowState.Maximized) WindowState = FormWindowState.Normal; // Unmaximize window to avoid problems
+            WindowState = FormWindowState.Maximized; // Maximize window
+        }
+        public void exitFullscreen() {
+            FormBorderStyle = previousBorderStyle;
+            WindowState = previousWindowState;
+            isFullscreen = false;
+        }
+        public void toggleFullscreen() {
+            if (FormBorderStyle == FormBorderStyle.None) exitFullscreen();
+            else enterFullscreen();
+        }
+        private void fulscreenUpdate(object? sender, object e) { // Fullscreen change event
+            if (config["fullscreen"] is not null) return; // If fullscreen is set in config return
+            if (webView2.CoreWebView2.ContainsFullScreenElement) enterFullscreen();
+            else exitFullscreen();
+        }
+        private void Webview_KeyDown(object? sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.F11) {
+                toggleFullscreen();
+                e.Handled = true;
+            }
+            if (e.KeyCode == Keys.Escape && isFullscreen)
+            {
+                exitFullscreen();
+                e.Handled = true;
+            }
+        }
     }
 }

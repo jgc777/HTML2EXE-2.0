@@ -41,7 +41,6 @@
             resources.ApplyResources(webView2, "webView2");
             webView2.Name = "webView2";
             webView2.ZoomFactor = 1D;
-            webView2.Click += webView21_Click;
             // 
             // WebviewForm
             // 
@@ -50,7 +49,6 @@
             Controls.Add(webView2);
             Name = "WebviewForm";
             ShowIcon = false;
-            Load += WebviewForm_Load;
             ((System.ComponentModel.ISupportInitialize)webView2).EndInit();
             ResumeLayout(false);
         }
