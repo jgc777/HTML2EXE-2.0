@@ -102,7 +102,8 @@ namespace Webview
 
                 ShowInTaskbar = config["show_in_taskbar"]?.GetValue<bool>() ?? true; // Config show in taskbar
 
-                if (config["icon"] is not null)
+                if (config["icon"] is null) webView2.NavigationCompleted += WebView2_NavigationCompleted;
+                else
                 {
 #pragma warning disable CS8602
                     Icon = new Icon(config["icon"].ToString()); // Config icon
@@ -198,5 +199,43 @@ namespace Webview
                 e.Handled = true;
             }
         }
+        private async void WebView2_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e) {
+            try {
+                ShowIcon = false;
+                string script = @"
+                (() => {
+                    let icon = document.querySelector('link[rel~=""icon""]');
+                    return icon ? icon.href : '';
+                })();";
+
+                string result = await webView2.ExecuteScriptAsync(script);
+                string faviconUrl = result.Trim('"');
+
+                if (string.IsNullOrEmpty(faviconUrl)) { // Use default favicon location if none found
+                    Uri uri = webView2.Source;
+                    faviconUrl = $"{uri.Scheme}://{uri.Host}/favicon.ico";
+                }
+
+                using HttpClient client = new HttpClient();
+                byte[] bytes = await client.GetByteArrayAsync(faviconUrl);
+                using MemoryStream ms = new MemoryStream(bytes);
+                Icon icon;
+                try {
+                    icon = new Icon(ms);
+                }
+                catch { // Try to convert to bitmap if icon loading fails
+                    ms.Position = 0;
+                    using Bitmap bmp = new Bitmap(ms);
+                    icon = Icon.FromHandle(bmp.GetHicon());
+                }
+
+                Icon = icon;
+                ShowIcon = true;
+            }
+            catch { // Ignore icon errors
+            }
+        }
+
+
     }
 }

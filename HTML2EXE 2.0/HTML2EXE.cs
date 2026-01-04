@@ -73,30 +73,35 @@ namespace HTML2EXE_2
                         string? argsConfigPath = TryGetFilePath(args[2]); // If the config file is still not found, throw an error
                         if (string.IsNullOrEmpty(argsConfigPath))
                             log($"Warning: config file not found: {args[2]}",true,false); // If the config file is not found, log a warning and use an empty config
-                        else { // Else read the config file
+                        else {
                             config = JsonNode.Parse(File.ReadAllText(argsConfigPath)) ?? new JsonObject();
                             string? configIcon = config["icon"]?.ToString(); // Read the icon path from the config file
-                            string? iconPath = string.IsNullOrEmpty(configIcon) ? null : TryGetFilePath(configIcon); // If the icon path is set in the config, check if it exists, otherwise set it to null
-                            if (!string.IsNullOrEmpty(iconPath)) { // If the icon path has been set
-                                if (iconPath.StartsWith("http://") || iconPath.StartsWith("https://")) { // If the icon path is a URL
-                                    try {
-                                        using (var client = new HttpClient()) { // Download the icon to webfiles\icon.ico
-                                            var data = client.GetByteArrayAsync(iconPath).Result;
-                                            File.WriteAllBytes(Path.Combine(tmpWebfilesPath, "icon.ico"), data);
-                                        }
-                                        config["icon"] = Path.Combine("webfiles", "icon.ico"); // Modify the config icon path to point to the downloaded icon
-                                    }
-                                    catch (Exception ex) {
-                                        log($"Error downloading icon: {ex.Message}",true,false);
-                                        config["icon"] = null;
+                            if (!string.IsNullOrEmpty(configIcon)) {
+                                if (configIcon.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                                    configIcon.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) {
+                                    using (var client = new HttpClient()) {
+                                        var data = client.GetByteArrayAsync(configIcon).Result;
+                                        File.WriteAllBytes(Path.Combine(tmpWebfilesPath, "icon.ico"), data);
+                                        config["icon"] = Path.Combine("webfiles", "icon.ico");
+                                        log($"Downloaded icon from URL: {configIcon}");
                                     }
                                 }
                                 else {
-                                    config["icon"] = Path.Combine("webfiles", Path.GetFileName(iconPath)); // Set the icon
-                                    if (File.Exists(iconPath)) File.Copy(iconPath, Path.Combine(tmpWebfilesPath, Path.GetFileName(iconPath)), true); // Copy the icon to the webfiles directory
+                                    string? iconPath = TryGetFilePath(configIcon);
+                                    if (!string.IsNullOrEmpty(iconPath)) {
+                                        var iconName = Path.GetFileName(iconPath);
+                                        File.Copy(iconPath, Path.Combine(tmpWebfilesPath, iconName), true);
+                                        config["icon"] = Path.Combine("webfiles", iconName);
+                                        log($"Loaded icon: {iconPath}");
+                                    }
+                                    else {
+                                        log($"Warning: icon file not found: {configIcon}", true, false);
+                                        config["icon"] = null;
+                                    }
                                 }
+
+                                File.WriteAllText(tmpConfigJson, config.ToString()); // Save the config file
                             }
-                            File.WriteAllText(tmpConfigJson, config.ToString()); // Save the config file
                         }
                     }
 
