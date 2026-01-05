@@ -1,4 +1,8 @@
-# <p align="center"><img src="icon.png" width="150"><br>HTML2EXE 2.0</p>
+<div align="center">
+<img src="icon.png" width="150"><br>
+<h1>HTML2EXE 2.0</h1>
+</div>
+
 ![.NET](https://img.shields.io/badge/.NET-5C2D91?logo=.net&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-%23239120.svg?logoColor=white)
 ![Converter](https://img.shields.io/badge/Converter-gray)
