@@ -10,14 +10,15 @@ namespace Webview
         public static readonly string webfilesPath = Path.Combine(Environment.CurrentDirectory, "webfiles");
         public static readonly string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HTML2EXE");
         public static readonly string configPath = Path.Combine(Environment.CurrentDirectory, "config.json");
-        
-        
+
+
         [STAThread]
         static void Main(string[] args)
         {
             try
             {
-                if (File.Exists(webfilesZipPath)) {
+                if (File.Exists(webfilesZipPath))
+                {
                     ZipFile.ExtractToDirectory(webfilesZipPath, Environment.CurrentDirectory);
                     File.Delete(webfilesZipPath);
                 }

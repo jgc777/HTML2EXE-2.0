@@ -43,8 +43,8 @@ namespace HTML2EXE_2
 
         public void ConfigDialog_Load(object sender, EventArgs e)
         {
-            this.Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
-            this.includeNETbox.Checked = HTML2EXE.IsBigBuild; // Set the include .NET runtime checkbox based on the build type
+            Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
+            includeNETbox.Checked = HTML2EXE.IsBigBuild; // Set the include .NET runtime checkbox based on the build type
         }
 
         private void okBtn_Click(object sender, EventArgs e)
@@ -56,7 +56,7 @@ namespace HTML2EXE_2
                 File.WriteAllText(HTML2EXE.tmpConfigJson, generateConfigJson().ToString());
 
                 // Close this form and show the build dialog
-                this.Close();
+                Close();
                 buildDialog = new BuildDialog();
                 buildDialog.ShowDialog();
             }
@@ -145,7 +145,7 @@ namespace HTML2EXE_2
         private void saveConfigBtnClick(object sender, EventArgs e)
         {
             jsonSaver.ShowDialog();
-            File.WriteAllText(jsonSaver.FileName, generateConfigJson(true,true).ToString()); // Generate and save the config
+            File.WriteAllText(jsonSaver.FileName, generateConfigJson(true, true).ToString()); // Generate and save the config
         }
 
         private void webviewBtn_Click(object sender, EventArgs e)
@@ -155,6 +155,7 @@ namespace HTML2EXE_2
             {
                 webviewPathLabel.Text = Path.GetFileName(webviewOpener.FileName);
                 removeWebviewBtn.Visible = true;
+                includeNETbox.Visible = false; // Hide the include .NET runtime checkbox when a custom webview is selected
                 File.Copy(webviewOpener.FileName, HTML2EXE.tmpWebviewPath, true); // Copy the webview file to the temporary path
             }
         }
@@ -164,6 +165,7 @@ namespace HTML2EXE_2
             webviewOpener.FileName = null;
             webviewPathLabel.Text = "No icon";
             removeWebviewBtn.Visible = false;
+            includeNETbox.Visible = true;
         }
 
     }

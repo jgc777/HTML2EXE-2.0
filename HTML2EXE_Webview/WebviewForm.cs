@@ -93,7 +93,8 @@ namespace Webview
                     MaximizeBox = false; // Disable maximize button
                 }
 
-                if (config["fullscreen"]?.GetValue<bool>() ?? false) {
+                if (config["fullscreen"]?.GetValue<bool>() ?? false)
+                {
                     enterFullscreen(); // Config fullscreen
                     // Remove fullscreen key event handlers
                     webView2.KeyDown -= Webview_KeyDown;
@@ -165,7 +166,8 @@ namespace Webview
             if (config["block_close"]?.GetValue<bool>() ?? false) e.Cancel = true; // Block close event
         }
 
-        public void enterFullscreen() {
+        public void enterFullscreen()
+        {
             previousBorderStyle = FormBorderStyle;
             previousWindowState = WindowState;
             isFullscreen = true;
@@ -174,22 +176,27 @@ namespace Webview
             if (WindowState == FormWindowState.Maximized) WindowState = FormWindowState.Normal; // Unmaximize window to avoid problems
             WindowState = FormWindowState.Maximized; // Maximize window
         }
-        public void exitFullscreen() {
+        public void exitFullscreen()
+        {
             FormBorderStyle = previousBorderStyle;
             WindowState = previousWindowState;
             isFullscreen = false;
         }
-        public void toggleFullscreen() {
+        public void toggleFullscreen()
+        {
             if (FormBorderStyle == FormBorderStyle.None) exitFullscreen();
             else enterFullscreen();
         }
-        private void fulscreenUpdate(object? sender, object e) { // Fullscreen change event
+        private void fulscreenUpdate(object? sender, object e)
+        { // Fullscreen change event
             if (config["fullscreen"] is not null) return; // If fullscreen is set in config return
             if (webView2.CoreWebView2.ContainsFullScreenElement) enterFullscreen();
             else exitFullscreen();
         }
-        private void Webview_KeyDown(object? sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.F11) {
+        private void Webview_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F11)
+            {
                 toggleFullscreen();
                 e.Handled = true;
             }
@@ -199,8 +206,10 @@ namespace Webview
                 e.Handled = true;
             }
         }
-        private async void WebView2_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e) {
-            try {
+        private async void WebView2_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
+        {
+            try
+            {
                 ShowIcon = false;
                 string script = @"
                 (() => {
@@ -211,7 +220,8 @@ namespace Webview
                 string result = await webView2.ExecuteScriptAsync(script);
                 string faviconUrl = result.Trim('"');
 
-                if (string.IsNullOrEmpty(faviconUrl)) { // Use default favicon location if none found
+                if (string.IsNullOrEmpty(faviconUrl))
+                { // Use default favicon location if none found
                     Uri uri = webView2.Source;
                     faviconUrl = $"{uri.Scheme}://{uri.Host}/favicon.ico";
                 }
@@ -220,10 +230,12 @@ namespace Webview
                 byte[] bytes = await client.GetByteArrayAsync(faviconUrl);
                 using MemoryStream ms = new MemoryStream(bytes);
                 Icon icon;
-                try {
+                try
+                {
                     icon = new Icon(ms);
                 }
-                catch { // Try to convert to bitmap if icon loading fails
+                catch
+                { // Try to convert to bitmap if icon loading fails
                     ms.Position = 0;
                     using Bitmap bmp = new Bitmap(ms);
                     icon = Icon.FromHandle(bmp.GetHicon());
@@ -232,7 +244,8 @@ namespace Webview
                 Icon = icon;
                 ShowIcon = true;
             }
-            catch { // Ignore icon errors
+            catch
+            { // Ignore icon errors
             }
         }
 

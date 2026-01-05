@@ -12,17 +12,20 @@ namespace HTML2EXE_2
 
         private void BuildDialog_Load(object sender, EventArgs e)
         {
-            this.Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
-            this.Visible = true;
+            Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
+            Visible = true;
             JsonNode config = JsonNode.Parse(File.ReadAllText(HTML2EXE.tmpConfigJson)) ?? new JsonObject();
-            string output = Path.Combine(Environment.CurrentDirectory, (config["title"]?.ToString() is not null) ?  $"{config["title"]!.ToString()}.exe" : "out.exe");
+            string output = Path.Combine(Environment.CurrentDirectory, (config["title"]?.ToString() is not null) ? $"{config["title"]!.ToString()}.exe" : "out.exe");
             // Set the output path using the config title or default to "out.exe"
-            try {
+            try
+            {
                 HTML2EXE.build(output);
-                this.Close();
+                Close();
                 Process.Start("explorer.exe", $"/select, \"{output}\"");
-            } catch (Exception ex) {
-                HTML2EXE.log($"Build error: {ex.Message}",true,false,true);
+            }
+            catch (Exception ex)
+            {
+                HTML2EXE.log($"Build error: {ex.Message}", true, false, true);
             }
         }
 

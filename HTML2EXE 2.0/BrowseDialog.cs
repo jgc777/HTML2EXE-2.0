@@ -14,7 +14,7 @@ namespace HTML2EXE_2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
+            Text = $"HTML2EXE 2.0 v{(HTML2EXE.IsBigBuild ? $"{HTML2EXE.CurrentVersion} (BIG)" : HTML2EXE.CurrentVersion)}";
         }
 
         private void selectFileBtn_Click(object sender, EventArgs e)
@@ -24,11 +24,11 @@ namespace HTML2EXE_2
             if (File.Exists(htmlPath))
             {
                 File.Copy(htmlPath, Path.Combine(HTML2EXE.tmpWebfilesPath, Path.GetFileName(htmlPath)), true);
-                this.Visible = false;
+                Visible = false;
                 configDialog = new ConfigDialog();
                 configDialog.ShowDialog();
             }
-            this.Close();
+            Close();
         }
 
         private void selectFolderBtn_Click(object sender, EventArgs e)
@@ -40,31 +40,32 @@ namespace HTML2EXE_2
             {
                 HTML2EXE.CopyDirectory(folderPath, HTML2EXE.tmpWebfilesPath);
 
-                this.Visible = false;
+                Visible = false;
                 configDialog = new ConfigDialog();
                 configDialog.ShowDialog();
             }
-            this.Close();
+            Close();
         }
 
-        
+
 
         private void cancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void noFileBtn_Click_1(object sender, EventArgs e)
         {
-            this.Visible = false;
+            Visible = false;
             configDialog = new ConfigDialog();
             configDialog.ShowDialog();
-            this.Close();
+            Close();
         }
 
         private void websiteBtn_Click(object sender, EventArgs e)
         {
-            Process.Start(new ProcessStartInfo {
+            Process.Start(new ProcessStartInfo
+            {
                 FileName = "https://jgc777.github.io/HTML2EXE-2.0/",
                 UseShellExecute = true
             });
