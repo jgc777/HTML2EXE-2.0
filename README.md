@@ -1,6 +1,7 @@
 <div align="center">
 <img src="icon.png" width="150"><br>
 <h1>HTML2EXE 2.0</h1>
+</div>
 
 ![.NET](https://img.shields.io/badge/.NET-5C2D91?logo=.net&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-%23239120.svg?logoColor=white)
@@ -8,7 +9,6 @@
 ![HTML5](https://img.shields.io/badge/Webview%202-%23E34F26.svg?logo=html5&logoColor=white)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue)](./LICENSE)
 [![Workflow](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml/badge.svg)](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml)
-</div>
 
 A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less size and it's more customizable.
 
