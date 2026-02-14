@@ -189,7 +189,7 @@ namespace Webview
         }
         private void fulscreenUpdate(object? sender, object e)
         { // Fullscreen change event
-            if (config["fullscreen"] is not null) return; // If fullscreen is set in config return
+            if (config["fullscreen"]?.GetValue<bool>() ?? true) return; // If fullscreen is forced in config return
             if (webView2.CoreWebView2.ContainsFullScreenElement) enterFullscreen();
             else exitFullscreen();
         }
@@ -200,7 +200,7 @@ namespace Webview
                 toggleFullscreen();
                 e.Handled = true;
             }
-            if (e.KeyCode == Keys.Escape && isFullscreen)
+            else if (e.KeyCode == Keys.Escape && isFullscreen)
             {
                 exitFullscreen();
                 e.Handled = true;
