@@ -304,7 +304,7 @@ AdminQuietInstCmd=
 UserQuietInstCmd=
 FILE0=""Webview.exe""
 FILE1=""webfiles.zip""
-{(File.Exists(Path.Combine(tmpPath, "WebView2Loader.dll")) ? "FILE2=\"\"WebView2Loader.dll\"\"" : "")}
+{(File.Exists(Path.Combine(tmpPath, "WebView2Loader.dll")) ? "FILE2=\"WebView2Loader.dll\"" : "")}
 {(hasConfig ? "FILE3=\"config.json\"" : "")}
 [SourceFiles]
 SourceFiles0=.\ 
