@@ -3,12 +3,10 @@
 <h1>HTML2EXE 2.0</h1>
 </div>
 
-![.NET](https://img.shields.io/badge/.NET-5C2D91?logo=.net&logoColor=white)
-![C#](https://img.shields.io/badge/C%23-%23239120.svg?logoColor=white)
-![Converter](https://img.shields.io/badge/Converter-gray)
-![HTML5](https://img.shields.io/badge/Webview%202-%23E34F26.svg?logo=html5&logoColor=white)
-[![MIT License](https://img.shields.io/badge/License-MIT-blue)](./LICENSE)
-[![Workflow](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml/badge.svg)](https://github.com/jgc777/HTML2EXE-2.0/actions/workflows/publish.yml)
+[![C#](https://img.shields.io/badge/C%23-%23239120.svg?logoColor=white&style=for-the-badge)](https://dotnet.microsoft.com/en-us/languages/csharp)
+[![Webview 2](https://img.shields.io/badge/Webview%202-%23E34F26.svg?logo=html5&logoColor=white&style=for-the-badge)](https://developer.microsoft.com/en-US/microsoft-edge/webview2)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](./LICENSE)
+[![GitHub Repo stars](https://img.shields.io/github/stars/jgc777/HTML2EXE-2.0?style=for-the-badge)](https://github.com/jgc777/HTML2EXE-2.0/stargazers)
 
 A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less size and it's more customizable.
 
