@@ -44,7 +44,7 @@ jobs:
     - name: Create webview-big.zip
       run: |
         cd webview_publish_big
-        zip ../webview-big.zip Webview.exe
+        zip ../webview-big.zip Webview.exe WebView2Loader.dll
         cd ..
 
     - name: Upload HTML2EXE-big.exe
@@ -68,7 +68,7 @@ jobs:
     - name: Create webview.zip
       run: |
         cd webview_publish
-        zip ../webview.zip Webview.exe
+        zip ../webview-big.zip Webview.exe WebView2Loader.dll
         cd ..
 
     - name: Upload HTML2EXE.exe
