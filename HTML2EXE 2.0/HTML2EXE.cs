@@ -242,6 +242,25 @@ namespace HTML2EXE_2
         { // Builds the final executable
             bool hasConfig = File.Exists(tmpConfigJson);
             JsonNode config = hasConfig ? JsonNode.Parse(File.ReadAllText(tmpConfigJson)) ?? new JsonObject() : new JsonObject(); // Parse the config file if it exists, otherwise create a new JsonObject
+            if (!File.Exists(Path.Combine(tmpPath, "Webview.exe"))) // If there is no Webview.exe in the tmpPath
+            {
+                if (!File.Exists(tmpWebviewPath)) // If the webview.zip file does not exist download it
+                {
+                    log("Downloading webview.zip...");
+                    if (webviewURL is null) throw new Exception("Error: webview URL is null.");
+                    using (HttpClient client = new HttpClient())
+                    {
+                        var response = client.GetAsync(webviewURL).Result;
+                        response.EnsureSuccessStatusCode();
+                        var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
+                        File.WriteAllBytes(tmpWebviewPath, fileBytes);
+                    }
+                }
+
+                log("Extracting webview.zip...");
+                ZipFile.ExtractToDirectory(tmpWebviewPath, tmpPath);
+                File.Delete(tmpWebviewPath);
+            }
             string iexpressConfig = $@"[Version]
 Class=IEXPRESS
 SEDVersion=3
@@ -301,25 +320,6 @@ SourceFiles0=.\
             string iexpressConfigPath = Path.Combine(tmpPath, "HTML2EXE.sed");
             File.WriteAllText(iexpressConfigPath, iexpressConfig);
 
-            if (!File.Exists(Path.Combine(tmpPath, "Webview.exe"))) // If there is no Webview.exe in the tmpPath
-            {
-                if (!File.Exists(tmpWebviewPath)) // If the webview.zip file does not exist download it
-                {
-                    log("Downloading webview.zip...");
-                    if (webviewURL is null) throw new Exception("Error: webview URL is null.");
-                    using (HttpClient client = new HttpClient())
-                    {
-                        var response = client.GetAsync(webviewURL).Result;
-                        response.EnsureSuccessStatusCode();
-                        var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
-                        File.WriteAllBytes(tmpWebviewPath, fileBytes);
-                    }
-                }
-
-                log("Extracting webview.zip...");
-                ZipFile.ExtractToDirectory(tmpWebviewPath, tmpPath);
-                File.Delete(tmpWebviewPath);
-            }
 
             log("Compressing web files...");
             ZipFile.CreateFromDirectory(tmpWebfilesPath, Path.Combine(tmpPath, "webfiles.zip"), CompressionLevel.SmallestSize, true);
