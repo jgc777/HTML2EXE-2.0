@@ -331,7 +331,7 @@ SourceFiles0=.\
                 {
                     FileName = "iexpress",
                     WorkingDirectory = tmpPath,
-                    Arguments = $"/Q /N {iexpressConfigPath}",
+                    Arguments = $"/N /M {iexpressConfigPath}",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -339,8 +339,8 @@ SourceFiles0=.\
                 };
                 iexpress.Start();
                 iexpress.WaitForExit();
-                if (iexpress.ExitCode != 0) throw new Exception($"Building failed with exit code: {iexpress.ExitCode}");
-                log($"IExpress finished with code {iexpress.ExitCode}");
+                if (iexpress.ExitCode != 0) throw new Exception($"Building failed with exit code {iexpress.ExitCode}.");
+                log($"IExpress finished OK");
             }
 
             string? configIcon = config?["icon"]?.ToString();
@@ -362,7 +362,7 @@ SourceFiles0=.\
                             RedirectStandardError = true
                         };
                         checkRcedit.Start();
-                        checkRcedit.WaitForExit(2000);
+                        checkRcedit.WaitForExit(5000);
                         rceditExists = checkRcedit.ExitCode == 0;
                     }
                 }
