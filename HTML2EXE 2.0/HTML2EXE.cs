@@ -327,11 +327,11 @@ SourceFiles0=.\
             log("Building...");
             using (Process iexpress = new Process())
             {
+                string oldDir = Environment.CurrentDirectory; Environment.CurrentDirectory = tmpPath; // Fix IExpress SED loading error (WorkingDirectory is ignored)
                 iexpress.StartInfo = new ProcessStartInfo
                 {
                     FileName = "iexpress",
-                    WorkingDirectory = tmpPath,
-                    Arguments = $"/N /M {iexpressConfigPath}",
+                    Arguments = $"/N /M HTML2EXE.sed", // Use /Q instead of /M to suppress the IExpress GUI and error messages
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -341,6 +341,7 @@ SourceFiles0=.\
                 iexpress.WaitForExit();
                 if (iexpress.ExitCode != 0) throw new Exception($"Building failed with exit code {iexpress.ExitCode}.");
                 log($"IExpress finished OK");
+                Environment.CurrentDirectory = oldDir;
             }
 
             string? configIcon = config?["icon"]?.ToString();
