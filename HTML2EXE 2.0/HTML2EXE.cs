@@ -1,8 +1,9 @@
-﻿using System.IO.Compression;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.IO.Compression;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text.Json.Nodes;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace HTML2EXE_2
 {
@@ -28,6 +29,7 @@ namespace HTML2EXE_2
         public static readonly string tmpWebfilesPath = Path.Combine(tmpPath, "webfiles");
 
         private static readonly string tmpUpdatePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
+        private static readonly string tmpRceditPath = Path.Combine(tmpPath, "rcedit.exe");
         public static readonly string tmpConfigJson = Path.Combine(tmpPath, "config.json");
         public static readonly string tmpWebviewPath = Path.Combine(tmpPath, "webview.zip");
         private static readonly string tmpOutputPath = Path.Combine(tmpPath, "out.exe");
@@ -61,6 +63,13 @@ namespace HTML2EXE_2
                 Directory.CreateDirectory(tmpWebfilesPath);
 
                 CheckForUpdatesAsync(args).Wait();
+
+                // Extract RCEdit
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("HTML2EXE_2.tools.rcedit.exe")!)
+                using (FileStream file = new FileStream(tmpRceditPath, FileMode.Create, FileAccess.Write))
+                {
+                    stream.CopyTo(file);
+                }
 
                 if (args.Length > 0)
                 {
@@ -296,7 +305,7 @@ FileDesc={config["title"]?.ToString() ?? "HTML2EXE 2.0"}
 InstallPrompt=
 DisplayLicense=
 FinishMessage=
-TargetName=out.exe
+TargetName={Path.GetFileName(tmpOutputPath)}
 FriendlyName={config["title"]?.ToString() ?? "HTML2EXE 2.0"}
 AppLaunched=.\Webview.exe
 PostInstallCmd=<None>
@@ -327,7 +336,7 @@ SourceFiles0=.\
             log("Building...");
             using (Process iexpress = new Process())
             {
-                string oldDir = Environment.CurrentDirectory; Environment.CurrentDirectory = tmpPath; // Fix IExpress SED loading error (WorkingDirectory is ignored)
+                Environment.CurrentDirectory = tmpPath; // Fix IExpress SED loading error (WorkingDirectory is ignored)
                 iexpress.StartInfo = new ProcessStartInfo
                 {
                     FileName = "iexpress",
@@ -341,63 +350,19 @@ SourceFiles0=.\
                 iexpress.WaitForExit();
                 if (iexpress.ExitCode != 0) throw new Exception($"Building failed with exit code {iexpress.ExitCode}.");
                 log($"IExpress finished OK");
-                Environment.CurrentDirectory = oldDir;
+                Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             }
 
             string? configIcon = config?["icon"]?.ToString();
+#if !DEBUG
             if (!string.IsNullOrEmpty(configIcon))
             { // If there is a config icon, add it to the executable using rcedit
-                // Check if rcedit is installed
-                bool rceditExists = false;
-                try
-                {
-                    using (Process checkRcedit = new Process())
-                    {
-                        checkRcedit.StartInfo = new ProcessStartInfo()
-                        {
-                            FileName = "rcedit",
-                            Arguments = "-h",
-                            CreateNoWindow = true,
-                            UseShellExecute = false,
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true
-                        };
-                        checkRcedit.Start();
-                        checkRcedit.WaitForExit(5000);
-                        rceditExists = checkRcedit.ExitCode == 0;
-                    }
-                }
-                catch
-                {
-                    rceditExists = false;
-                }
-
-                if (!rceditExists)
-                {
-                    log("Installing rcedit...");
-                    using (Process rceditwinget = new Process())
-                    {
-                        rceditwinget.StartInfo = new ProcessStartInfo()
-                        {
-                            FileName = "winget",
-                            Arguments = "install --id=ElectronCommunity.rcedit  -e",
-                            CreateNoWindow = true,
-                            UseShellExecute = false,
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true
-                        };
-                        rceditwinget.Start();
-                        rceditwinget.WaitForExit();
-                        if (rceditwinget.ExitCode != 0) throw new Exception("Error installing rcedit.");
-                    }
-                }
-
                 log("Adding icon...");
                 using (Process rcedit = new Process())
                 {
                     rcedit.StartInfo = new ProcessStartInfo()
                     {
-                        FileName = "rcedit",
+                        FileName = tmpRceditPath,
                         // Add the icon to the executable, checking if it's a full path or relative to the tmpPath
                         Arguments = $"\"{tmpOutputPath}\" --set-icon \"{(File.Exists(configIcon) ? configIcon : Path.Combine(tmpPath, configIcon))}\"",
                         CreateNoWindow = true,
@@ -410,7 +375,9 @@ SourceFiles0=.\
                     if (rcedit.ExitCode != 0) log($"rcedit failed with exit code {rcedit.ExitCode}", true);
                 }
             }
-
+#else
+            log("Debug build detected, skipping RCEdit...");
+#endif
             log("Cleaning up...");
             File.Move(tmpOutputPath, output, true);
 

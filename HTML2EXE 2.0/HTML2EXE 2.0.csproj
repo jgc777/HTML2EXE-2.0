@@ -33,6 +33,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="tools\rcedit.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="tools\rcedit.exe">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CustomToolNamespace></CustomToolNamespace>
+      <Generator></Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -45,6 +57,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
