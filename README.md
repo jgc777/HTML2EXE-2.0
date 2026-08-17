@@ -15,6 +15,7 @@ Note that there are some good alternatives such as [Electron](https://www.electr
 
 ## Requirements
 - Windows 10 or later
+- [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0/runtime/desktop) (not needed in big nor offline builds)
 
 ## Features
 - Convert HTML files (really any chromium-compatible files) and folders to EXE files
