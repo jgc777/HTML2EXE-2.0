@@ -7,6 +7,7 @@
 [![Webview 2](https://img.shields.io/badge/Webview%202-%23E34F26.svg?logo=html5&logoColor=white&style=for-the-badge)](https://developer.microsoft.com/en-US/microsoft-edge/webview2)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](./LICENSE)
 [![GitHub Repo stars](https://img.shields.io/github/stars/jgc777/HTML2EXE-2.0?style=for-the-badge)](https://github.com/jgc777/HTML2EXE-2.0/stargazers)
+[![Hits](https://hits.sh/github.com/jgc777/HTML2EXE-2.0.svg?label=Views%20since%2017%2F08%2F2026&logo=github)](https://hits.sh/github.com/jgc777/HTML2EXE-2.0/)
 
 A rewrite of [HTML2EXE](https://jgc777.github.io/HTML2EXE) which takes much less size and it's more customizable.
 

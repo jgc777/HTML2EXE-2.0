@@ -36,13 +36,13 @@ jobs:
       run: dotnet restore -p:EnableWindowsTargeting=true
 
     - name: Build main app (self-contained)
-      run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o ./publish-big -p:EnableWindowsTargeting=true -p:DefineConstants="BIG_BUILD"
+      run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:InvariantGlobalization=true --self-contained true -o ./publish-big -p:EnableWindowsTargeting=true -p:DefineConstants="BIG_BUILD"
 
     - name: Rename to HTML2EXE-big.exe
       run: mv "./publish-big/HTML2EXE.exe" "./publish-big/HTML2EXE-big.exe"
 
     - name: Build WebView (self-contained)
-      run: dotnet publish HTML2EXE_Webview -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o ./webview_publish_big -p:EnableWindowsTargeting=true
+      run: dotnet publish HTML2EXE_Webview -c Release -r win-x64 -p:PublishSingleFile=true -p:InvariantGlobalization=true --self-contained true -o ./webview_publish_big -p:EnableWindowsTargeting=true
 
     - name: Create webview-big.zip
       run: |
@@ -90,7 +90,7 @@ jobs:
       run: sed -i 's/bool update = .*/bool update = false;/' '/home/runner/work/HTML2EXE-2.0/HTML2EXE-2.0/HTML2EXE 2.0/HTML2EXE.cs'
 
     - name: Build main app (offline & self-contained)
-      run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o ./publish-offline -p:EnableWindowsTargeting=true -p:DefineConstants="BIG_BUILD"
+      run: dotnet publish "HTML2EXE 2.0" -c Release -r win-x64 -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:InvariantGlobalization=true --self-contained true -o ./publish-offline -p:EnableWindowsTargeting=true -p:DefineConstants="BIG_BUILD"
 
     - name: Rename to HTML2EXE-offline.exe
       run: mv "./publish-offline/HTML2EXE.exe" "./publish-offline/HTML2EXE-offline.exe"
