@@ -25,7 +25,7 @@ Note that there are some good alternatives such as [Electron](https://www.electr
 - Quick and easy to use and distribute
 
 ## How to use it
-- [Download the program](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE.exe) from the [latest release](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/).
+- [Download the program](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/HTML2EXE-big.exe) from the [latest release](https://github.com/jgc777/HTML2EXE-2.0/releases/latest/). Use the file that you need, checking if you have .NET installed.
 - Drag and drop your HTML file or folder to the program.
 
 You can also open the program to see the GUI menu or use it from the command line.
