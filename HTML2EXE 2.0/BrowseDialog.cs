@@ -47,13 +47,6 @@ namespace HTML2EXE_2
             Close();
         }
 
-
-
-        private void cancelBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void noFileBtn_Click_1(object sender, EventArgs e)
         {
             Visible = false;
@@ -62,7 +55,7 @@ namespace HTML2EXE_2
             Close();
         }
 
-        private void websiteBtn_Click(object sender, EventArgs e)
+        private void HeaderPanel_Click(object sender, EventArgs e)
         {
             Process.Start(new ProcessStartInfo
             {

@@ -31,22 +31,24 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BuildDialog));
             logTextBox = new RichTextBox();
             copyBtn = new Button();
-            buildBtn = new Button();
             SuspendLayout();
             // 
             // logTextBox
             // 
-            logTextBox.Location = new Point(12, 12);
+            logTextBox.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) 
+                | AnchorStyles.Left) | AnchorStyles.Right)));
+            logTextBox.Location = new Point(12, 40);
             logTextBox.Name = "logTextBox";
             logTextBox.ReadOnly = true;
             logTextBox.ScrollBars = RichTextBoxScrollBars.Vertical;
-            logTextBox.Size = new Size(460, 208);
+            logTextBox.Size = new Size(460, 242);
             logTextBox.TabIndex = 0;
             logTextBox.Text = "";
             // 
             // copyBtn
             // 
-            copyBtn.Location = new Point(397, 226);
+            copyBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            copyBtn.Location = new Point(397, 289);
             copyBtn.Name = "copyBtn";
             copyBtn.Size = new Size(75, 23);
             copyBtn.TabIndex = 2;
@@ -58,13 +60,14 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(484, 261);
+            ClientSize = new Size(484, 324);
+            ControlBox = true;
             Controls.Add(copyBtn);
             Controls.Add(logTextBox);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.Sizable;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            MinimizeBox = false;
+            MinimizeBox = true;
             Name = "BuildDialog";
             Text = "HTML2EXE 2.0";
             Load += BuildDialog_Load;
@@ -74,7 +77,6 @@
         #endregion
 
         public RichTextBox logTextBox;
-        private Button buildBtn;
         private Button copyBtn;
     }
 }

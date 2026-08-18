@@ -104,20 +104,19 @@ namespace Webview
                 ShowInTaskbar = config["show_in_taskbar"]?.GetValue<bool>() ?? true; // Config show in taskbar
 
                 if (config["icon"] is null) webView2.NavigationCompleted += WebView2_NavigationCompleted;
-                else
+                else if (config["icon"] is not null)
                 {
-#pragma warning disable CS8602
-                    Icon = new Icon(config["icon"].ToString()); // Config icon
+                    Icon = new Icon(config["icon"]!.ToString()); // Config icon
                     ShowIcon = true; // Show icon
                 }
 
-                if (config["width"] is not null) Width = config["width"].GetValue<int>(); // Set config width
-                if (config["height"] is not null) Height = config["height"].GetValue<int>(); // Set config height
+                if (config["width"] is not null && config["width"]!.GetValue<int>() is > 0) Width = config["width"]!.GetValue<int>(); // Set config width
+                if (config["height"] is not null && config["height"]!.GetValue<int>() is > 0) Height = config["height"]!.GetValue<int>(); // Set config height
 
                 await webView2.EnsureCoreWebView2Async(); // Wait for WebView to be initialized
 
 
-                if (config["title"] is not null) Text = config["title"].ToString(); // Set config title
+                if (config["title"] is not null) Text = config["title"]!.ToString(); // Set config title
                 else webView2.CoreWebView2.DocumentTitleChanged += WebView_DocumentTitleChanged; // Set default title
 
                 webView2.CoreWebView2.Settings.AreDefaultContextMenusEnabled = config["context_menu"]?.GetValue<bool>() ?? false; // Config context menu
@@ -138,14 +137,13 @@ namespace Webview
                     process.StartInfo = new ProcessStartInfo
                     {
                         FileName = "cmd.exe",
-                        Arguments = $"/c {config["additional_cmd"].ToString()}",
+                        Arguments = $"/c {config["additional_cmd"]!.ToString()}",
                         WorkingDirectory = Webview.webfilesPath,
                         UseShellExecute = false,
                         CreateNoWindow = true
                     };
                     process.Start(); // Start process
                 }
-#pragma warning restore CS8602
             }
             catch (JsonException jsonEx)
             {

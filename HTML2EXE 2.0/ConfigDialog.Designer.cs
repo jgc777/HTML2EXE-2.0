@@ -1,4 +1,4 @@
-﻿namespace HTML2EXE_2
+namespace HTML2EXE_2
 {
     partial class ConfigDialog
     {
@@ -68,73 +68,68 @@
             webviewPathLabel = new Label();
             removeWebviewBtn = new Button();
             SuspendLayout();
-            // 
-            // urlLabel
-            // 
+
+            // ===== HEADER (Title) =====
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(12, 12);
+            label2.Name = "label2";
+            label2.Size = new Size(188, 26);
+            label2.TabIndex = 1;
+            label2.Text = "Additional options";
+
+            // ===== SECTION 1: URL & TITLE (Top rows) =====
+            urlLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             urlLabel.AutoSize = true;
-            urlLabel.Location = new Point(13, 40);
+            urlLabel.Location = new Point(13, 53);
             urlLabel.Name = "urlLabel";
             urlLabel.Size = new Size(76, 15);
             urlLabel.TabIndex = 0;
             urlLabel.Text = "Custom URL:";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(12, 6);
-            label2.Name = "label2";
-            label2.Size = new Size(188, 28);
-            label2.TabIndex = 1;
-            label2.Text = "Additional options";
-            // 
-            // urlTextBox
-            // 
-            urlTextBox.Location = new Point(114, 37);
+
+            urlTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            urlTextBox.Location = new Point(114, 50);
             urlTextBox.Name = "urlTextBox";
             urlTextBox.PlaceholderText = "webfiles/index.html";
-            urlTextBox.Size = new Size(259, 23);
+            urlTextBox.Size = new Size(267, 23);
             urlTextBox.TabIndex = 2;
-            // 
-            // titleTextBox
-            // 
-            titleTextBox.Location = new Point(114, 66);
-            titleTextBox.Name = "titleTextBox";
-            titleTextBox.PlaceholderText = "HTML2EXE";
-            titleTextBox.Size = new Size(259, 23);
-            titleTextBox.TabIndex = 4;
-            // 
-            // titleLabel
-            // 
+
+            titleLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             titleLabel.AutoSize = true;
-            titleLabel.Location = new Point(13, 69);
+            titleLabel.Location = new Point(13, 82);
             titleLabel.Name = "titleLabel";
             titleLabel.Size = new Size(32, 15);
             titleLabel.TabIndex = 3;
             titleLabel.Text = "Title:";
-            // 
-            // iconLabel
-            // 
+
+            titleTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            titleTextBox.Location = new Point(114, 79);
+            titleTextBox.Name = "titleTextBox";
+            titleTextBox.PlaceholderText = "HTML2EXE";
+            titleTextBox.Size = new Size(267, 23);
+            titleTextBox.TabIndex = 4;
+
+            // ===== SECTION 2: ICON (Row 3) =====
+            iconLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             iconLabel.AutoSize = true;
-            iconLabel.Location = new Point(13, 128);
+            iconLabel.Location = new Point(13, 111);
             iconLabel.Name = "iconLabel";
             iconLabel.Size = new Size(33, 15);
             iconLabel.TabIndex = 5;
             iconLabel.Text = "Icon:";
-            // 
-            // iconBtn
-            // 
-            iconBtn.Location = new Point(114, 124);
+
+            iconBtn.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            iconBtn.Location = new Point(114, 107);
             iconBtn.Name = "iconBtn";
             iconBtn.Size = new Size(75, 23);
             iconBtn.TabIndex = 6;
             iconBtn.Text = "Select";
             iconBtn.UseVisualStyleBackColor = true;
             iconBtn.Click += iconBtn_Click;
-            // 
-            // removeIconBtn
-            // 
-            removeIconBtn.Location = new Point(298, 124);
+
+            removeIconBtn.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            removeIconBtn.Location = new Point(195, 107);
             removeIconBtn.Name = "removeIconBtn";
             removeIconBtn.Size = new Size(75, 23);
             removeIconBtn.TabIndex = 7;
@@ -142,283 +137,204 @@
             removeIconBtn.UseVisualStyleBackColor = true;
             removeIconBtn.Visible = false;
             removeIconBtn.Click += removeIconBtn_Click;
-            // 
-            // iconPathLabel
-            // 
+
+            iconPathLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             iconPathLabel.AutoSize = true;
-            iconPathLabel.Location = new Point(195, 128);
+            iconPathLabel.Location = new Point(276, 111);
             iconPathLabel.Name = "iconPathLabel";
             iconPathLabel.Size = new Size(49, 15);
             iconPathLabel.TabIndex = 8;
             iconPathLabel.Text = "No icon";
-            // 
-            // iconOpener
-            // 
+
             iconOpener.AddToRecent = false;
             iconOpener.Filter = "Icon Files|*.ico";
             iconOpener.Title = "Select icon";
-            // 
-            // contextMenu
-            // 
+
+            // ===== SECTION 3: DIMENSIONS (Row 4) =====
+            widthLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            widthLabel.AutoSize = true;
+            widthLabel.Location = new Point(13, 139);
+            widthLabel.Name = "widthLabel";
+            widthLabel.Size = new Size(44, 15);
+            widthLabel.TabIndex = 9;
+            widthLabel.Text = "Width:";
+
+            widthTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            widthTextBox.Location = new Point(114, 136);
+            widthTextBox.Name = "widthTextBox";
+            widthTextBox.PlaceholderText = "800";
+            widthTextBox.Size = new Size(75, 23);
+            widthTextBox.TabIndex = 10;
+
+            heightLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            heightLabel.AutoSize = true;
+            heightLabel.Location = new Point(200, 139);
+            heightLabel.Name = "heightLabel";
+            heightLabel.Size = new Size(50, 15);
+            heightLabel.TabIndex = 11;
+            heightLabel.Text = "Height:";
+
+            heightTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            heightTextBox.Location = new Point(256, 136);
+            heightTextBox.Name = "heightTextBox";
+            heightTextBox.PlaceholderText = "600";
+            heightTextBox.Size = new Size(75, 23);
+            heightTextBox.TabIndex = 12;
+
+            // ===== SECTION 4: CHECKBOXES (Rows 5-9, 2 columns) =====
+            contextMenu.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             contextMenu.AutoSize = true;
-            contextMenu.Location = new Point(11, 211);
+            contextMenu.Location = new Point(13, 168);
             contextMenu.Name = "contextMenu";
             contextMenu.Size = new Size(138, 19);
-            contextMenu.TabIndex = 9;
+            contextMenu.TabIndex = 13;
             contextMenu.Text = "Enable context menu";
             contextMenu.UseVisualStyleBackColor = true;
-            // 
-            // devTools
-            // 
+
+            devTools.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             devTools.AutoSize = true;
-            devTools.Location = new Point(156, 211);
+            devTools.Location = new Point(200, 168);
             devTools.Name = "devTools";
             devTools.Size = new Size(145, 19);
-            devTools.TabIndex = 10;
+            devTools.TabIndex = 14;
             devTools.Text = "Enable developer tools";
             devTools.UseVisualStyleBackColor = true;
-            // 
-            // maximized
-            // 
+
+            maximized.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             maximized.AutoSize = true;
-            maximized.Location = new Point(12, 236);
+            maximized.Location = new Point(13, 193);
             maximized.Name = "maximized";
             maximized.Size = new Size(84, 19);
-            maximized.TabIndex = 11;
+            maximized.TabIndex = 15;
             maximized.Text = "Maximized";
             maximized.UseVisualStyleBackColor = true;
-            // 
-            // resizable
-            // 
+
+            resizable.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             resizable.AutoSize = true;
             resizable.Checked = true;
             resizable.CheckState = CheckState.Checked;
-            resizable.Location = new Point(156, 236);
+            resizable.Location = new Point(200, 193);
             resizable.Name = "resizable";
             resizable.Size = new Size(74, 19);
-            resizable.TabIndex = 12;
+            resizable.TabIndex = 16;
             resizable.Text = "Resizable";
             resizable.UseVisualStyleBackColor = true;
-            // 
-            // controlBox
-            // 
+
+            controlBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             controlBox.AutoSize = true;
             controlBox.Checked = true;
             controlBox.CheckState = CheckState.Checked;
-            controlBox.Location = new Point(11, 261);
+            controlBox.Location = new Point(13, 218);
             controlBox.Name = "controlBox";
             controlBox.Size = new Size(146, 19);
-            controlBox.TabIndex = 13;
+            controlBox.TabIndex = 17;
             controlBox.Text = "Show window controls";
             controlBox.UseVisualStyleBackColor = true;
-            // 
-            // minimizable
-            // 
+
+            minimizable.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             minimizable.AutoSize = true;
             minimizable.Checked = true;
             minimizable.CheckState = CheckState.Checked;
-            minimizable.Location = new Point(156, 261);
+            minimizable.Location = new Point(200, 218);
             minimizable.Name = "minimizable";
             minimizable.Size = new Size(91, 19);
-            minimizable.TabIndex = 14;
+            minimizable.TabIndex = 18;
             minimizable.Text = "Minimizable";
             minimizable.UseVisualStyleBackColor = true;
-            // 
-            // maximizable
-            // 
+
+            maximizable.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             maximizable.AutoSize = true;
             maximizable.Checked = true;
             maximizable.CheckState = CheckState.Checked;
-            maximizable.Location = new Point(156, 286);
+            maximizable.Location = new Point(200, 243);
             maximizable.Name = "maximizable";
             maximizable.Size = new Size(93, 19);
-            maximizable.TabIndex = 15;
+            maximizable.TabIndex = 19;
             maximizable.Text = "Maximizable";
             maximizable.UseVisualStyleBackColor = true;
-            // 
-            // fullscreen
-            // 
+
+            fullscreen.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             fullscreen.AutoSize = true;
-            fullscreen.Location = new Point(11, 286);
+            fullscreen.Location = new Point(13, 243);
             fullscreen.Name = "fullscreen";
             fullscreen.Size = new Size(109, 19);
-            fullscreen.TabIndex = 16;
+            fullscreen.TabIndex = 20;
             fullscreen.Text = "Force fullscreen";
             fullscreen.UseVisualStyleBackColor = true;
-            // 
-            // alwaysOnTop
-            // 
+
+            alwaysOnTop.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             alwaysOnTop.AutoSize = true;
-            alwaysOnTop.Location = new Point(11, 311);
+            alwaysOnTop.Location = new Point(13, 268);
             alwaysOnTop.Name = "alwaysOnTop";
             alwaysOnTop.Size = new Size(101, 19);
-            alwaysOnTop.TabIndex = 17;
+            alwaysOnTop.TabIndex = 21;
             alwaysOnTop.Text = "Always on top";
             alwaysOnTop.UseVisualStyleBackColor = true;
-            // 
-            // zoomControl
-            // 
+
+            zoomControl.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             zoomControl.AutoSize = true;
-            zoomControl.Location = new Point(156, 311);
+            zoomControl.Location = new Point(200, 268);
             zoomControl.Name = "zoomControl";
             zoomControl.Size = new Size(135, 19);
-            zoomControl.TabIndex = 18;
+            zoomControl.TabIndex = 22;
             zoomControl.Text = "Enable zoom control";
             zoomControl.UseVisualStyleBackColor = true;
-            // 
-            // showInTaskbar
-            // 
+
+            showInTaskbar.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             showInTaskbar.AutoSize = true;
             showInTaskbar.Checked = true;
             showInTaskbar.CheckState = CheckState.Checked;
-            showInTaskbar.Location = new Point(11, 336);
+            showInTaskbar.Location = new Point(13, 293);
             showInTaskbar.Name = "showInTaskbar";
             showInTaskbar.Size = new Size(109, 19);
-            showInTaskbar.TabIndex = 19;
+            showInTaskbar.TabIndex = 23;
             showInTaskbar.Text = "Show in taskbar";
             showInTaskbar.UseVisualStyleBackColor = true;
-            // 
-            // widthTextBox
-            // 
-            widthTextBox.Location = new Point(114, 95);
-            widthTextBox.Name = "widthTextBox";
-            widthTextBox.PlaceholderText = "800";
-            widthTextBox.Size = new Size(85, 23);
-            widthTextBox.TabIndex = 21;
-            // 
-            // widthLabel
-            // 
-            widthLabel.AutoSize = true;
-            widthLabel.Location = new Point(13, 98);
-            widthLabel.Name = "widthLabel";
-            widthLabel.Size = new Size(87, 15);
-            widthLabel.TabIndex = 20;
-            widthLabel.Text = "Window width:";
-            // 
-            // heightTextBox
-            // 
-            heightTextBox.Location = new Point(287, 95);
-            heightTextBox.Name = "heightTextBox";
-            heightTextBox.PlaceholderText = "600";
-            heightTextBox.Size = new Size(85, 23);
-            heightTextBox.TabIndex = 23;
-            // 
-            // heightLabel
-            // 
-            heightLabel.AutoSize = true;
-            heightLabel.Location = new Point(215, 98);
-            heightLabel.Name = "heightLabel";
-            heightLabel.Size = new Size(46, 15);
-            heightLabel.TabIndex = 22;
-            heightLabel.Text = "Height:";
-            // 
-            // okBtn
-            // 
-            okBtn.Location = new Point(11, 390);
-            okBtn.Name = "okBtn";
-            okBtn.Size = new Size(362, 24);
-            okBtn.TabIndex = 24;
-            okBtn.Text = "Build";
-            okBtn.UseVisualStyleBackColor = true;
-            okBtn.Click += okBtn_Click;
-            // 
-            // extraCmdTextBox
-            // 
-            extraCmdTextBox.Location = new Point(114, 182);
-            extraCmdTextBox.Name = "extraCmdTextBox";
-            extraCmdTextBox.PlaceholderText = "call start.bat";
-            extraCmdTextBox.Size = new Size(259, 23);
-            extraCmdTextBox.TabIndex = 27;
-            // 
-            // extraCmdLabel
-            // 
-            extraCmdLabel.AutoSize = true;
-            extraCmdLabel.Location = new Point(11, 185);
-            extraCmdLabel.Name = "extraCmdLabel";
-            extraCmdLabel.Size = new Size(94, 15);
-            extraCmdLabel.TabIndex = 26;
-            extraCmdLabel.Text = "Extra command:";
-            // 
-            // blockClose
-            // 
+
+            blockClose.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             blockClose.AutoSize = true;
-            blockClose.Location = new Point(156, 336);
+            blockClose.Location = new Point(200, 293);
             blockClose.Name = "blockClose";
-            blockClose.Size = new Size(105, 19);
-            blockClose.TabIndex = 30;
-            blockClose.Text = "Disable closing";
+            blockClose.Size = new Size(122, 19);
+            blockClose.TabIndex = 24;
+            blockClose.Text = "Block close event";
             blockClose.UseVisualStyleBackColor = true;
-            // 
-            // jsonOpener
-            // 
-            jsonOpener.FileName = "config.json";
-            jsonOpener.Filter = "Json files|*.json";
-            // 
-            // saveConfigBtn
-            // 
-            saveConfigBtn.Location = new Point(156, 358);
-            saveConfigBtn.Name = "saveConfigBtn";
-            saveConfigBtn.Size = new Size(216, 23);
-            saveConfigBtn.TabIndex = 32;
-            saveConfigBtn.Text = "Export Config";
-            saveConfigBtn.UseVisualStyleBackColor = true;
-            saveConfigBtn.Click += saveConfigBtnClick;
-            // 
-            // includeNETbox
-            // 
-            includeNETbox.AutoSize = true;
-            includeNETbox.Location = new Point(11, 361);
-            includeNETbox.Name = "includeNETbox";
-            includeNETbox.Size = new Size(137, 19);
-            includeNETbox.TabIndex = 33;
-            includeNETbox.Text = "Include .NET runtime";
-            includeNETbox.UseVisualStyleBackColor = true;
-            // 
-            // jsonSaver
-            // 
-            jsonSaver.AddToRecent = false;
-            jsonSaver.DefaultExt = "json";
-            jsonSaver.FileName = "config.json";
-            jsonSaver.Filter = "JSON File|*.json";
-            // 
-            // label1
-            // 
+
+            // ===== SECTION 5: EXTRA CMD & WEBVIEW =====
+            extraCmdLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            extraCmdLabel.AutoSize = true;
+            extraCmdLabel.Location = new Point(13, 327);
+            extraCmdLabel.Name = "extraCmdLabel";
+            extraCmdLabel.Size = new Size(98, 15);
+            extraCmdLabel.TabIndex = 25;
+            extraCmdLabel.Text = "Extra command:";
+
+            extraCmdTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            extraCmdTextBox.Location = new Point(114, 324);
+            extraCmdTextBox.Name = "extraCmdTextBox";
+            extraCmdTextBox.PlaceholderText = ";";
+            extraCmdTextBox.Size = new Size(267, 23);
+            extraCmdTextBox.TabIndex = 26;
+
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             label1.AutoSize = true;
-            label1.Location = new Point(11, 157);
+            label1.Location = new Point(13, 355);
             label1.Name = "label1";
             label1.Size = new Size(96, 15);
             label1.TabIndex = 34;
             label1.Text = "Webview source:";
-            // 
-            // webviewBtn
-            // 
-            webviewBtn.Location = new Point(114, 153);
+
+            webviewBtn.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            webviewBtn.Location = new Point(114, 351);
             webviewBtn.Name = "webviewBtn";
             webviewBtn.Size = new Size(75, 23);
             webviewBtn.TabIndex = 35;
             webviewBtn.Text = "Select";
             webviewBtn.UseVisualStyleBackColor = true;
             webviewBtn.Click += webviewBtn_Click;
-            // 
-            // webviewOpener
-            // 
-            webviewOpener.AddToRecent = false;
-            webviewOpener.DefaultExt = "zip";
-            webviewOpener.FileName = "webview.zip";
-            webviewOpener.Filter = "HTML2EXE Webview ZIP|*.zip|All file types|*.*";
-            // 
-            // webviewPathLabel
-            // 
-            webviewPathLabel.AutoSize = true;
-            webviewPathLabel.Location = new Point(195, 157);
-            webviewPathLabel.Name = "webviewPathLabel";
-            webviewPathLabel.Size = new Size(66, 15);
-            webviewPathLabel.TabIndex = 36;
-            webviewPathLabel.Text = "Use default";
-            // 
-            // removeWebviewBtn
-            // 
-            removeWebviewBtn.Location = new Point(297, 153);
+
+            removeWebviewBtn.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            removeWebviewBtn.Location = new Point(195, 351);
             removeWebviewBtn.Name = "removeWebviewBtn";
             removeWebviewBtn.Size = new Size(75, 23);
             removeWebviewBtn.TabIndex = 37;
@@ -426,27 +342,70 @@
             removeWebviewBtn.UseVisualStyleBackColor = true;
             removeWebviewBtn.Visible = false;
             removeWebviewBtn.Click += removeWebviewBtn_Click;
-            // 
-            // ConfigDialog
-            // 
+
+            webviewPathLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            webviewPathLabel.AutoSize = true;
+            webviewPathLabel.Location = new Point(276, 355);
+            webviewPathLabel.Name = "webviewPathLabel";
+            webviewPathLabel.Size = new Size(66, 15);
+            webviewPathLabel.TabIndex = 36;
+            webviewPathLabel.Text = "Use default";
+
+            webviewOpener.AddToRecent = false;
+            webviewOpener.DefaultExt = "zip";
+            webviewOpener.FileName = "webview.zip";
+            webviewOpener.Filter = "HTML2EXE Webview ZIP|*.zip|All file types|*.*";
+
+            // ===== SECTION 6: CHECKBOXES (continued) =====
+            includeNETbox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            includeNETbox.AutoSize = true;
+            includeNETbox.Location = new Point(13, 383);
+            includeNETbox.Name = "includeNETbox";
+            includeNETbox.Size = new Size(185, 19);
+            includeNETbox.TabIndex = 27;
+            includeNETbox.Text = "Include .NET Runtime (Big)";
+            includeNETbox.UseVisualStyleBackColor = true;
+
+            jsonOpener.AddToRecent = false;
+            jsonOpener.DefaultExt = "json";
+            jsonOpener.Filter = "JSON File|*.json";
+
+            jsonSaver.Filter = "JSON File|*.json";
+
+            // ===== SECTION 7: BUTTONS (Bottom) =====
+            okBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            okBtn.Location = new Point(321, 420);
+            okBtn.Name = "okBtn";
+            okBtn.Size = new Size(75, 23);
+            okBtn.TabIndex = 28;
+            okBtn.Text = "Build";
+            okBtn.UseVisualStyleBackColor = true;
+            okBtn.Click += okBtn_Click;
+
+            saveConfigBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            saveConfigBtn.Location = new Point(13, 420);
+            saveConfigBtn.Name = "saveConfigBtn";
+            saveConfigBtn.Size = new Size(109, 23);
+            saveConfigBtn.TabIndex = 29;
+            saveConfigBtn.Text = "Save Config";
+            saveConfigBtn.UseVisualStyleBackColor = true;
+            saveConfigBtn.Click += saveConfigBtnClick;
+
+            // ===== FORM SETTINGS =====
             AcceptButton = okBtn;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 424);
+            ClientSize = new Size(406, 460);
+            Controls.Add(saveConfigBtn);
+            Controls.Add(okBtn);
+            Controls.Add(includeNETbox);
             Controls.Add(removeWebviewBtn);
             Controls.Add(webviewPathLabel);
             Controls.Add(webviewBtn);
             Controls.Add(label1);
-            Controls.Add(includeNETbox);
-            Controls.Add(saveConfigBtn);
-            Controls.Add(blockClose);
             Controls.Add(extraCmdTextBox);
             Controls.Add(extraCmdLabel);
-            Controls.Add(okBtn);
-            Controls.Add(heightTextBox);
-            Controls.Add(heightLabel);
-            Controls.Add(widthTextBox);
-            Controls.Add(widthLabel);
+            Controls.Add(blockClose);
             Controls.Add(showInTaskbar);
             Controls.Add(zoomControl);
             Controls.Add(alwaysOnTop);
@@ -458,6 +417,10 @@
             Controls.Add(maximized);
             Controls.Add(devTools);
             Controls.Add(contextMenu);
+            Controls.Add(heightTextBox);
+            Controls.Add(heightLabel);
+            Controls.Add(widthTextBox);
+            Controls.Add(widthLabel);
             Controls.Add(iconPathLabel);
             Controls.Add(removeIconBtn);
             Controls.Add(iconBtn);
@@ -467,10 +430,11 @@
             Controls.Add(urlTextBox);
             Controls.Add(label2);
             Controls.Add(urlLabel);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            ControlBox = true;
+            FormBorderStyle = FormBorderStyle.Sizable;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            MinimizeBox = false;
+            MinimizeBox = true;
             Name = "ConfigDialog";
             Text = "HTML2EXE 2.0";
             Load += ConfigDialog_Load;
