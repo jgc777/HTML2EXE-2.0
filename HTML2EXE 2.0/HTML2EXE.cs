@@ -27,10 +27,10 @@ namespace HTML2EXE_2
         public static readonly string webview_big = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip";
         public static string? webviewURL;
 
-        public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), "HTML2EXE");
+        public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), $"HTML2EXE-{Guid.NewGuid():N}");
         public static readonly string tmpWebfilesPath = Path.Combine(tmpPath, "webfiles");
 
-        private static readonly string tmpUpdatePath = Path.Combine(Path.GetTempPath(), "HTML2EXE-latest.exe");
+        private static readonly string tmpUpdatePath = Path.Combine(Path.GetTempPath(), $"HTML2EXE-{Guid.NewGuid():N}.exe");
         private static readonly string tmpRceditPath = Path.Combine(tmpPath, "rcedit.exe");
         public static readonly string tmpConfigJson = Path.Combine(tmpPath, "config.json");
         public static readonly string tmpWebviewPath = Path.Combine(tmpPath, "webview.zip");
@@ -191,7 +191,6 @@ namespace HTML2EXE_2
                 if (Directory.Exists(tmpPath)) Directory.Delete(tmpPath, true);
             }
         }
-
         public static async Task CheckForUpdatesAsync(string[] args)
         {
 #if DEBUG // No updates in debug mode
@@ -200,7 +199,7 @@ namespace HTML2EXE_2
             if (CurrentVersion != 0 && update) try
                 {
                     log("Checking for updates...");
-                    string json = await client.GetStringAsync(latestJsonUrl);
+                    string json = await client.GetStringAsync(latestJsonUrl).ConfigureAwait(false);
 
                     using JsonDocument doc = JsonDocument.Parse(json);
                     int latestVersion = doc.RootElement.GetProperty("version").GetInt32();
@@ -211,8 +210,8 @@ namespace HTML2EXE_2
                     !string.IsNullOrEmpty(downloadUrl))
                     {
                         log($"New version available ({CurrentVersion} --> {latestVersion}). Updating...", false, true);
-                        byte[] data = await client.GetByteArrayAsync(downloadUrl);
-                        await File.WriteAllBytesAsync(tmpUpdatePath, data);
+                        byte[] data = await client.GetByteArrayAsync(downloadUrl).ConfigureAwait(false);
+                        await File.WriteAllBytesAsync(tmpUpdatePath, data).ConfigureAwait(false);
                         string argsString = "";
                         if (args.Length > 0) argsString = string.Join(" ", args.Select(arg => $"\"{arg}\"")); // Join the arguments into a single string, escaping them
                         using (Process update = new Process())
