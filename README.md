@@ -32,6 +32,13 @@ Note that there are some good alternatives such as [Electron](https://www.electr
 
 You can also open the program to see the GUI menu or use it from the command line.
 
+
+> [!IMPORTANT]
+> It is not recommended to run multiple instances of the program at the same time, as it may cause problems, specially when the program updates.
+
+> [!WARNING]
+> If you define the title, use a basic name with no special characters, as it will be used as the data folder and output name.
+
 ### GUI (Graphical User Interface)
 - Open the program and a GUI will show up with all the options.
 - You can select the HTML file or folder you want to convert (with index.html) or just continue with an empty folder.

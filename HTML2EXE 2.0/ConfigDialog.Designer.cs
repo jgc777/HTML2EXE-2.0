@@ -106,7 +106,7 @@ namespace HTML2EXE_2
             titleTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             titleTextBox.Location = new Point(114, 79);
             titleTextBox.Name = "titleTextBox";
-            titleTextBox.PlaceholderText = "HTML2EXE";
+            titleTextBox.PlaceholderText = "Basic name (See Github README)";
             titleTextBox.Size = new Size(267, 23);
             titleTextBox.TabIndex = 4;
 
@@ -312,7 +312,7 @@ namespace HTML2EXE_2
             extraCmdTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             extraCmdTextBox.Location = new Point(114, 324);
             extraCmdTextBox.Name = "extraCmdTextBox";
-            extraCmdTextBox.PlaceholderText = ";";
+            extraCmdTextBox.PlaceholderText = "Windows CMD command";
             extraCmdTextBox.Size = new Size(267, 23);
             extraCmdTextBox.TabIndex = 26;
 

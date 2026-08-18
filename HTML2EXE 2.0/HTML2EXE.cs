@@ -27,17 +27,17 @@ namespace HTML2EXE_2
         public static readonly string webview_big = "https://github.com/jgc777/HTML2EXE-2.0/releases/latest/download/webview-big.zip";
         public static string? webviewURL;
 
-        public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), $"HTML2EXE-{Guid.NewGuid():N}");
+        public static readonly string tmpPath = Path.Combine(Path.GetTempPath(), $"HTML2EXE\\{Guid.NewGuid():N}");
         public static readonly string tmpWebfilesPath = Path.Combine(tmpPath, "webfiles");
 
-        private static readonly string tmpUpdatePath = Path.Combine(Path.GetTempPath(), $"HTML2EXE-{Guid.NewGuid():N}.exe");
+        private static readonly string tmpUpdatePath = Path.Combine(Path.GetTempPath(), $"HTML2EXE\\{Guid.NewGuid():N}.exe");
         private static readonly string tmpRceditPath = Path.Combine(tmpPath, "rcedit.exe");
         public static readonly string tmpConfigJson = Path.Combine(tmpPath, "config.json");
         public static readonly string tmpWebviewPath = Path.Combine(tmpPath, "webview.zip");
         private static readonly string tmpOutputPath = Path.Combine(tmpPath, "out.exe");
 
         public static bool GUI = false;
-        private static readonly string guiFlag = Path.Combine(tmpPath, "gui.flag");
+        private static readonly string guiFlag = Path.Combine(Path.GetTempPath(), "HTML2EXE\\gui.flag");
         private static BrowseDialog browseDialog = new BrowseDialog();
         public static readonly HttpClient client = new();
 
