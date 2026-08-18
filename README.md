@@ -62,7 +62,7 @@ It's a JSON file which defines some webview settings. It can be loaded in the CL
 | `maximizable` | boolean | If the window should be maximizable. |
 | `fullscreen` | boolean | If the window should be fullscreen by default. |
 | `always_on_top` | boolean | If the window should be always on top. |
-| `zoomcontrol` | boolean | If the zoom control should be enabled. |
+| `zoom_control` | boolean | If the zoom control should be enabled. |
 | `show_in_taskbar` | boolean | If the window should be shown in the taskbar. |
 | `width` | integer | The width of the window. |
 | `height` | integer | The height of the window. |

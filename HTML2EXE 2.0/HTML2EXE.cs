@@ -2,11 +2,13 @@
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace HTML2EXE_2
 {
+    [SupportedOSPlatform("windows6.1")] // Remove warnings
     internal static class HTML2EXE
     {
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -36,7 +38,8 @@ namespace HTML2EXE_2
 
         public static bool GUI = false;
         private static readonly string guiFlag = Path.Combine(tmpPath, "gui.flag");
-        private static BrowseDialog? browseDialog;
+        private static BrowseDialog browseDialog = new BrowseDialog();
+        public static readonly HttpClient client = new();
 
         [STAThread]
         static void Main(string[] args)
@@ -95,13 +98,10 @@ namespace HTML2EXE_2
                                     if (configIcon.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                                         configIcon.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        using (var client = new HttpClient())
-                                        {
-                                            var data = client.GetByteArrayAsync(configIcon).Result;
-                                            File.WriteAllBytes(Path.Combine(tmpWebfilesPath, "icon.ico"), data);
-                                            config["icon"] = Path.Combine("webfiles", "icon.ico");
-                                            log($"Downloaded icon from URL: {configIcon}");
-                                        }
+                                        var data = client.GetByteArrayAsync(configIcon).Result;
+                                        File.WriteAllBytes(Path.Combine(tmpWebfilesPath, "icon.ico"), data);
+                                        config["icon"] = Path.Combine("webfiles", "icon.ico");
+                                        log($"Downloaded icon from URL: {configIcon}");
                                     }
                                     else
                                     {
@@ -160,7 +160,6 @@ namespace HTML2EXE_2
                         {
                             webviewURL = args[3];
                             log($"Using webview URL: {webviewURL}");
-                            return;
                         }
 
                         string? webviewPath = TryGetFileFolderPath(args[3]); // Try to get the webview path from the fourth argument
@@ -180,7 +179,7 @@ namespace HTML2EXE_2
                     Console.WriteLine("No arguments provided, starting GUI...");
                     File.WriteAllText(guiFlag, ""); // Used to close the updater console window when the updated GUI is opened
                     FreeConsole();
-                    Application.Run(browseDialog = new BrowseDialog());
+                    Application.Run(browseDialog);
                 }
             }
             catch (Exception ex)
@@ -201,7 +200,6 @@ namespace HTML2EXE_2
             if (CurrentVersion != 0 && update) try
                 {
                     log("Checking for updates...");
-                    using HttpClient client = new HttpClient();
                     string json = await client.GetStringAsync(latestJsonUrl);
 
                     using JsonDocument doc = JsonDocument.Parse(json);
@@ -257,13 +255,10 @@ namespace HTML2EXE_2
                 {
                     log("Downloading webview.zip...");
                     if (webviewURL is null) throw new Exception("Error: webview URL is null.");
-                    using (HttpClient client = new HttpClient())
-                    {
-                        var response = client.GetAsync(webviewURL).Result;
-                        response.EnsureSuccessStatusCode();
-                        var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
-                        File.WriteAllBytes(tmpWebviewPath, fileBytes);
-                    }
+                    var response = client.GetAsync(webviewURL).Result;
+                    response.EnsureSuccessStatusCode();
+                    var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
+                    File.WriteAllBytes(tmpWebviewPath, fileBytes);
                 }
 
                 log("Extracting webview.zip...");
@@ -417,19 +412,15 @@ SourceFiles0=.\
 
         public static void log(string message = "", bool isError = false, bool isGreen = false, bool messageBox = false)
         { // Logs a message to the console or GUI if the GUI is active
-            if (GUI)
+            if (GUI && browseDialog.configDialog.buildDialog.logTextBox is RichTextBox logTextBox)
             {
-                if (browseDialog is BrowseDialog && browseDialog?.configDialog?.buildDialog?.logTextBox is RichTextBox logTextBox)
-                { // If used to hide warnings and make code cleaner
-                    int start = logTextBox.TextLength;
-                    logTextBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] [HTML2EXE] {message}\n");
-                    logTextBox.Select(start, logTextBox.TextLength - start); // Select the new text
-                    logTextBox.SelectionColor = logTextBox.ForeColor; // Default color
-                    if (isError) logTextBox.SelectionColor = Color.Red; // Red for isError
-                    if (isGreen) logTextBox.SelectionColor = Color.Green; // Green for isGreen
-                    logTextBox.SelectionLength = 0; // Remove selection
-                }
-                else throw new Exception("logTextBox not found (GUI=true)");
+                int start = logTextBox.TextLength;
+                logTextBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] [HTML2EXE] {message}\n");
+                logTextBox.Select(start, logTextBox.TextLength - start); // Select the new text
+                logTextBox.SelectionColor = logTextBox.ForeColor; // Default color
+                if (isError) logTextBox.SelectionColor = Color.Red; // Red for isError
+                if (isGreen) logTextBox.SelectionColor = Color.Green; // Green for isGreen
+                logTextBox.SelectionLength = 0; // Remove selection
             }
             else
             {

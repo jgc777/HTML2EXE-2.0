@@ -5,7 +5,7 @@ namespace HTML2EXE_2
 {
     public partial class BrowseDialog : Form
     {
-        public ConfigDialog? configDialog;
+        public ConfigDialog configDialog = new ConfigDialog();
 
         public BrowseDialog()
         {
@@ -25,7 +25,6 @@ namespace HTML2EXE_2
             {
                 File.Copy(htmlPath, Path.Combine(HTML2EXE.tmpWebfilesPath, Path.GetFileName(htmlPath)), true);
                 Visible = false;
-                configDialog = new ConfigDialog();
                 configDialog.ShowDialog();
             }
             Close();
@@ -41,7 +40,6 @@ namespace HTML2EXE_2
                 HTML2EXE.CopyDirectory(folderPath, HTML2EXE.tmpWebfilesPath);
 
                 Visible = false;
-                configDialog = new ConfigDialog();
                 configDialog.ShowDialog();
             }
             Close();
@@ -50,7 +48,6 @@ namespace HTML2EXE_2
         private void noFileBtn_Click_1(object sender, EventArgs e)
         {
             Visible = false;
-            configDialog = new ConfigDialog();
             configDialog.ShowDialog();
             Close();
         }

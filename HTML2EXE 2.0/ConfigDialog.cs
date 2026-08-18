@@ -5,7 +5,7 @@ namespace HTML2EXE_2
     public partial class ConfigDialog : Form
     {
         public JsonNode config = new JsonObject();
-        public BuildDialog? buildDialog;
+        public BuildDialog buildDialog = new BuildDialog();
         public string? iconPath = null;
 
         private Dictionary<string, CheckBox> checkBoxes;
@@ -57,7 +57,6 @@ namespace HTML2EXE_2
 
                 // Close this form and show the build dialog
                 Close();
-                buildDialog = new BuildDialog();
                 buildDialog.ShowDialog();
             }
             catch (Exception ex)
@@ -82,11 +81,9 @@ namespace HTML2EXE_2
                 { // If the icon is a URL download it
                     try
                     {
-                        using (var client = new HttpClient())
-                        {
-                            var data = client.GetByteArrayAsync(iconPath).Result;
-                            File.WriteAllBytes(Path.Combine(HTML2EXE.tmpWebfilesPath, "icon.ico"), data);
-                        }
+                        var data = HTML2EXE.client.GetByteArrayAsync(iconPath).Result;
+                        File.WriteAllBytes(Path.Combine(HTML2EXE.tmpWebfilesPath, "icon.ico"), data);
+                        
                         config["icon"] = Path.Combine("webfiles", "icon.ico"); // Set the icon to the downloaded file
                     }
                     catch (Exception ex)
@@ -106,7 +103,7 @@ namespace HTML2EXE_2
             if (export) config["include_runtime"] = includeNETbox.Checked; // If exporting, set the include runtime option
             HTML2EXE.webviewURL = includeNETbox.Checked ? HTML2EXE.webview_big : HTML2EXE.webview; // Set the webview URL based on the include runtime option
 
-            if (export) config["webview"] = webviewOpener.FileName;
+            if (export && !string.IsNullOrEmpty(webviewOpener.FileName)) config["webview"] = webviewOpener.FileName;
 
             // Clean nulls and order alphabetically
             if (removenulls)

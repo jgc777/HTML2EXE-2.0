@@ -104,7 +104,7 @@ namespace Webview
                 ShowInTaskbar = config["show_in_taskbar"]?.GetValue<bool>() ?? true; // Config show in taskbar
 
                 if (config["icon"] is null) webView2.NavigationCompleted += WebView2_NavigationCompleted;
-                else if (config["icon"] is not null)
+                else
                 {
                     Icon = new Icon(config["icon"]!.ToString()); // Config icon
                     ShowIcon = true; // Show icon
@@ -114,7 +114,6 @@ namespace Webview
                 if (config["height"] is not null && config["height"]!.GetValue<int>() is > 0) Height = config["height"]!.GetValue<int>(); // Set config height
 
                 await webView2.EnsureCoreWebView2Async(); // Wait for WebView to be initialized
-
 
                 if (config["title"] is not null) Text = config["title"]!.ToString(); // Set config title
                 else webView2.CoreWebView2.DocumentTitleChanged += WebView_DocumentTitleChanged; // Set default title
@@ -163,7 +162,6 @@ namespace Webview
         {
             if (config["block_close"]?.GetValue<bool>() ?? false) e.Cancel = true; // Block close event
         }
-
         public void enterFullscreen()
         {
             previousBorderStyle = FormBorderStyle;
@@ -209,24 +207,15 @@ namespace Webview
             try
             {
                 ShowIcon = false;
-                string script = @"
-                (() => {
-                    let icon = document.querySelector('link[rel~=""icon""]');
-                    return icon ? icon.href : '';
-                })();";
-
-                string result = await webView2.ExecuteScriptAsync(script);
-                string faviconUrl = result.Trim('"');
-
+                string faviconUrl = (await webView2.ExecuteScriptAsync(@"()=>{let icon = document.querySelector('link[rel~=""icon""]');return icon ? icon.href : '';})();")).Trim('"');
                 if (string.IsNullOrEmpty(faviconUrl))
                 { // Use default favicon location if none found
                     Uri uri = webView2.Source;
                     faviconUrl = $"{uri.Scheme}://{uri.Host}/favicon.ico";
                 }
 
-                using HttpClient client = new HttpClient();
-                byte[] bytes = await client.GetByteArrayAsync(faviconUrl);
-                using MemoryStream ms = new MemoryStream(bytes);
+                HttpClient client = new HttpClient();
+                MemoryStream ms = new MemoryStream(await client.GetByteArrayAsync(faviconUrl));
                 Icon icon;
                 try
                 {
@@ -246,7 +235,5 @@ namespace Webview
             { // Ignore icon errors
             }
         }
-
-
     }
 }

@@ -353,7 +353,6 @@ namespace HTML2EXE_2
 
             webviewOpener.AddToRecent = false;
             webviewOpener.DefaultExt = "zip";
-            webviewOpener.FileName = "webview.zip";
             webviewOpener.Filter = "HTML2EXE Webview ZIP|*.zip|All file types|*.*";
 
             // ===== SECTION 6: CHECKBOXES (continued) =====
